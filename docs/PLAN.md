@@ -72,7 +72,8 @@ integrations/
    5. [x] Shooters (`features/shooters/`, route `/matches/[matchId]/squads/[squadId]/stages/[stageId]`)
    6. [x] Scoring (matrix, steppers, sticky bar; route `.../stages/[stageId]/score/[shooterId]`). DQ, DNF and Review buttons are inert until step 7
    7. [x] Review sheet with saving (`ReviewSheet.tsx`, `review.ts`), Confirm DNF (`ConfirmDnfSheet.tsx`) and Confirm DQ (`ConfirmDqSheet.tsx`); results built in `outcome.ts`
-6. [ ] Offline fallback and PWA
+6. [x] Installable PWA: `app/manifest.ts`, icons in `public/icons/` and `app/apple-icon.png`, iOS web-app metadata. Placeholder target icon (replace with club artwork). `public/sw.js` caches the app shell: pages already visited open without a connection
+6b. [ ] Offline fallback: outbox and sync, unsynced indicator (the service worker for the app shell is done; a new page never opened before still needs a connection)
 7. [ ] Playwright E2E, including an offline case
 8. [ ] SSI: get API facts (docs, auth, write-back, mapping), then `integrations/ssi/`, `app/api/*`, API-backed repository
 
@@ -112,7 +113,7 @@ From a UX pass over every screen; details in DESIGN.md (Toast, Load errors, Stic
 
 - SSI: API access and docs, auth method, whether scores can be written back, and how SSI divisions, power factor and stage config map to this sport.
 - If a pure static export is ever required, the API must become a separate service.
-- PWA service worker: Next.js has no built-in one, so it's hand-written or a library. It must cache the app shell for offline use.
+- PWA service worker: hand-written (`public/sw.js`), no library. Open: whether to precache more than visited pages, and how to handle updates while a shift is in progress (today a new version applies on the next page load).
 
 - Backend / auth provider and how ROs are provisioned.
 - Who can reverse a DQ and how (current copy says "needs the Range Master's approval"). DQ rows are not selectable in the app, so a reversal would need its own flow.
