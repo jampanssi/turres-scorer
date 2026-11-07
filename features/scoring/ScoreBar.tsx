@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { useT } from "@/shared/i18n/useT";
 import { Button } from "@/shared/ui/Button";
 import { Stepper } from "@/shared/ui/Stepper";
@@ -14,11 +15,14 @@ interface ScoreBarProps {
   onDq: () => void;
   onDnf: () => void;
   onReview: () => void;
+  /** True while the time or any target is missing: Review stays disabled until the score is complete. */
+  reviewDisabled: boolean;
 }
 
 /** Sticky bottom bar: penalty steppers, then DQ · DNF · Review. It never scrolls away. */
 export function ScoreBar(props: ScoreBarProps) {
   const { t } = useT();
+  const reviewHintId = useId();
 
   return (
     <div className="sticky bottom-0 z-10 flex flex-col gap-4 border-t border-border-light bg-surface px-4 pb-4 pt-3 shadow-bar">
@@ -45,9 +49,18 @@ export function ScoreBar(props: ScoreBarProps) {
         <Button variant="outline" className="px-4" onClick={props.onDnf}>
           {t("score.dnf")}
         </Button>
-        <Button className="flex-1" onClick={props.onReview}>
+        <Button
+          className="flex-1"
+          disabled={props.reviewDisabled}
+          aria-describedby={props.reviewDisabled ? reviewHintId : undefined}
+          onClick={props.onReview}
+        >
           {t("score.review")}
         </Button>
+        {/* The red "N left" row tiles show what is missing; this explains the disabled button to screen readers. */}
+        <span id={reviewHintId} className="sr-only">
+          {t("score.reviewBlocked")}
+        </span>
       </div>
     </div>
   );

@@ -172,7 +172,7 @@ Header: shooter name, `#23 · Stage 3 · Squad 2`.
 Scrollable content:
 1. **Time card**: stopwatch icon, label "Time (s)", and a button (120 × 46, 2 px `primary` border, Barlow 28, right-aligned, placeholder `0.00`) that opens the **time keypad** instead of the phone keyboard (below).
 2. **ScoreMatrix**: Paper rows 1…N, divider, Steel rows 1…S (see components and SCORING.md for behaviour).
-Sticky bottom bar: **No-shoot** stepper (`Max = 2 × no-shoot targets`), **Procedural** stepper (`Max = ceil(maxPoints / 10)`), then **DQ · DNF · Review**.
+Sticky bottom bar: **No-shoot** stepper (`Max = 2 × no-shoot targets`), **Procedural** stepper (`Max = ceil(maxPoints / 10)`), then **DQ · DNF · Review**. **Review is disabled** (disabled colour) until the score is complete: a time entered and every paper and steel target has all its hits. The red `N left` row tiles show which targets are missing, and an empty time shows `0.00` in the disabled colour.
 No running points/HF summary on this screen — totals are shown in Review.
 
 ### Time keypad (bottom sheet over Scoring)
@@ -196,7 +196,7 @@ Sheet background `bg`. Title **REVIEW SCORE**, shooter line.
 2. **Hit totals**: six tiles — A, C, D, M, NS, PE — count + points (`55p`, `-10p` …). M/NS/PE labels in `danger`.
 3. **Targets**: Paper row of tiles `1 AA`, `2 AC`, … (a tile containing M uses `danger-tint` / `danger-text`); Steel row `1 A`, `2 A`, `3 A`.
 4. **Shooter sign-off**: checkbox "Shooter has reviewed and accepts the score" (no signature pad).
-Actions: **Edit** (outline primary) → Scoring · **Accept & save** (primary) → Shooters. Accept & save is disabled until the checkbox is ticked.
+Actions: **Edit** (outline primary) → back to Scoring · **Accept & save** (primary) → saves the score, then Shooters. Accept & save is disabled until the checkbox is ticked **and the score is complete** (a time entered and every paper and steel target has all its hits). An addition to the mock-up: otherwise an unfinished score would be saved with an HF of 0. Because Review is disabled until the score is complete, the sheet is only reachable with a complete score. The red box ("Enter the time before saving.", "N targets are not complete.") and the red `—` tiles are a safety net that also keeps Accept & save disabled. Tapping Edit goes back to fix it. While saving, both buttons are disabled; if saving fails, the sheet stays open with "Could not save the score. Try again." The checkbox starts unticked each time the sheet opens. Hit total tiles show the points per code (`55p`, `-10p`); NS and PE are not translated.
 
 ---
 

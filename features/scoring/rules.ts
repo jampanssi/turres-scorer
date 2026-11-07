@@ -29,14 +29,23 @@ export function totalsOf(input: ScoreInput): Totals {
   return totals;
 }
 
+/** Points of each code: A, C and D add, M, NS and PE subtract (shown per tile on the Review sheet). */
+export function codePoints(t: Totals): Totals {
+  return {
+    A: HIT_POINTS.A * t.A,
+    C: HIT_POINTS.C * t.C,
+    D: HIT_POINTS.D * t.D,
+    // 0 - n rather than -n, so a count of 0 gives 0 and not -0.
+    M: 0 - PENALTY_POINTS * t.M,
+    NS: 0 - PENALTY_POINTS * t.NS,
+    PE: 0 - PENALTY_POINTS * t.PE,
+  };
+}
+
 /** Stage points, never negative. */
 export function pointsOf(t: Totals): number {
-  const raw =
-    HIT_POINTS.A * t.A +
-    HIT_POINTS.C * t.C +
-    HIT_POINTS.D * t.D -
-    PENALTY_POINTS * (t.M + t.NS + t.PE);
-  return Math.max(0, raw);
+  const p = codePoints(t);
+  return Math.max(0, p.A + p.C + p.D + p.M + p.NS + p.PE);
 }
 
 /** Hit factor = points / time. 0 if time is empty or not positive. */
