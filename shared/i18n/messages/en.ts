@@ -105,6 +105,8 @@ export const en = {
   "score.dq": "DQ",
   "score.dnf": "DNF",
   "score.review": "Review",
+  "score.edit": "Edit",
+  "score.result": "Result",
   "score.reviewBlocked": "Enter the time and complete every target to review the score.",
   "dq.title": "Disqualify shooter?",
   "dq.info": "The shooter is removed from the rest of the match. This needs the Range Master's approval to reverse.",

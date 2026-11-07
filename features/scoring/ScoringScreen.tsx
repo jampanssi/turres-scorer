@@ -27,6 +27,7 @@ import {
 import { maxNoShoots, maxProcedurals } from "./rules";
 import { buildDnfScore, buildDqScore } from "./outcome";
 import { ReviewSheet } from "./ReviewSheet";
+import { ScoreReadOnly } from "./ScoreReadOnly";
 import { buildStageScore, summarizeDraft } from "./review";
 import { ScoreBar } from "./ScoreBar";
 import { ScoreMatrix } from "./ScoreMatrix";
@@ -76,7 +77,7 @@ export function ScoringScreen() {
       )}
       {data?.disqualified && <p className="px-4 pt-4 text-text-secondary">{t("score.disqualified")}</p>}
       {data && !data.disqualified && (
-        <ScoringForm data={data} matchId={matchId} roId={session.session.email} backHref={backHref} />
+        <ScoringBody data={data} matchId={matchId} roId={session.session.email} backHref={backHref} />
       )}
     </div>
   );
@@ -89,6 +90,20 @@ interface ScoringFormProps {
   roId: string;
   /** The shooter list: where to go after saving. */
   backHref: string;
+}
+
+/**
+ * A shooter with a saved result opens read only (the summary and an Edit button); a shooter without
+ * one opens straight in the entry form. Tapping Edit switches to the form, starting from the saved score.
+ */
+function ScoringBody(props: ScoringFormProps) {
+  const { data } = props;
+  const [editing, setEditing] = useState(data.existing === null);
+
+  if (!editing && data.existing) {
+    return <ScoreReadOnly existing={data.existing} stage={data.stage} onEdit={() => setEditing(true)} />;
+  }
+  return <ScoringForm {...props} />;
 }
 
 /** The entry form. Mounted only once the data is loaded, so the draft starts from the saved score (if any). */

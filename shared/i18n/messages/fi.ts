@@ -105,6 +105,8 @@ export const fi: Record<MessageKey, string> = {
   "score.dq": "DQ",
   "score.dnf": "DNF",
   "score.review": "Tarkista",
+  "score.edit": "Muokkaa",
+  "score.result": "Tulos",
   "score.reviewBlocked": "Syötä aika ja täytä kaikki maalit ennen tuloksen tarkistamista.",
   "dq.title": "Suljetaanko ampuja ottelusta?",
   "dq.info": "Ampuja poistetaan ottelun jäljellä olevilta radoilta. Sulkemisen peruminen vaatii Range Masterin hyväksynnän.",

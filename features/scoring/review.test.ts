@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { StageScore } from "@/shared/domain/types";
-import { type ScoreDraft } from "./draft";
+import { draftFromScore, type ScoreDraft } from "./draft";
 import { buildStageScore, summarizeDraft } from "./review";
 
 const stage = { hitsPerPaperTarget: 2 as const };
@@ -84,5 +84,27 @@ describe("buildStageScore", () => {
     const score = buildStageScore({ ...base, now: "2026-11-07T11:00:00.000Z", existing });
     expect(score.createdAt).toBe("2026-11-07T09:00:00.000Z");
     expect(score.updatedAt).toBe("2026-11-07T11:00:00.000Z");
+  });
+});
+
+describe("a saved score read back (the read-only view)", () => {
+  const targets = { paperTargets: 6, steelTargets: 3, noShootTargets: 2, hitsPerPaperTarget: 2 as const };
+
+  it("shows the same summary as the draft it was saved from", () => {
+    const saved = buildStageScore({
+      draft: mockUp, matchId: "m", stageId: "st", shooterId: "sh", roId: "ro", now: "t", existing: null,
+    });
+    expect(summarizeDraft(draftFromScore(saved, targets), stage)).toEqual(summarizeDraft(mockUp, stage));
+  });
+
+  it("keeps penalties and the exact time", () => {
+    const draft: ScoreDraft = { ...mockUp, timeDigits: "2307", noShoots: 2, procedurals: 1 };
+    const saved = buildStageScore({
+      draft, matchId: "m", stageId: "st", shooterId: "sh", roId: "ro", now: "t", existing: null,
+    });
+    const read = summarizeDraft(draftFromScore(saved, targets), stage);
+    expect(read.seconds).toBe(23.07);
+    expect(read.totals).toMatchObject({ NS: 2, PE: 1 });
+    expect(read).toEqual(summarizeDraft(draft, stage));
   });
 });
