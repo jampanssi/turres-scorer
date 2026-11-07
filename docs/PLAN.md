@@ -60,7 +60,7 @@ integrations/
 1. [x] Foundation: config, design tokens, fonts, format helpers (Vitest config added, package still to install)
 2. [x] Domain types and scoring rules with tests (`shared/domain/types.ts`, `features/scoring/`)
 3. [x] Data layer on mock + IndexedDB (`shared/data/`)
-4. [ ] UI primitives
+4. [x] UI primitives (`shared/ui/`)
 5. [ ] Scoring screen with Review/DQ/DNF sheets
 6. [ ] Navigation screens: Shooters → Stages → Squads → Matches → Sign in
 7. [ ] Offline fallback and PWA
