@@ -1,0 +1,31 @@
+import type { Match, Shooter, Squad, Stage, StageScore } from "@/shared/domain/types";
+
+/**
+ * The seam between the app and its data source. Screens use only this interface.
+ * Today it is backed by mock data + IndexedDB; SSI is added later behind an API-backed implementation.
+ */
+export interface Repository {
+  listMatches(): Promise<Match[]>;
+  getMatch(matchId: string): Promise<Match | null>;
+
+  listStages(matchId: string): Promise<Stage[]>;
+  getStage(stageId: string): Promise<Stage | null>;
+
+  listSquads(matchId: string): Promise<Squad[]>;
+  getSquad(squadId: string): Promise<Squad | null>;
+
+  /** Shooters of a squad, in shooting order. */
+  listShooters(squadId: string): Promise<Shooter[]>;
+  getShooter(shooterId: string): Promise<Shooter | null>;
+
+  /** All saved scores of a match, optionally limited to one stage. */
+  listScores(matchId: string, filter?: { stageId?: string }): Promise<StageScore[]>;
+  getScore(stageId: string, shooterId: string): Promise<StageScore | null>;
+  /** Insert or replace the score of one shooter on one stage. */
+  saveScore(score: StageScore): Promise<void>;
+}
+
+/** One score per shooter per stage, so the id is derived from both. */
+export function scoreId(stageId: string, shooterId: string): string {
+  return `${stageId}:${shooterId}`;
+}
