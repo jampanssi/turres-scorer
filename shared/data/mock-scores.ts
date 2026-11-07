@@ -84,7 +84,9 @@ function makeScore(matchId: string, stage: Stage, shooterId: string, kind: "scor
     };
   }
 
-  const paper: HitCode[][] = Array.from({ length: stage.paperTargets }, () => [pickHit(rand), pickHit(rand)]);
+  const paper: HitCode[][] = Array.from({ length: stage.paperTargets }, () =>
+    Array.from({ length: stage.hitsPerPaperTarget }, () => pickHit(rand)),
+  );
   const steel: SteelHit[] = Array.from({ length: stage.steelTargets }, () => (rand() < 0.85 ? "A" : "M"));
   const noShoots = stage.noShootTargets > 0 && rand() < 0.1 ? 1 : 0;
   const procedurals = rand() < 0.05 ? 1 : 0;

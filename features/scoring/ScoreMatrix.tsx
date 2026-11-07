@@ -11,6 +11,8 @@ const PAPER_CODES: HitCode[] = ["A", "C", "D", "M"];
 
 interface ScoreMatrixProps {
   paper: HitCode[][];
+  /** Hits each paper target needs on this stage (1-3): drives the "N left" tiles. */
+  hitsPerPaperTarget: number;
   steel: SteelHit[];
   onPaperTap: (row: number, hit: HitCode) => void;
   onPaperUndo: (row: number) => void;
@@ -19,7 +21,7 @@ interface ScoreMatrixProps {
 }
 
 /** The target matrix: paper rows (A C D M), then steel rows (A or M), each with a per-row undo. */
-export function ScoreMatrix({ paper, steel, onPaperTap, onPaperUndo, onSteelTap, onSteelUndo }: ScoreMatrixProps) {
+export function ScoreMatrix({ paper, hitsPerPaperTarget, steel, onPaperTap, onPaperUndo, onSteelTap, onSteelUndo }: ScoreMatrixProps) {
   const { t } = useT();
 
   return (
@@ -35,7 +37,7 @@ export function ScoreMatrix({ paper, steel, onPaperTap, onPaperUndo, onSteelTap,
           </div>
           {paper.map((hits, index) => {
             const row = index + 1;
-            const remaining = paperRemaining(hits);
+            const remaining = paperRemaining(hits, hitsPerPaperTarget);
             return (
               <div key={row} className={GRID}>
                 <RowLabel number={row} remaining={remaining} />

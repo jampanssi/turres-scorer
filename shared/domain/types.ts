@@ -19,6 +19,9 @@ export interface Match {
   squadIds: string[];
 }
 
+/** Scored hits a paper target needs on a stage: set per stage, usually 2 (some stages use 1 or 3). */
+export type HitsPerPaperTarget = 1 | 2 | 3;
+
 export interface Stage {
   id: string;
   matchId: string;
@@ -26,6 +29,8 @@ export interface Stage {
   name: string;
   minRounds: number;
   paperTargets: number;
+  /** How many hits each paper target needs (1, 2 or 3). */
+  hitsPerPaperTarget: HitsPerPaperTarget;
   steelTargets: number;
   noShootTargets: number;
 }
@@ -52,7 +57,7 @@ export interface StageScore {
   roId: string;
   status: "scored" | "dnf" | "dq";
   timeSec: number | null;
-  /** One array per paper target, length <= 2, order = tap order. */
+  /** One array per paper target; each has at most the stage's hitsPerPaperTarget hits, in tap order. */
   paper: HitCode[][];
   /** One entry per steel target. */
   steel: SteelHit[];

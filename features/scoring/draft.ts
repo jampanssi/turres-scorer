@@ -12,7 +12,7 @@ export interface ScoreDraft {
    * No leading zeros; "" means no time yet. At most 5 digits (999.99 s).
    */
   timeDigits: string;
-  /** One row per paper target, up to two hits each (tap order). */
+  /** One row per paper target, up to the stage's hits per paper target (tap order). */
   paper: HitCode[][];
   /** One entry per steel target. */
   steel: SteelHit[];
@@ -21,7 +21,7 @@ export interface ScoreDraft {
 }
 
 type TargetCounts = Pick<Stage, "paperTargets" | "steelTargets">;
-type PenaltyLimits = Pick<Stage, "paperTargets" | "steelTargets" | "noShootTargets">;
+type PenaltyLimits = Pick<Stage, "paperTargets" | "steelTargets" | "noShootTargets" | "hitsPerPaperTarget">;
 
 export function emptyDraft(stage: TargetCounts): ScoreDraft {
   return {
@@ -39,18 +39,20 @@ export function draftFromScore(score: StageScore | null, stage: PenaltyLimits): 
   const draft = emptyDraft(stage);
   return {
     timeDigits: digitsFromSeconds(score.timeSec),
-    paper: draft.paper.map((_, i) => [...(score.paper[i] ?? [])]),
+    // A row never holds more hits than the stage asks for: keep the most recent ones.
+    paper: draft.paper.map((_, i) => (score.paper[i] ?? []).slice(-stage.hitsPerPaperTarget)),
     steel: draft.steel.map((_, i) => score.steel[i] ?? null),
     noShoots: Math.min(score.noShoots, maxNoShoots(stage.noShootTargets)),
-    procedurals: Math.min(score.procedurals, maxProcedurals(stage.paperTargets, stage.steelTargets)),
+    procedurals: Math.min(score.procedurals, maxProcedurals(stage.paperTargets, stage.steelTargets, stage.hitsPerPaperTarget)),
   };
 }
 
 const replaceAt = <T,>(items: T[], index: number, value: T): T[] => items.map((item, i) => (i === index ? value : item));
 
-export function tapPaper(draft: ScoreDraft, row: number, hit: HitCode): ScoreDraft {
+/** Tap a paper cell. `hitsPerPaperTarget` is the stage's setting: a row keeps that many recent hits. */
+export function tapPaper(draft: ScoreDraft, row: number, hit: HitCode, hitsPerPaperTarget: number): ScoreDraft {
   if (row < 0 || row >= draft.paper.length) return draft;
-  return { ...draft, paper: replaceAt(draft.paper, row, addPaperHit(draft.paper[row], hit)) };
+  return { ...draft, paper: replaceAt(draft.paper, row, addPaperHit(draft.paper[row], hit, hitsPerPaperTarget)) };
 }
 
 export function undoPaper(draft: ScoreDraft, row: number): ScoreDraft {
@@ -75,7 +77,7 @@ export function setNoShoots(draft: ScoreDraft, value: number, stage: PenaltyLimi
 }
 
 export function setProcedurals(draft: ScoreDraft, value: number, stage: PenaltyLimits): ScoreDraft {
-  return { ...draft, procedurals: clamp(value, maxProcedurals(stage.paperTargets, stage.steelTargets)) };
+  return { ...draft, procedurals: clamp(value, maxProcedurals(stage.paperTargets, stage.steelTargets, stage.hitsPerPaperTarget)) };
 }
 
 // --- Time entry: digits typed on the keypad, two implied decimals -------------------------------

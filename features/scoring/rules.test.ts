@@ -27,5 +27,9 @@ describe("hit factor", () => {
 
 describe("penalty limits", () => {
   it("no-shoot max is 2 per target", () => expect(maxNoShoots(2)).toBe(4));
-  it("procedural max: 6 paper + 3 steel -> 8", () => expect(maxProcedurals(6, 3)).toBe(8));
+  it("procedural max: 6 paper (2 hits) + 3 steel -> 8", () => expect(maxProcedurals(6, 3, 2)).toBe(8));
+  it("procedural max follows the hits per paper target", () => {
+    expect(maxProcedurals(4, 2, 1)).toBe(3); // 4 x 1 x 5 + 2 x 5 = 30 points
+    expect(maxProcedurals(6, 2, 3)).toBe(10); // 6 x 3 x 5 + 2 x 5 = 100 points
+  });
 });

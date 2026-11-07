@@ -17,7 +17,7 @@ import {
 } from "./draft";
 
 // Stage 3 of the mock-ups: 6 paper, 3 steel, 2 no-shoots (no-shoot max 4, procedural max 8).
-const stage = { paperTargets: 6, steelTargets: 3, noShootTargets: 2 };
+const stage = { paperTargets: 6, hitsPerPaperTarget: 2 as const, steelTargets: 3, noShootTargets: 2 };
 
 describe("emptyDraft", () => {
   it("has an empty row per target", () => {
@@ -31,33 +31,33 @@ describe("emptyDraft", () => {
 describe("paper rows", () => {
   it("adds taps and keeps the two most recent (FIFO)", () => {
     let draft = emptyDraft(stage);
-    draft = tapPaper(tapPaper(draft, 0, "A"), 0, "A");
+    draft = tapPaper(tapPaper(draft, 0, "A", 2), 0, "A", 2);
     expect(draft.paper[0]).toEqual(["A", "A"]);
-    draft = tapPaper(draft, 0, "C");
+    draft = tapPaper(draft, 0, "C", 2);
     expect(draft.paper[0]).toEqual(["A", "C"]);
-    draft = tapPaper(draft, 0, "M");
+    draft = tapPaper(draft, 0, "M", 2);
     expect(draft.paper[0]).toEqual(["C", "M"]);
   });
 
   it("only changes the tapped row", () => {
-    const draft = tapPaper(emptyDraft(stage), 2, "D");
+    const draft = tapPaper(emptyDraft(stage), 2, "D", 2);
     expect(draft.paper.map((r) => r.length)).toEqual([0, 0, 1, 0, 0, 0]);
   });
 
   it("undo removes the most recent entry of that row", () => {
-    const draft = undoPaper(tapPaper(tapPaper(emptyDraft(stage), 1, "A"), 1, "C"), 1);
+    const draft = undoPaper(tapPaper(tapPaper(emptyDraft(stage), 1, "A", 2), 1, "C", 2), 1);
     expect(draft.paper[1]).toEqual(["A"]);
   });
 
   it("ignores rows that do not exist", () => {
     const draft = emptyDraft(stage);
-    expect(tapPaper(draft, 9, "A")).toBe(draft);
+    expect(tapPaper(draft, 9, "A", 2)).toBe(draft);
     expect(undoPaper(draft, -1)).toBe(draft);
   });
 
   it("does not change the previous draft", () => {
     const before = emptyDraft(stage);
-    tapPaper(before, 0, "A");
+    tapPaper(before, 0, "A", 2);
     expect(before.paper[0]).toEqual([]);
   });
 });
@@ -178,5 +178,39 @@ describe("time keypad", () => {
 
   it("shows nothing for an empty time", () => {
     expect(formatTimeDigits("")).toBe("");
+  });
+});
+
+describe("hits per paper target set by the stage", () => {
+  it("1 hit: a tap replaces the previous one", () => {
+    let draft = tapPaper(emptyDraft(stage), 0, "A", 1);
+    draft = tapPaper(draft, 0, "C", 1);
+    expect(draft.paper[0]).toEqual(["C"]);
+  });
+
+  it("3 hits: keeps the three most recent taps", () => {
+    let draft = emptyDraft(stage);
+    for (const hit of ["A", "A", "A", "C", "M"] as const) draft = tapPaper(draft, 1, hit, 3);
+    expect(draft.paper[1]).toEqual(["A", "C", "M"]);
+  });
+
+  it("procedural limit follows the hits: 4 paper x 1 hit + 2 steel -> 3", () => {
+    const strongHand = { paperTargets: 4, hitsPerPaperTarget: 1 as const, steelTargets: 2, noShootTargets: 0 };
+    expect(setProcedurals(emptyDraft(strongHand), 20, strongHand).procedurals).toBe(3);
+  });
+
+  it("procedural limit follows the hits: 6 paper x 3 hits + 2 steel -> 10", () => {
+    const heavy = { paperTargets: 6, hitsPerPaperTarget: 3 as const, steelTargets: 2, noShootTargets: 3 };
+    expect(setProcedurals(emptyDraft(heavy), 20, heavy).procedurals).toBe(10);
+  });
+
+  it("a saved score with more hits than the stage asks for is trimmed to the most recent ones", () => {
+    const oneHit = { paperTargets: 2, hitsPerPaperTarget: 1 as const, steelTargets: 0, noShootTargets: 0 };
+    const saved: StageScore = {
+      id: "st:sh", matchId: "m", stageId: "st", shooterId: "sh", roId: "ro", status: "scored", timeSec: 5,
+      paper: [["A", "C"], ["M", "D"]], steel: [], noShoots: 0, procedurals: 0, shooterAccepted: true,
+      createdAt: "", updatedAt: "",
+    };
+    expect(draftFromScore(saved, oneHit).paper).toEqual([["C"], ["D"]]);
   });
 });

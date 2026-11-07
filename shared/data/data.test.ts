@@ -114,3 +114,21 @@ describe("repository", () => {
     expect(await repo.listScores(MATCH, { stageId: `${MATCH}-st2` })).toHaveLength(1);
   });
 });
+
+describe("hits per paper target in the mock stages", () => {
+  const catalog = buildMockCatalog();
+  const stage = (number: number) => catalog.stages.find((s) => s.id === `autumn-2026-st${number}`)!;
+
+  it("most stages need 2 hits, some 1 or 3", () => {
+    expect(catalog.stages.every((s) => [1, 2, 3].includes(s.hitsPerPaperTarget))).toBe(true);
+    expect(stage(3).hitsPerPaperTarget).toBe(2);
+    expect(stage(5).hitsPerPaperTarget).toBe(1);
+    expect(stage(6).hitsPerPaperTarget).toBe(3);
+  });
+
+  it("minimum rounds follow the stage's hits: paper x hits + steel", () => {
+    expect(stage(3).minRounds).toBe(15); // 6 x 2 + 3, the mock-up stage
+    expect(stage(5).minRounds).toBe(6); // 4 x 1 + 2
+    expect(stage(6).minRounds).toBe(20); // 6 x 3 + 2
+  });
+});

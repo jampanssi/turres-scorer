@@ -27,10 +27,12 @@ describe("mock scores", () => {
     for (const s of scores.filter((x) => x.status === "scored")) {
       const stage = stages.get(s.stageId)!;
       expect(s.paper).toHaveLength(stage.paperTargets);
-      expect(s.paper.every((row) => row.length === 2)).toBe(true);
+      expect(s.paper.every((row) => row.length === stage.hitsPerPaperTarget)).toBe(true);
       expect(s.steel).toHaveLength(stage.steelTargets);
       expect(s.noShoots).toBeLessThanOrEqual(stage.noShootTargets * 2);
-      expect(s.procedurals).toBeLessThanOrEqual(Math.ceil((stage.paperTargets * 10 + stage.steelTargets * 5) / 10));
+      expect(s.procedurals).toBeLessThanOrEqual(
+        Math.ceil((stage.paperTargets * stage.hitsPerPaperTarget * 5 + stage.steelTargets * 5) / 10),
+      );
       expect(s.timeSec).toBeGreaterThan(0);
     }
   });

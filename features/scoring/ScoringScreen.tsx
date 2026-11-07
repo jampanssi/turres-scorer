@@ -89,8 +89,9 @@ function ScoringForm({ data }: { data: ScoringContext }) {
         />
         <ScoreMatrix
           paper={draft.paper}
+          hitsPerPaperTarget={stage.hitsPerPaperTarget}
           steel={draft.steel}
-          onPaperTap={(row, hit) => setDraft((d) => tapPaper(d, row, hit))}
+          onPaperTap={(row, hit) => setDraft((d) => tapPaper(d, row, hit, stage.hitsPerPaperTarget))}
           onPaperUndo={(row) => setDraft((d) => undoPaper(d, row))}
           onSteelTap={(row, hit) => setDraft((d) => tapSteel(d, row, hit))}
           onSteelUndo={(row) => setDraft((d) => undoSteel(d, row))}
@@ -102,7 +103,7 @@ function ScoringForm({ data }: { data: ScoringContext }) {
         maxNoShoots={maxNoShoots(stage.noShootTargets)}
         onNoShootsChange={(value) => setDraft((d) => setNoShoots(d, value, stage))}
         procedurals={draft.procedurals}
-        maxProcedurals={maxProcedurals(stage.paperTargets, stage.steelTargets)}
+        maxProcedurals={maxProcedurals(stage.paperTargets, stage.steelTargets, stage.hitsPerPaperTarget)}
         onProceduralsChange={(value) => setDraft((d) => setProcedurals(d, value, stage))}
         // The DQ, DNF and Review sheets are the next step; until then these buttons do nothing.
         onDq={() => {}}

@@ -1,4 +1,4 @@
-import type { Match, Shooter, Squad, Stage } from "@/shared/domain/types";
+import type { HitsPerPaperTarget, Match, Shooter, Squad, Stage } from "@/shared/domain/types";
 
 /** Placeholder catalog based on docs/DESIGN.md §8. Replaced by SSI data later. */
 
@@ -12,17 +12,19 @@ export interface Catalog {
 interface StageDef {
   name: string;
   paper: number;
+  /** Hits each paper target needs (1-3); most stages use 2. */
+  hits: HitsPerPaperTarget;
   steel: number;
   noShoot: number;
 }
 
 const STAGE_DEFS: StageDef[] = [
-  { name: "Vehicle Stop", paper: 5, steel: 2, noShoot: 1 },
-  { name: "Barricade", paper: 6, steel: 1, noShoot: 2 },
-  { name: "Rapid Entry", paper: 6, steel: 3, noShoot: 2 }, // stage 3 in the mock-ups: min. 15 rounds
-  { name: "Long Corridor", paper: 8, steel: 0, noShoot: 2 },
-  { name: "Strong Hand Only", paper: 4, steel: 2, noShoot: 0 },
-  { name: "Casualty Drag", paper: 6, steel: 2, noShoot: 3 },
+  { name: "Vehicle Stop", paper: 5, hits: 2, steel: 2, noShoot: 1 },
+  { name: "Barricade", paper: 6, hits: 2, steel: 1, noShoot: 2 },
+  { name: "Rapid Entry", paper: 6, hits: 2, steel: 3, noShoot: 2 }, // stage 3 in the mock-ups: min. 15 rounds
+  { name: "Long Corridor", paper: 8, hits: 2, steel: 0, noShoot: 2 },
+  { name: "Strong Hand Only", paper: 4, hits: 1, steel: 2, noShoot: 0 },
+  { name: "Casualty Drag", paper: 6, hits: 3, steel: 2, noShoot: 3 },
 ];
 
 const FIRST_NAMES = ["Mikko", "Jari", "Timo", "Juha", "Pekka", "Ville", "Sami", "Kalle"];
@@ -63,8 +65,9 @@ export function buildMockCatalog(): Catalog {
       matchId: config.id,
       number: i + 1,
       name: def.name,
-      minRounds: def.paper * 2 + def.steel,
+      minRounds: def.paper * def.hits + def.steel,
       paperTargets: def.paper,
+      hitsPerPaperTarget: def.hits,
       steelTargets: def.steel,
       noShootTargets: def.noShoot,
     }));

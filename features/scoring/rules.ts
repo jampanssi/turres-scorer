@@ -51,7 +51,7 @@ export function maxNoShoots(noShootTargets: number): number {
 }
 
 /** Maximum procedurals: ceil(maxPoints / 10); 8 procedurals guarantee a zero stage in the example. */
-export function maxProcedurals(paperTargets: number, steelTargets: number): number {
-  const maxPoints = paperTargets * 2 * HIT_POINTS.A + steelTargets * HIT_POINTS.A;
+export function maxProcedurals(paperTargets: number, steelTargets: number, hitsPerPaperTarget: number): number {
+  const maxPoints = paperTargets * hitsPerPaperTarget * HIT_POINTS.A + steelTargets * HIT_POINTS.A;
   return Math.ceil(maxPoints / PENALTY_POINTS);
 }

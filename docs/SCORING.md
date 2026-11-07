@@ -32,24 +32,26 @@ Several squads can be on the range at the same time, each on a different stage.
 
 ## Targets
 
-- **Paper target**: exactly **2** scored entries, each one of `A | C | D | M`.
+- **Paper target**: exactly **H** scored entries, each one of `A | C | D | M`. **H is set per stage** (`hitsPerPaperTarget`): 1, 2 or 3, usually 2. Everything below uses H.
 - **Steel target**: exactly **1** entry, either `A` or `M` (mutually exclusive).
 - A stage has N paper targets, S steel targets and K no-shoot targets (configured per stage).
 
 ## Penalty limits
 
 - **No-shoot max** = `K × 2`. Example: 2 no-shoot targets → max 4.
-- **Procedural max** = `ceil(maxPoints / 10)` where `maxPoints = N × 2 × 5 + S × 5`.
-  Example: 6 paper + 3 steel → maxPoints 75 → PE max = ceil(7.5) = **8**. (8 procedurals guarantee a zero stage.)
+- **Procedural max** = `ceil(maxPoints / 10)` where `maxPoints = N × H × 5 + S × 5` (N paper targets, S steel targets).
+  Example (H = 2): 6 paper + 3 steel → maxPoints 75 → PE max = ceil(7.5) = **8**. (8 procedurals guarantee a zero stage.) With H = 1, 4 paper + 2 steel → 30 → **3**; with H = 3, 6 paper + 2 steel → 100 → **10**.
 - The `+` control is disabled when the max is reached.
 
 ## Matrix entry behaviour
 
 - Tapping a paper cell **adds** a hit of that type to the row. Cells never cycle back to zero.
-- A paper row keeps the **two most recent taps** (FIFO): with 2 entries already, a new tap drops the **oldest**.
+- A paper row keeps the **H most recent taps** (FIFO): with H entries already, a new tap drops the **oldest**. Examples for H = 2, 1 and 3:
   - `AA` + tap `C` → `AC`
   - `AA` + tap `C`, tap `M` → `CM`
   - `AA` + tap `C`, tap `C` → `CC`
+  - H = 1: each tap replaces the previous one (`A` + tap `C` → `C`)
+  - H = 3: `AAA` + tap `C` → `AAC`; `AAA` + tap `C`, tap `M` → `ACM`
 - Each row has a visible **Undo** button removing that row's most recent entry (steel: clears the row). Disabled when empty.
 - Tapping a steel cell sets it to that value (A or M); the other is cleared.
 - A row is **complete** when it has its required count. The row-number tile is green when complete; otherwise red-tinted with `N left` (e.g. `1 left`).
@@ -63,7 +65,8 @@ type HitCode = 'A' | 'C' | 'D' | 'M';
 interface Match   { id: string; name: string; date: string; range: string; status: 'open' | 'live' | 'finished';
                     stageIds: string[]; squadIds: string[]; }
 interface Stage   { id: string; matchId: string; number: number; name: string;
-                    minRounds: number; paperTargets: number; steelTargets: number; noShootTargets: number; }
+                    minRounds: number; paperTargets: number; hitsPerPaperTarget: 1 | 2 | 3;
+                    steelTargets: number; noShootTargets: number; }
 interface Squad   { id: string; matchId: string; number: number; shooterIds: string[];   // ordered = shooting order
                     stageRotation: string[]; }
 interface Shooter { id: string; name: string; competitorNumber: number; }
@@ -72,7 +75,7 @@ interface StageScore {
   id: string; matchId: string; stageId: string; shooterId: string; roId: string;
   status: 'scored' | 'dnf' | 'dq';
   timeSec: number | null;
-  paper: HitCode[][];          // one array per paper target, length ≤ 2, order = tap order
+  paper: HitCode[][];          // one array per paper target, at most hitsPerPaperTarget hits, order = tap order
   steel: ('A' | 'M' | null)[]; // one per steel target
   noShoots: number;
   procedurals: number;
