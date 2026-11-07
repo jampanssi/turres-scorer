@@ -5,36 +5,29 @@ import nextTs from "eslint-config-next/typescript";
 /**
  * Import boundaries (see CLAUDE.md "Folder structure"). Layers, from the bottom:
  *   shared/        imports nothing from features, integrations or app
- *   features/<x>/  imports shared/* and features/auth only (temporary exceptions below)
+ *   features/<x>/  imports shared/* and features/shell only; shell also imports features/auth
  *   integrations/  imports shared/domain only
  *   app/           thin pages, may import anything
  * ESLint replaces (does not merge) `no-restricted-imports` options for a file, so every override
  * below lists the complete set of restrictions for its folder.
  */
-const FEATURES = ["auth", "matches", "squads", "stages", "shooters", "scoring"];
+const FEATURES = ["auth", "shell", "matches", "squads", "stages", "shooters", "scoring"];
 
-/**
- * Temporary exceptions, removed as the refactoring lands (docs/PLAN.md):
- * - every feature may import features/auth (the session guard and UserMenu move to features/shell)
- * Format: { feature: ["otherFeature/module"] }; none left besides auth.
- */
-const TEMPORARY_EXCEPTIONS = {};
+/** The only features another feature may import: every screen uses the shell; the shell uses auth; auth uses none. */
+const ALLOWED_FEATURE_IMPORTS = { shell: ["auth"], auth: [] };
+const DEFAULT_ALLOWED_FEATURE_IMPORTS = ["shell"];
 
 function featureRestrictions(name) {
-  const others = FEATURES.filter((feature) => feature !== name && feature !== "auth");
+  const allowed = ALLOWED_FEATURE_IMPORTS[name] ?? DEFAULT_ALLOWED_FEATURE_IMPORTS;
+  const others = FEATURES.filter((feature) => feature !== name && !allowed.includes(feature));
   return [
     {
       group: ["@/integrations/**", "@/app/**"],
       message: "Features must not import integrations or app routes.",
     },
     ...others.map((other) => ({
-      group: [
-        `@/features/${other}/**`,
-        ...(TEMPORARY_EXCEPTIONS[name] ?? [])
-          .filter((path) => path.startsWith(`${other}/`))
-          .map((path) => `!@/features/${path}`),
-      ],
-      message: `features/${name} must not import features/${other}. Move shared code to shared/.`,
+      group: [`@/features/${other}/**`],
+      message: `features/${name} must not import features/${other}. Move shared code to shared/ (or use features/shell).`,
     })),
   ];
 }

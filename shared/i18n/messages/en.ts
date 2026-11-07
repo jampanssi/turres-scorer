@@ -34,8 +34,6 @@ export const en = {
   "matches.status.finished": "Finished",
   "matches.empty.open": "No open matches.",
   "matches.empty.results": "No finished matches yet.",
-  "matches.loading": "Loading…",
-  "matches.error": "Could not load matches.",
 
   "common.loading": "Loading…",
   "common.error": "Could not load the data.",

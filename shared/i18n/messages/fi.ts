@@ -34,8 +34,6 @@ export const fi: Record<MessageKey, string> = {
   "matches.status.finished": "Päättynyt",
   "matches.empty.open": "Ei avoimia otteluita.",
   "matches.empty.results": "Ei vielä päättyneitä otteluita.",
-  "matches.loading": "Ladataan…",
-  "matches.error": "Otteluiden lataus epäonnistui.",
 
   "common.loading": "Ladataan…",
   "common.error": "Tietojen lataus epäonnistui.",

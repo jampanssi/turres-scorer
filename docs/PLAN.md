@@ -37,14 +37,17 @@ Feature-based, so new features (e.g. match registration) are new folders. Depend
 ```
 app/
   layout.tsx, globals.css          tokens, fonts, manifest link
-  page.tsx                         sign in
-  matches/page.tsx                 (Open | Results)
-  matches/[matchId]/...            squads, stages, shooters, score (+ sheets)
+  error.tsx, not-found.tsx         global fallbacks
+  (public)/page.tsx                sign in
+  (app)/layout.tsx                 the one session gate
+  (app)/matches/page.tsx           (Open | Results)
+  (app)/matches/[matchId]/...      squads, stages, shooters, score (+ sheets)
   api/                             SSI phase only
 features/
   scoring/    ScoreMatrix, ScoreBar, ReviewSheet, ConfirmDQ/DNFSheet, entry.ts, draft.ts, tests
   matches/    MatchCard, SquadList, StageList, ShooterList
-  auth/       sign-in form, session hook
+  shell/      SessionGate, Screen (header, user menu, loading/error/not-found)
+  auth/       sign-in form, session, user menu
   (registration/ later)
 shared/
   domain/     types.ts
@@ -80,7 +83,7 @@ Behaviour-preserving, one commit per phase, all checks green after each:
 - [x] Phase 0: safety net. Prettier, ESLint import boundaries, `app/error.tsx`, `app/not-found.tsx`, page titles
 - [x] Phase 1: domain consolidation. Scoring rules in `shared/domain/scoring.ts`, one `shared/domain/progress.ts` for the scored/DQ rules, `StageScore` as a scored/DNF/DQ union, `createPersistedStore` for theme, language and session
 - [x] Phase 2: data access. `useRepoQuery` (refetches on repository changes), async repository factory (mock data only in the bundle when configured), repository clock `now()`, session `userId`
-- [ ] Phase 3: screen structure. `(app)` route group with one session gate, `features/shell/Screen`, split `ScoringScreen`
+- [x] Phase 3: screen structure. `(app)` route group with one `SessionGate`, `features/shell/Screen` for the header and loading/error/not-found, `ScoringScreen` split into `ScoringForm` and `useSaveResult`
 - [ ] Phase 4: base UI components. Card, form fields, IconButton, native-dialog sheet, Popover, one Confirm sheet for DNF and DQ, tokens
 - [ ] Phase 5: i18n hygiene. `common.*` keys, typed enum helper, key usage test
 - [ ] Phase 6: component tests (Testing Library) and `fake-indexeddb`
