@@ -11,10 +11,11 @@ import {
 import type { StageScore } from "./types";
 
 /** Results as `stage:shooter` ids; `dq` lists the shooters disqualified from the match. */
-const index = (results: Array<[stage: string, shooter: string]>, dq: string[] = []) =>
+const index = (results: Array<[stage: string, shooter: string]>, dq: string[] = [], dns: string[] = []) =>
   createResultIndex(
     results.map(([stage, shooter]) => scoreId(stage, shooter)),
     dq,
+    dns,
   );
 
 const everyone = (stages: string[], shooters: string[]): Array<[string, string]> =>
@@ -171,5 +172,58 @@ describe("indexResults", () => {
     expect(idx.has("s1", "b")).toBe(true);
     expect(idx.has("s2", "b")).toBe(false);
     expect([...idx.disqualified]).toEqual(["a"]);
+  });
+});
+
+describe("a DNS shooter (did not show at roll call)", () => {
+  const shooters = ["a", "b", "c"];
+
+  it("is not expected on any stage, so they do not hold up progress", () => {
+    const idx = index(everyone(["s1"], ["a", "c"]), [], ["b"]);
+    expect(expectedShooters("s1", shooters, idx)).toEqual(["a", "c"]);
+    expect(stageProgress("s1", shooters, idx)).toEqual({ scored: 2, total: 2, status: "done" });
+    expect(squadProgress(shooters, ["s1", "s2"], index(everyone(["s1", "s2"], ["a", "c"]), [], ["b"])).status).toBe(
+      "done",
+    );
+  });
+
+  it("is expected again once the DNS is reversed", () => {
+    const results = everyone(["s1"], ["a", "c"]);
+    expect(stageProgress("s1", shooters, index(results, [], ["b"])).status).toBe("done");
+    expect(stageProgress("s1", shooters, index(results)).status).toBe("inProgress"); // b is here after all
+  });
+
+  it("still counts on a stage where they already have a result", () => {
+    const idx = index(everyone(["s1"], shooters), [], ["b"]);
+    expect(expectedShooters("s1", shooters, idx)).toEqual(["a", "b", "c"]);
+    expect(expectedShooters("s2", shooters, idx)).toEqual(["a", "c"]);
+  });
+
+  it("is handled together with a DQ", () => {
+    const idx = index([["s1", "a"]], ["a"], ["b"]);
+    expect(expectedShooters("s2", shooters, idx)).toEqual(["c"]);
+    expect(expectedShooters("s1", shooters, idx)).toEqual(["a", "c"]);
+  });
+
+  it("matchProgress leaves the DNS shooter out of the totals", () => {
+    const squads = [{ shooterIds: shooters }];
+    expect(matchProgress(squads, ["s1", "s2"], index([], [], ["b"])).total).toBe(4);
+  });
+
+  it("indexResults reads DNS from the roll call records, latest day first", () => {
+    const rec = (shooterId: string, day: string, status: "present" | "dns") => ({
+      id: day + shooterId,
+      matchId: "m",
+      shooterId,
+      day,
+      status,
+      roId: "ro",
+      updatedAt: day,
+    });
+    const idx = indexResults(
+      [],
+      [rec("a", "2026-11-07", "dns"), rec("b", "2026-11-07", "dns"), rec("b", "2026-11-08", "present")],
+    );
+    expect([...idx.notStarting]).toEqual(["a"]);
   });
 });

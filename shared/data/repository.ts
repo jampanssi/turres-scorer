@@ -1,4 +1,4 @@
-import type { Match, Shooter, Squad, Stage, StageScore } from "@/shared/domain/types";
+import type { Attendance, Match, Shooter, Squad, Stage, StageScore } from "@/shared/domain/types";
 
 /**
  * The seam between the app and its data source. Screens use only this interface.
@@ -23,6 +23,11 @@ export interface Repository {
   getScore(stageId: string, shooterId: string): Promise<StageScore | null>;
   /** Insert or replace the score of one shooter on one stage. Notifies subscribers once it is stored. */
   saveScore(score: StageScore): Promise<void>;
+
+  /** All roll call records of a match, every day. */
+  listAttendance(matchId: string): Promise<Attendance[]>;
+  /** Insert or replace roll call records (by id) in one go. Notifies subscribers once. */
+  saveAttendance(records: Attendance[]): Promise<void>;
 
   /**
    * Call `listener` after the data changed (a result was saved here, or later a sync brought new data),

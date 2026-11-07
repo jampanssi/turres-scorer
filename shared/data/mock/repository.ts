@@ -1,12 +1,17 @@
 import { scoreId } from "@/shared/domain/ids";
-import type { StageScore } from "@/shared/domain/types";
+import type { Attendance, StageScore } from "@/shared/domain/types";
 import type { Repository } from "../repository";
 import type { Catalog } from "./catalog";
+import { type AttendanceStore, createMemoryAttendanceStore } from "../attendance-store";
 import type { ScoreStore } from "../score-store";
 
 interface CatalogRepositoryOptions {
   /** The clock; defaults to the system time. Tests pass a fixed one. */
   now?: () => string;
+  /** Where roll call records are saved; defaults to memory. */
+  attendance?: AttendanceStore;
+  /** Read-only sample roll call records; a saved record with the same id overrides one. */
+  seedAttendance?: Attendance[];
 }
 
 /**
@@ -17,12 +22,17 @@ export function createCatalogRepository(
   catalog: Catalog,
   scores: ScoreStore,
   seedScores: StageScore[] = [],
-  { now = () => new Date().toISOString() }: CatalogRepositoryOptions = {},
+  {
+    now = () => new Date().toISOString(),
+    attendance = createMemoryAttendanceStore(),
+    seedAttendance = [],
+  }: CatalogRepositoryOptions = {},
 ): Repository {
   const listeners = new Set<() => void>();
   const byId = <T extends { id: string }>(items: T[], id: string): T | null =>
     items.find((item) => item.id === id) ?? null;
   const seeds = new Map(seedScores.map((s) => [s.id, s]));
+  const attendanceSeeds = new Map(seedAttendance.map((a) => [a.id, a]));
 
   return {
     async listMatches() {
@@ -68,6 +78,16 @@ export function createCatalogRepository(
     },
     async saveScore(score) {
       await scores.put(score);
+      listeners.forEach((listener) => listener());
+    },
+    async listAttendance(matchId) {
+      const merged = new Map<string, Attendance>();
+      for (const seed of attendanceSeeds.values()) if (seed.matchId === matchId) merged.set(seed.id, seed);
+      for (const saved of await attendance.listByMatch(matchId)) merged.set(saved.id, saved);
+      return [...merged.values()];
+    },
+    async saveAttendance(records) {
+      await attendance.putMany(records);
       listeners.forEach((listener) => listener());
     },
     subscribe(listener) {

@@ -1,13 +1,15 @@
+import { dnsShooterIds } from "./attendance";
 import { disqualifiedShooterIds } from "./disqualified";
 import { scoreId } from "./ids";
-import type { StageScore } from "./types";
+import type { Attendance, StageScore } from "./types";
 
 /**
  * Progress of stages, squads and matches. This is the ONE place that decides who counts:
  *
  * - A shooter is **expected** on a stage unless they are disqualified from the match (a DQ removes
- *   them from the rest of it). A disqualified shooter still counts on stages where they have a
- *   result: the stage of the DQ itself counts as scored, and so do stages they had already shot.
+ *   them from the rest of it) or are not starting (DNS at roll call). Such a shooter still counts on
+ *   stages where they have a result: the stage of the DQ itself counts as scored, and so do stages
+ *   they had already shot. A DNS can be reversed (roll call again), which makes them expected again.
  * - A **result** is any saved result: scored, DNF or DQ.
  * - A stage is **done** when every expected shooter has a result.
  *
@@ -18,30 +20,40 @@ import type { StageScore } from "./types";
 export interface ResultIndex {
   /** Shooters disqualified from the match. */
   disqualified: ReadonlySet<string>;
+  /** Shooters whose latest roll call says DNS (did not show). */
+  notStarting: ReadonlySet<string>;
   /** Does this shooter have a saved result on this stage? */
   has(stageId: string, shooterId: string): boolean;
 }
 
-/** Build the index from result ids (see `scoreId`) and the ids of disqualified shooters. */
-export function createResultIndex(resultIds: Iterable<string>, disqualified: Iterable<string> = []): ResultIndex {
+/** Build the index from result ids (see `scoreId`), the ids of disqualified shooters and of DNS shooters. */
+export function createResultIndex(
+  resultIds: Iterable<string>,
+  disqualified: Iterable<string> = [],
+  notStarting: Iterable<string> = [],
+): ResultIndex {
   const ids = new Set(resultIds);
   return {
     disqualified: new Set(disqualified),
+    notStarting: new Set(notStarting),
     has: (stageId, shooterId) => ids.has(scoreId(stageId, shooterId)),
   };
 }
 
-/** Build the index from the saved results of a match. */
-export function indexResults(results: readonly StageScore[]): ResultIndex {
+/** Build the index from the saved results and the roll call records of a match. */
+export function indexResults(results: readonly StageScore[], attendance: readonly Attendance[] = []): ResultIndex {
   return createResultIndex(
     results.map((r) => scoreId(r.stageId, r.shooterId)),
     disqualifiedShooterIds([...results]),
+    dnsShooterIds(attendance),
   );
 }
 
-/** The shooters expected on a stage: everyone not disqualified, plus disqualified ones with a result there. */
+/** The shooters expected on a stage: everyone still starting, plus anyone out of the match with a result there. */
 export function expectedShooters(stageId: string, shooterIds: readonly string[], index: ResultIndex): string[] {
-  return shooterIds.filter((id) => !index.disqualified.has(id) || index.has(stageId, id));
+  return shooterIds.filter(
+    (id) => (!index.disqualified.has(id) && !index.notStarting.has(id)) || index.has(stageId, id),
+  );
 }
 
 export type StageStatus = "done" | "inProgress" | "notStarted";

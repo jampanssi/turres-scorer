@@ -5,7 +5,7 @@ Source of truth for scoring. All rules were confirmed by the product owner. Impl
 ## User flow
 
 ```
-Sign in → Matches (Open | Results) → Squads in match → Stage selection
+Sign in → Matches (Open | Results) → Squads in match (tab: Shooters, to mark DNS) → Stage selection
         → Shooters on stage (shooting order) → Scoring (matrix)
               ├─ DQ  → Confirm DQ (bottom sheet)  → back to Shooters
               ├─ DNF → Confirm DNF (bottom sheet) → back to Shooters
@@ -14,6 +14,15 @@ Sign in → Matches (Open | Results) → Squads in match → Stage selection
 ```
 
 Several squads can be on the range at the same time, each on a different stage.
+
+## DNS (did not show)
+
+Everyone is present by default. The **Shooters** tab of the match view lists every squad with its shooters, and a range officer marks the ones who did not show as **DNS** (only a status: no reason, no note). Any range officer can take a DNS back.
+
+- A mark stays until someone changes it, on the same day or a later one: the shooter's **latest** record decides. Records carry the calendar day they were made (Europe/Helsinki, from the repository clock).
+- A DNS shooter is **not expected** on a stage, except on a stage where they already have a result (same pattern as a DQ). They are listed last on Shooters, not selectable, and they do not hold up stage, squad or match progress. Taking the mark back makes them expected again.
+- There is no gate: a squad can always open its stages and be scored.
+- A shooter disqualified from the match cannot be marked.
 
 ## Hit values
 

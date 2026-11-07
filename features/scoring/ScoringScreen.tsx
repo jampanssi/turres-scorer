@@ -59,8 +59,10 @@ export function ScoringScreen() {
         notFound={t("score.notFound")}
       >
         {(data) =>
-          data.disqualified ? (
-            <p className="px-4 pt-4 text-text-secondary">{t("score.disqualified")}</p>
+          data.disqualified || data.notStarting ? (
+            <p className="px-4 pt-4 text-text-secondary">
+              {t(data.disqualified ? "score.disqualified" : "score.notStarting")}
+            </p>
           ) : (
             <ScoringBody
               key={`${stageId}:${shooterId}`}

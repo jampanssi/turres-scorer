@@ -49,13 +49,14 @@ export async function loadSquadsOverview(repo: Repository, matchId: string): Pro
   const match = await repo.getMatch(matchId);
   if (!match) return null;
 
-  const [stageList, squadList, scores] = await Promise.all([
+  const [stageList, squadList, scores, attendance] = await Promise.all([
     repo.listStages(matchId),
     repo.listSquads(matchId),
     repo.listScores(matchId),
+    repo.listAttendance(matchId),
   ]);
   const stages = new Map(stageList.map((s) => [s.id, s]));
-  const index = indexResults(scores);
+  const index = indexResults(scores, attendance);
   const squads = squadList.map((squad) => summarizeSquad(squad, stages, index));
 
   return {

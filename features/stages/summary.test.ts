@@ -3,6 +3,8 @@ import { buildMockCatalog } from "@/shared/data/mock/catalog";
 import { createCatalogRepository } from "@/shared/data/mock/repository";
 import { buildMockScores } from "@/shared/data/mock/scores";
 import { createMemoryScoreStore } from "@/shared/data/score-store";
+import { buildMockAttendance } from "@/shared/data/mock/attendance";
+import { dayOf } from "@/shared/domain/attendance";
 import { createResultIndex } from "@/shared/domain/progress";
 import { loadStagesOverview, summarizeStage } from "./summary";
 
@@ -86,5 +88,19 @@ describe("loadStagesOverview with the sample DQ (squad 3)", () => {
     expect(overview.stagesDone).toBe(3);
     const third = overview.stages.find((s) => s.stage.id === squad3.stageRotation[2])!;
     expect(third).toMatchObject({ status: "done", scored: 7, total: 7 });
+  });
+});
+
+describe("DNS on the Stages screen", () => {
+  const NOW = "2026-11-07T10:00:00.000Z";
+  const squad7 = catalog.squads.find((s) => s.matchId === MATCH && s.number === 7)!;
+
+  it("leaves a DNS shooter out of the stage counts, so squad 7 expects one shooter fewer", async () => {
+    const r = createCatalogRepository(catalog, createMemoryScoreStore(), buildMockScores(catalog), {
+      now: () => NOW,
+      seedAttendance: buildMockAttendance(catalog, dayOf(NOW), NOW),
+    });
+    const overview = (await loadStagesOverview(r, MATCH, squad7.id))!;
+    expect(overview.stages[0].total).toBe(squad7.shooterIds.length - 1);
   });
 });

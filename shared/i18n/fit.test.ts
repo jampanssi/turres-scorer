@@ -30,6 +30,9 @@ const SHORT_LABELS = {
   "matches.tab.open": 12,
   "matches.tab.results": 12,
   "score.review": 12,
+  "matchTabs.squads": 10,
+  "matchTabs.shooters": 12,
+  "common.dns": 4,
   "common.dnf": 4,
   "common.dq": 4,
 } as const;

@@ -35,9 +35,14 @@ export async function loadStagesOverview(
   const squad = await repo.getSquad(squadId);
   if (!squad || squad.matchId !== matchId) return null;
 
-  const [stageList, scores] = await Promise.all([repo.listStages(matchId), repo.listScores(matchId)]);
-  const index = indexResults(scores);
+  const [stageList, scores, attendance] = await Promise.all([
+    repo.listStages(matchId),
+    repo.listScores(matchId),
+    repo.listAttendance(matchId),
+  ]);
+  const index = indexResults(scores, attendance);
   const stages = stageList.map((stage) => summarizeStage(stage, squad, index));
+  const stagesDone = stages.filter((s) => s.status === "done").length;
 
-  return { squad, stages, stagesDone: stages.filter((s) => s.status === "done").length };
+  return { squad, stages, stagesDone };
 }

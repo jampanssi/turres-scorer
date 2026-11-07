@@ -158,3 +158,33 @@ describe("DQ counts on the shooters screen (sample squad 3)", () => {
     ]);
   });
 });
+
+describe("DNS shooters (did not show at roll call)", () => {
+  const dns = new Set(["s2"]);
+
+  it("lists them last, without an order number, and they never become shooting or on deck", () => {
+    const rows = buildShooterRows(shooters, [], new Set(), dns);
+    expect(rows.map((r) => r.shooter.id)).toEqual(["s1", "s3", "s4", "s5", "s2"]);
+    expect(states(rows)).toEqual(["shooting", "onDeck", "waiting", "waiting", "dns"]);
+    expect(rows.map((r) => r.order)).toEqual([1, 2, 3, 4, null]);
+  });
+
+  it("keeps a shooter with a result on this stage in the order, as scored", () => {
+    const rows = buildShooterRows(shooters, [result("s2")], new Set(), dns);
+    expect(rows[1]).toMatchObject({ shooter: { id: "s2" }, state: "scored" });
+  });
+
+  it("shows a DQ as DQ even when the shooter is also DNS", () => {
+    const rows = buildShooterRows(shooters, [], new Set(["s2"]), new Set(["s2"]));
+    expect(rows[rows.length - 1].state).toBe("dq");
+  });
+
+  it("keeps the relative order of removed shooters (DQ and DNS)", () => {
+    const rows = buildShooterRows(shooters, [], new Set(["s4"]), new Set(["s1", "s2"]));
+    expect(rows.slice(-3).map((r) => [r.shooter.id, r.state])).toEqual([
+      ["s1", "dns"],
+      ["s2", "dns"],
+      ["s4", "dq"],
+    ]);
+  });
+});

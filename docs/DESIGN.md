@@ -152,6 +152,12 @@ Header: title **MATCHES**, the user menu (avatar). Segmented control **Open | Re
 Header: match name, subtitle `6 stages · 8 squads · 64 shooters`. Section header **SQUADS**.
 List of squads (ListCard): `Squad N`, `8 shooters · Stage 3 · 2/6 done`, status (Done / On range / Not started), progress bar of stages done. Several squads can be **On range** at once. Tap → Stage selection.
 
+
+**Tabs.** Under the header a two-tab control **Squads | Shooters** (same look as the Open | Results control, but two pages with their own URLs: `/matches/[id]` and `/matches/[id]/roll-call`, real links with `aria-current`). Both pages use the same header subtitle.
+
+### 3a · Shooters (tab of the match view, where DNS is marked)
+The same header as Squads (match name, subtitle `6 stages · 8 squads · 64 shooters`, back arrow to Matches) and the **Squads | Shooters** tabs, Shooters current. Section header **SHOOTERS**. Then one group per squad, in squad order, **always open** (nothing collapses): a heading row (44 px, a real `<h3>`) with `SQUAD 6` (Barlow 22, uppercase) and on the right `8 shooters`, then its shooters in shooting order as white cards: name and `#number`, and a single 44 px **DNS** button (min width 76 px, Barlow 18 uppercase). **Everyone is present by default**: there is no Here button, no confirmation and no Mark all present; the only action is marking a shooter who did not show. A marked shooter has the DNS button filled (`text-label` with `bg` text, `aria-pressed`); tapping it again takes the mark back. A shooter disqualified from the match is dimmed with a red **DQ** and no button, listed last. Every tap is saved at once and shown at once. A mark stays until someone changes it, also on a later day. There is no gate and no progress counter: Stage selection opens for any squad.
+
 ### 4 · Stage selection
 Header: `Squad 2`, subtitle `8 shooters`. Section header **SELECT STAGE** with count `2 / 6 stages done`.
 Stage cards: number tile, stage name, status (Done / In progress / Not started), then three lines: the targets `6 paper · 3 steel · 2 no-shoots` (dot-separated, like the header subtitle), the shots `Minimum rounds: 15` (Finnish `Minimilaukausmäärä: 15`), and `3 / 8 scored`; chevron. Tap → Shooters. Stages are listed in number order. Status is per squad: Done = every shooter has a saved result (scored, DNF or DQ), In progress = some do (blue border and filled tile), Not started = none. Target counts of 0 are left out (`4 paper`), and the singular is used for 1.
@@ -163,6 +169,7 @@ Rows: order number, name, `#23` (competitor number; no division/gun type). Right
 - **Shooting** (current) → `primary`, row highlighted (`primary-tint` bg, 2 px `primary` border)
 - **On deck** (next) → `text-secondary`
 - waiting → `—` (the word "Waiting" is added for screen readers)
+- **DNS** → `text-secondary`. A shooter who did not show at roll call is **last, dimmed, without an order number and not selectable** (a plain row), like a DQ but not red. A DNS shooter is not expected on this stage unless they already have a result on it (then they stay in the order as scored), so they are left out of the "scored" counts and never become "Shooting" or "On deck".
 - **DNF** → `text-secondary`. The shooter keeps their place in the order and the row stays selectable (so a mistaken DNF can be corrected). A DNF is a result: it counts as scored and the shooter never becomes "Shooting".
 - **DQ** → `danger-fg`. A DQ removes the shooter from the **rest of the match**, so they are shown on every stage of the match: **last in the list, without an order number, dimmed and not selectable** (a plain row, not a link). Counting follows time: on the stage where the DQ happens it **counts as scored**, and so do stages where the shooter already had a result; on the stages after the DQ the shooter is not expected, so they are left out of the "scored" counts and do not hold up stage, squad or match progress.
 

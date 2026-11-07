@@ -28,7 +28,8 @@ export function ShooterRow({
     if (justSaved) ref.current?.scrollIntoView({ block: "nearest" });
   }, [justSaved]);
   const shooting = row.state === "shooting";
-  const disqualified = row.state === "dq";
+  // A DQ or DNS shooter is listed but cannot be opened: a plain, dimmed row.
+  const unavailable = row.state === "dq" || row.state === "dns";
 
   const content = (
     <>
@@ -54,6 +55,7 @@ export function ShooterRow({
         )}
         {row.state === "dnf" && <span className="text-lg font-bold text-text-secondary">{t("common.dnf")}</span>}
         {row.state === "dq" && <span className="text-lg font-bold text-danger-fg">{t("common.dq")}</span>}
+        {row.state === "dns" && <span className="text-lg font-bold text-text-secondary">{t("common.dns")}</span>}
         {row.state === "waiting" && (
           <>
             <span aria-hidden="true" className="text-lg font-bold text-text-secondary">
@@ -66,7 +68,7 @@ export function ShooterRow({
     </>
   );
 
-  if (disqualified) {
+  if (unavailable) {
     return (
       <div
         aria-disabled="true"

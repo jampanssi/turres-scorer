@@ -19,17 +19,18 @@ export async function loadMatchSummaries(repo: Repository): Promise<MatchSummary
   const matches = await repo.listMatches();
   return Promise.all(
     matches.map(async (match) => {
-      const [stages, squads, scores] = await Promise.all([
+      const [stages, squads, scores, attendance] = await Promise.all([
         repo.listStages(match.id),
         repo.listSquads(match.id),
         repo.listScores(match.id),
+        repo.listAttendance(match.id),
       ]);
       const shooters = squads.reduce((sum, squad) => sum + squad.shooterIds.length, 0);
       // Who counts (incl. a disqualified shooter) is decided in shared/domain/progress.ts.
       const progress = matchProgress(
         squads,
         stages.map((stage) => stage.id),
-        indexResults(scores),
+        indexResults(scores, attendance),
       );
       return {
         match,

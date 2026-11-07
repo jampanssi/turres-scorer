@@ -95,3 +95,23 @@ export interface DqStageScore extends StageScoreBase {
  * it: a DNF or DQ cannot have hits, and a scored result always has a time.
  */
 export type StageScore = ScoredStageScore | DnfStageScore | DqStageScore;
+
+/** Roll call result for one shooter: here, or did not show. */
+export type AttendanceStatus = "present" | "dns";
+
+/**
+ * One shooter's roll call on one day. There is at most one record per shooter per day (the id is
+ * derived from both), so a day's roll call can be corrected by saving again. Roll call is repeated
+ * each day of a match; the latest record decides whether a shooter is still starting.
+ */
+export interface Attendance {
+  id: string;
+  matchId: string;
+  shooterId: string;
+  /** Calendar day of the roll call, "YYYY-MM-DD" in the match's time zone (see `dayOf`). */
+  day: string;
+  status: AttendanceStatus;
+  /** The range officer who made the entry. */
+  roId: string;
+  updatedAt: string;
+}

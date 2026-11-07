@@ -7,11 +7,12 @@ import type { Shooter, Squad, Stage, StageScore } from "@/shared/domain/types";
  * Row state on the Shooters screen:
  * - scored / dnf: a result is saved on this stage
  * - dq: disqualified from the match (any stage); listed last and not selectable
+ * - dns: did not show at roll call (and has no result on this stage); listed last, not selectable
  * - shooting: the first active shooter in the order without a result
  * - onDeck: the next one without a result
  * - waiting: everyone after that
  */
-export type ShooterRowState = "scored" | "dnf" | "dq" | "shooting" | "onDeck" | "waiting";
+export type ShooterRowState = "scored" | "dnf" | "dq" | "dns" | "shooting" | "onDeck" | "waiting";
 
 export interface ShooterRowData {
   /** 1-based shooting order among the shooters still in the match; null for disqualified shooters. */
@@ -24,19 +25,23 @@ export interface ShooterRowData {
 
 /**
  * Rows in shooting order, with disqualified shooters moved to the end (keeping their relative order).
- * `scores` are the saved results of this stage; `disqualified` holds shooters disqualified in the match.
+ * `scores` are the saved results of this stage; `disqualified` holds shooters disqualified in the match;
+ * `notStarting` holds shooters whose latest roll call says DNS (one with a result on this stage still shows it).
  */
 export function buildShooterRows(
   shooters: Shooter[],
   scores: StageScore[],
   disqualified: ReadonlySet<string> = new Set(),
+  notStarting: ReadonlySet<string> = new Set(),
 ): ShooterRowData[] {
   const byShooter = new Map(scores.map((s) => [s.shooterId, s]));
   const isDisqualified = (shooter: Shooter) =>
     disqualified.has(shooter.id) || byShooter.get(shooter.id)?.status === "dq";
 
-  const active = shooters.filter((s) => !isDisqualified(s));
-  const removed = shooters.filter(isDisqualified);
+  const isDns = (shooter: Shooter) => notStarting.has(shooter.id) && !byShooter.has(shooter.id);
+
+  const active = shooters.filter((s) => !isDisqualified(s) && !isDns(s));
+  const removed = shooters.filter((s) => isDisqualified(s) || isDns(s));
 
   let waitingSeen = 0; // active shooters without a result so far: 0 -> next is shooting, 1 -> on deck
   const activeRows = active.map((shooter, index): ShooterRowData => {
@@ -61,7 +66,7 @@ export function buildShooterRows(
   const removedRows = removed.map((shooter): ShooterRowData => ({
     order: null,
     shooter,
-    state: "dq",
+    state: isDisqualified(shooter) ? "dq" : "dns",
     hitFactor: null,
   }));
   return [...activeRows, ...removedRows];
@@ -90,10 +95,14 @@ export async function loadShootersOverview(
   const [squad, stage] = await Promise.all([repo.getSquad(squadId), repo.getStage(stageId)]);
   if (!squad || !stage || squad.matchId !== matchId || stage.matchId !== matchId) return null;
 
-  const [shooters, matchScores] = await Promise.all([repo.listShooters(squadId), repo.listScores(matchId)]);
+  const [shooters, matchScores, attendance] = await Promise.all([
+    repo.listShooters(squadId),
+    repo.listScores(matchId),
+    repo.listAttendance(matchId),
+  ]);
   const stageScores = matchScores.filter((s) => s.stageId === stageId);
-  const index = indexResults(matchScores);
-  const rows = buildShooterRows(shooters, stageScores, index.disqualified);
+  const index = indexResults(matchScores, attendance);
+  const rows = buildShooterRows(shooters, stageScores, index.disqualified, index.notStarting);
   const progress = stageProgress(stageId, squad.shooterIds, index);
   return { squad, stage, rows, scoredCount: progress.scored, totalCount: progress.total };
 }

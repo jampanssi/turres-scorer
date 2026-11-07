@@ -1,6 +1,9 @@
-import { createIndexedDbScoreStore } from "../local";
+import { createMemoryAttendanceStore } from "../attendance-store";
+import { createIndexedDbAttendanceStore, createIndexedDbScoreStore } from "../local";
+import { dayOf } from "@/shared/domain/attendance";
 import type { Repository } from "../repository";
 import { createMemoryScoreStore } from "../score-store";
+import { buildMockAttendance } from "./attendance";
 import { buildMockCatalog } from "./catalog";
 import { createCatalogRepository } from "./repository";
 import { buildMockScores } from "./scores";
@@ -11,7 +14,13 @@ import { buildMockScores } from "./scores";
  * mock data source is configured, so the sample data stays out of other builds.
  */
 export function createMockRepository(): Repository {
-  const scores = typeof indexedDB === "undefined" ? createMemoryScoreStore() : createIndexedDbScoreStore();
+  const browser = typeof indexedDB !== "undefined";
+  const scores = browser ? createIndexedDbScoreStore() : createMemoryScoreStore();
+  const attendance = browser ? createIndexedDbAttendanceStore() : createMemoryAttendanceStore();
   const catalog = buildMockCatalog();
-  return createCatalogRepository(catalog, scores, buildMockScores(catalog));
+  const now = new Date().toISOString();
+  return createCatalogRepository(catalog, scores, buildMockScores(catalog), {
+    attendance,
+    seedAttendance: buildMockAttendance(catalog, dayOf(now), now),
+  });
 }

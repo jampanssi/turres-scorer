@@ -5,3 +5,8 @@
 export function scoreId(stageId: string, shooterId: string): string {
   return `${stageId}:${shooterId}`;
 }
+
+/** The id of a roll call record: one per shooter per day. The only place that knows the format. */
+export function attendanceId(day: string, shooterId: string): string {
+  return `${day}:${shooterId}`;
+}

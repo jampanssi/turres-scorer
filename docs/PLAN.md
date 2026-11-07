@@ -100,6 +100,12 @@ From a UX pass over every screen; details in DESIGN.md (Toast, Load errors, Stic
 - [x] Sign in: no inert link, "Signing in…"; empty states on Squads, Stages, Shooters
 - [ ] Not done: reserved slot for an unsynced mark (do it with the offline step), dark palette contrast pass, Finnish copy review
 
+## DNS (done)
+
+- [x] Domain (`attendance.ts`, DNS in `progress.ts`), attendance stores (IndexedDB v2), repository methods, mock seed (one DNS shooter)
+- [x] Shooters tab on the match view with all squads grouped (always open) and a DNS button per shooter (first built as a roll call with Here/DNS, a gate and counters; simplified after testing), DNS row on the stage's shooter list, Scoring notice, next shooter skips DNS
+- [ ] Not done: the time zone is fixed to Europe/Helsinki; SSI may have its own check-in; a DNS from an earlier day carries over until taken back
+
 ## Definition of done (MVP)
 
 - [ ] All screens in DESIGN.md at 390×844, usable down to 360 px wide.

@@ -73,3 +73,41 @@ describe("loadScoringContext", () => {
     expect(await loadScoringContext(repo(), "club-night-11", squad2.id, stage, shooter)).toBeNull(); // other match
   });
 });
+
+describe("DNS shooters in the scoring context", () => {
+  const rec = (shooterId: string, status: "present" | "dns") => ({
+    id: `d:${shooterId}`,
+    matchId: MATCH,
+    shooterId,
+    day: "2026-11-07",
+    status,
+    roId: "ro",
+    updatedAt: "2026-11-07T08:00:00.000Z",
+  });
+  const withDns = (...ids: string[]) =>
+    createCatalogRepository(catalog, createMemoryScoreStore(), [], {
+      seedAttendance: ids.map((id) => rec(id, "dns")),
+    });
+
+  it("flags a DNS shooter with no result, so the screen does not allow scoring", async () => {
+    const stageId = squad2.stageRotation[0];
+    const [a, b] = squad2.shooterIds;
+    const context = (await loadScoringContext(withDns(b), MATCH, squad2.id, stageId, b))!;
+    expect(context.notStarting).toBe(true);
+    expect((await loadScoringContext(withDns(b), MATCH, squad2.id, stageId, a))!.notStarting).toBe(false);
+  });
+
+  it("does not flag a DNS shooter who already has a result on the stage", async () => {
+    const stageId = squad2.stageRotation[0];
+    const r = withDns(squad2.shooterIds[0]);
+    await r.saveScore(scoredResult({ matchId: MATCH, stageId, shooterId: squad2.shooterIds[0] }));
+    expect((await loadScoringContext(r, MATCH, squad2.id, stageId, squad2.shooterIds[0]))!.notStarting).toBe(false);
+  });
+
+  it("skips a DNS shooter when offering the next shooter", async () => {
+    const stageId = squad2.stageRotation[0];
+    const order = (await withDns().listShooters(squad2.id)).map((s) => s.id);
+    const r = withDns(order[1]);
+    expect((await loadScoringContext(r, MATCH, squad2.id, stageId, order[0]))!.nextShooterId).toBe(order[2]);
+  });
+});

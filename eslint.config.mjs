@@ -11,7 +11,7 @@ import nextTs from "eslint-config-next/typescript";
  * ESLint replaces (does not merge) `no-restricted-imports` options for a file, so every override
  * below lists the complete set of restrictions for its folder.
  */
-const FEATURES = ["auth", "shell", "matches", "squads", "stages", "shooters", "scoring"];
+const FEATURES = ["auth", "shell", "matches", "squads", "stages", "shooters", "scoring", "rollcall"];
 
 /** The only features another feature may import: every screen uses the shell; the shell uses auth; auth uses none. */
 const ALLOWED_FEATURE_IMPORTS = { shell: ["auth"], auth: [] };
