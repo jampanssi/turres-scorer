@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { ThemeToggle } from "@/shared/theme/ThemeToggle";
 import { ChevronLeftIcon } from "./icons";
 
 interface AppHeaderProps {
@@ -31,6 +32,7 @@ export function AppHeader({ title, subtitle, back, right, children }: AppHeaderP
           {subtitle && <p className="mt-1 truncate text-[13px] text-on-primary-muted">{subtitle}</p>}
         </div>
         {right}
+        <ThemeToggle />
       </div>
       {children && <div className="mt-3">{children}</div>}
     </header>
