@@ -106,6 +106,12 @@ export const fi: Record<MessageKey, string> = {
   "score.dnf": "DNF",
   "score.review": "Tarkista",
   "score.reviewBlocked": "Syötä aika ja täytä kaikki maalit ennen tuloksen tarkistamista.",
+  "dq.title": "Suljetaanko ampuja ottelusta?",
+  "dq.info": "Ampuja poistetaan ottelun jäljellä olevilta radoilta. Sulkemisen peruminen vaatii Range Masterin hyväksynnän.",
+  "dq.reason": "Syy",
+  "dq.note": "Muistiinpano (valinnainen)",
+  "dq.confirm": "Vahvista DQ",
+
   "dnf.title": "Merkitäänkö DNF?",
   "dnf.info": "{stage} merkitään tälle ampujalle keskeytetyksi (DNF). Radalle syötetyt osumat hylätään.",
   "dnf.reason": "Syy",

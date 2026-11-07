@@ -6,10 +6,11 @@ import { UserMenu } from "@/features/auth/UserMenu";
 import { useRequireSession } from "@/features/auth/useRequireSession";
 import { getRepository } from "@/shared/data";
 import { useLoad } from "@/shared/data/useLoad";
-import type { DnfReason, StageScore } from "@/shared/domain/types";
+import type { DnfReason, DqReason, StageScore } from "@/shared/domain/types";
 import { useT } from "@/shared/i18n/useT";
 import { AppHeader } from "@/shared/ui/AppHeader";
 import { ConfirmDnfSheet } from "./ConfirmDnfSheet";
+import { ConfirmDqSheet } from "./ConfirmDqSheet";
 import { loadScoringContext, type ScoringContext } from "./context";
 import {
   appendTimeDigit,
@@ -24,7 +25,7 @@ import {
   undoSteel,
 } from "./draft";
 import { maxNoShoots, maxProcedurals } from "./rules";
-import { buildDnfScore } from "./outcome";
+import { buildDnfScore, buildDqScore } from "./outcome";
 import { ReviewSheet } from "./ReviewSheet";
 import { buildStageScore, summarizeDraft } from "./review";
 import { ScoreBar } from "./ScoreBar";
@@ -96,7 +97,7 @@ function ScoringForm({ data, matchId, roId, backHref }: ScoringFormProps) {
   const router = useRouter();
   const { stage, shooter, squad } = data;
   const [draft, setDraft] = useState<ScoreDraft>(() => draftFromScore(data.existing, stage));
-  const [sheet, setSheet] = useState<"review" | "dnf" | null>(null);
+  const [sheet, setSheet] = useState<"review" | "dnf" | "dq" | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
 
@@ -144,6 +145,20 @@ function ScoringForm({ data, matchId, roId, backHref }: ScoringFormProps) {
       }),
     );
 
+  const confirmDq = (reason: DqReason, note: string) =>
+    persist(
+      buildDqScore({
+        matchId,
+        stageId: stage.id,
+        shooterId: shooter.id,
+        roId,
+        reason,
+        note,
+        now: now(),
+        existing: data.existing,
+      }),
+    );
+
   const stageLabel = t("shooters.stage", { number: stage.number });
   const shooterLine = `${shooter.name} · #${shooter.competitorNumber}`;
 
@@ -173,8 +188,7 @@ function ScoringForm({ data, matchId, roId, backHref }: ScoringFormProps) {
         procedurals={draft.procedurals}
         maxProcedurals={maxProcedurals(stage.paperTargets, stage.steelTargets, stage.hitsPerPaperTarget)}
         onProceduralsChange={(value) => setDraft((d) => setProcedurals(d, value, stage))}
-        // The DQ sheet is the next step; until then the DQ button does nothing.
-        onDq={() => {}}
+        onDq={() => setSheet("dq")}
         onDnf={() => setSheet("dnf")}
         onReview={() => setSheet("review")}
         reviewDisabled={!summarizeDraft(draft, stage).complete}
@@ -188,6 +202,16 @@ function ScoringForm({ data, matchId, roId, backHref }: ScoringFormProps) {
           summary={summarizeDraft(draft, stage)}
           onEdit={closeSheet}
           onAccept={saveScore}
+          saving={saving}
+          saveFailed={saveFailed}
+        />
+      )}
+
+      {sheet === "dq" && (
+        <ConfirmDqSheet
+          subtitle={`${shooterLine} · ${stageLabel}`}
+          onCancel={closeSheet}
+          onConfirm={confirmDq}
           saving={saving}
           saveFailed={saveFailed}
         />

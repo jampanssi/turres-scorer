@@ -106,6 +106,12 @@ export const en = {
   "score.dnf": "DNF",
   "score.review": "Review",
   "score.reviewBlocked": "Enter the time and complete every target to review the score.",
+  "dq.title": "Disqualify shooter?",
+  "dq.info": "The shooter is removed from the rest of the match. This needs the Range Master's approval to reverse.",
+  "dq.reason": "Reason",
+  "dq.note": "Note (optional)",
+  "dq.confirm": "Confirm DQ",
+
   "dnf.title": "Mark as DNF?",
   "dnf.info": "{stage} is recorded as Did Not Finish for this shooter. Hits entered on this stage are discarded.",
   "dnf.reason": "Reason",

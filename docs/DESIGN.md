@@ -179,10 +179,10 @@ No running points/HF summary on this screen — totals are shown in Review.
 Opens when the time field is tapped. Title **TIME (S)**, a white card with the typed time large (Barlow 48, `0.00` in the disabled colour while empty) and the hint "The last two digits are decimals: 842 = 8.42". Below, a 3 × 4 grid of 64 px keys (Barlow 32): **1–9**, an empty cell, **0**, and **backspace** (icon, aria-label "Delete last digit"). There is no decimal key: digits shift in from the right, so 8, 4, 2 gives 8.42; leading zeros are ignored and at most 5 digits are taken. The action row has one **Done** button; Escape, Enter and a tap on the scrim also close it. On a physical keyboard, digits and Backspace work too.
 
 ### 6a · Confirm DQ (bottom sheet over Scoring)
-Red warning icon in a `danger-tint` circle, title **DISQUALIFY SHOOTER?**, `Antti Mäkelä · #23 · Stage 3`.
+White sheet (`surface`). The header row has a 44 px circle in `danger-tint` holding a `danger-fg` warning-triangle icon, and to its right the title **DISQUALIFY SHOOTER?** and the shooter line `Antti Mäkelä · #23 · Stage 3` (no squad).
 `danger-tint` info box: "The shooter is removed from the rest of the match. This needs the Range Master's approval to reverse."
 **Reason** select (Unsafe gun handling, Accidental discharge, Unsportsmanlike conduct, Other) and optional **Note** textarea.
-Actions: **Cancel** (outline) → Scoring · **Confirm DQ** (`danger` solid) → Shooters.
+Actions: **Cancel** (outline, closes the sheet and keeps the entered hits) · **Confirm DQ** (`danger` solid, a little wider). Confirming saves a DQ result for this stage: no time, no hits, the chosen reason (a code, e.g. `unsafe_handling`), the trimmed note if any (max 500 characters), no shooter sign-off. Anything already saved or entered on this stage is replaced. Then back to Shooters, where the shooter is now last, dimmed and not selectable, on every stage of the match (a DQ lasts for the rest of the match). The reason starts on the first choice each time and the note starts empty. While saving both buttons are disabled; a failed save keeps the sheet open with an error. The DQ button works with an incomplete score. There is no way to reverse a DQ in the app: the text says it needs the Range Master's approval.
 
 ### 6b · Confirm DNF (bottom sheet over Scoring)
 White sheet (`surface`). The header row has a 44 px circle in `primary-tint` holding a `primary-text` circle-x icon, and to its right the title **MARK AS DNF?** and the shooter line `Antti Mäkelä · #23 · Stage 3` (no squad).

@@ -68,7 +68,7 @@ integrations/
    4. [x] Stage selection (`features/stages/`, route `/matches/[matchId]/squads/[squadId]`)
    5. [x] Shooters (`features/shooters/`, route `/matches/[matchId]/squads/[squadId]/stages/[stageId]`)
    6. [x] Scoring (matrix, steppers, sticky bar; route `.../stages/[stageId]/score/[shooterId]`). DQ, DNF and Review buttons are inert until step 7
-   7. [ ] Review sheet with saving: done (`ReviewSheet.tsx`, `review.ts`). Confirm DNF sheet: done (`ConfirmDnfSheet.tsx`, `outcome.ts`). Confirm DQ sheet: still to do
+   7. [x] Review sheet with saving (`ReviewSheet.tsx`, `review.ts`), Confirm DNF (`ConfirmDnfSheet.tsx`) and Confirm DQ (`ConfirmDqSheet.tsx`); results built in `outcome.ts`
 6. [ ] Offline fallback and PWA
 7. [ ] Playwright E2E, including an offline case
 8. [ ] SSI: get API facts (docs, auth, write-back, mapping), then `integrations/ssi/`, `app/api/*`, API-backed repository

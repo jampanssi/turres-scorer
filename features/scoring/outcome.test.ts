@@ -2,8 +2,9 @@ import { describe, expect, it } from "vitest";
 import { buildMockCatalog } from "@/shared/data/mock";
 import { createCatalogRepository } from "@/shared/data/mock-repository";
 import { createMemoryScoreStore } from "@/shared/data/score-store";
-import { DNF_REASONS, type StageScore } from "@/shared/domain/types";
-import { buildDnfScore } from "./outcome";
+import { disqualifiedShooterIds } from "@/shared/domain/disqualified";
+import { DNF_REASONS, DQ_REASONS, type StageScore } from "@/shared/domain/types";
+import { buildDnfScore, buildDqScore } from "./outcome";
 
 const base = { matchId: "m", stageId: "st", shooterId: "sh", roId: "ro@example.fi", now: "2026-11-07T10:00:00.000Z" };
 
@@ -41,5 +42,41 @@ describe("buildDnfScore", () => {
     await repo.saveScore(buildDnfScore({ ...base, matchId: "autumn-2026", stageId, shooterId, reason: "injury", existing: null }));
     const saved = (await repo.getScore(stageId, shooterId))!;
     expect(saved).toMatchObject({ status: "dnf", timeSec: null, paper: [] });
+  });
+});
+
+describe("buildDqScore", () => {
+  it("is a result with no time and no hits, and the chosen reason", () => {
+    const score = buildDqScore({ ...base, reason: "unsafe_handling", existing: null });
+    expect(score).toMatchObject({
+      id: "st:sh", status: "dq", dqReason: "unsafe_handling", timeSec: null, paper: [], steel: [],
+      noShoots: 0, procedurals: 0, roId: "ro@example.fi", shooterAccepted: false,
+      createdAt: base.now, updatedAt: base.now,
+    });
+    expect(score.dnfReason).toBeUndefined();
+  });
+
+  it("accepts every DQ reason", () => {
+    for (const reason of DQ_REASONS) expect(buildDqScore({ ...base, reason, existing: null }).dqReason).toBe(reason);
+  });
+
+  it("stores a trimmed note, and leaves it out when empty or blank", () => {
+    expect(buildDqScore({ ...base, reason: "other", note: "  Muzzle swept the RO  ", existing: null }).note).toBe(
+      "Muzzle swept the RO",
+    );
+    expect("note" in buildDqScore({ ...base, reason: "other", note: "", existing: null })).toBe(false);
+    expect("note" in buildDqScore({ ...base, reason: "other", note: "   ", existing: null })).toBe(false);
+    expect("note" in buildDqScore({ ...base, reason: "other", existing: null })).toBe(false);
+  });
+
+  it("keeps createdAt when it replaces an earlier result", () => {
+    const existing = { createdAt: "2026-11-07T09:00:00.000Z" } as StageScore;
+    const score = buildDqScore({ ...base, now: "2026-11-07T11:00:00.000Z", reason: "other", existing });
+    expect(score.createdAt).toBe("2026-11-07T09:00:00.000Z");
+  });
+
+  it("makes the shooter disqualified in the match", () => {
+    const score = buildDqScore({ ...base, reason: "accidental_discharge", existing: null });
+    expect([...disqualifiedShooterIds([score])]).toEqual(["sh"]);
   });
 });
