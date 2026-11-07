@@ -1,7 +1,7 @@
 "use client";
 
 import { useT } from "@/shared/i18n/useT";
-import { cx } from "./cx";
+import { IconButton } from "./IconButton";
 import { MinusIcon, PlusIcon } from "./icons";
 
 interface StepperProps {
@@ -22,30 +22,25 @@ export function Stepper({ label, value, max, onChange }: StepperProps) {
         <p className="text-[15px] font-bold leading-tight">{label}</p>
         <p className="text-xs text-text-secondary">{t("stepper.max", { max })}</p>
       </div>
-      <button
-        type="button"
-        aria-label={t("stepper.decrease", { label })}
+      <IconButton
+        variant="outline"
+        label={t("stepper.decrease", { label })}
         disabled={value <= 0}
         onClick={() => onChange(value - 1)}
-        className="flex size-11 items-center justify-center rounded-button border-2 border-border bg-surface text-text-label disabled:text-disabled"
       >
         <MinusIcon />
-      </button>
+      </IconButton>
       <output aria-label={t("stepper.count", { label })} className="w-8 text-center font-display text-2xl font-bold">
         {value}
       </output>
-      <button
-        type="button"
-        aria-label={t("stepper.increase", { label })}
+      <IconButton
+        variant="solid"
+        label={t("stepper.increase", { label })}
         disabled={atMax}
         onClick={() => onChange(value + 1)}
-        className={cx(
-          "flex size-11 items-center justify-center rounded-button text-white",
-          atMax ? "cursor-not-allowed bg-disabled" : "bg-primary",
-        )}
       >
         <PlusIcon />
-      </button>
+      </IconButton>
     </div>
   );
 }

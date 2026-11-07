@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { formatHitFactor, formatTime } from "@/shared/i18n/format";
 import { useT } from "@/shared/i18n/useT";
+import { Card } from "@/shared/ui/Card";
 import { cx } from "@/shared/ui/cx";
 import type { ScoreDraft } from "./draft";
 import { paperRemaining, steelRemaining } from "./entry";
@@ -87,10 +88,10 @@ export function ScoreSummary({ draft, hitsPerPaperTarget, summary }: ScoreSummar
 /** A white card with a small uppercase title. */
 export function SummaryCard({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-1.5 rounded-card bg-surface px-3 py-2.5">
-      <h3 className="text-[11px] font-bold uppercase tracking-wide text-text-label">{title}</h3>
+    <Card as="section" elevated={false} className="flex flex-col gap-1.5 px-3 py-2.5">
+      <h3 className="eyebrow">{title}</h3>
       {children}
-    </section>
+    </Card>
   );
 }
 

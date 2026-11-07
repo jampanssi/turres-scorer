@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { type ReactNode, useSyncExternalStore } from "react";
+import { IconLink } from "./IconButton";
 import { ChevronLeftIcon } from "./icons";
 import { cx } from "./cx";
 
@@ -48,13 +48,9 @@ export function AppHeader({ title, subtitle, back, right, children }: AppHeaderP
     >
       <div className="flex items-center gap-1">
         {back && (
-          <Link
-            href={back.href}
-            aria-label={back.label}
-            className="flex size-11 shrink-0 items-center justify-center rounded-button"
-          >
+          <IconLink href={back.href} label={back.label}>
             <ChevronLeftIcon />
-          </Link>
+          </IconLink>
         )}
         <div className={back ? "min-w-0 flex-1" : "min-w-0 flex-1 pl-1"}>
           {/* Fixed heights (even with no subtitle or while loading) keep the title at the same

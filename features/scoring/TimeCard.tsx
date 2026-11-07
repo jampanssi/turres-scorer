@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { useT } from "@/shared/i18n/useT";
+import { Card } from "@/shared/ui/Card";
 import { StopwatchIcon } from "@/shared/ui/icons";
 import { formatTimeDigits } from "./draft";
 import { TimeKeypad } from "./TimeKeypad";
@@ -25,7 +26,7 @@ export function TimeCard({ digits, onDigit, onBackspace }: TimeCardProps) {
 
   return (
     <>
-      <div className="flex items-center gap-3 rounded-card bg-surface p-3 shadow-card">
+      <Card className="flex items-center gap-3 p-3">
         <StopwatchIcon className="shrink-0 text-primary-text" />
         <span id={labelId} className="flex-1 text-base font-bold">
           {t("score.time")}
@@ -40,7 +41,7 @@ export function TimeCard({ digits, onDigit, onBackspace }: TimeCardProps) {
         >
           {display || <span className="text-disabled">0.00</span>}
         </button>
-      </div>
+      </Card>
       <TimeKeypad
         open={open}
         onClose={() => setOpen(false)}

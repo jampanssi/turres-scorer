@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useT } from "@/shared/i18n/useT";
 import { BottomSheet } from "@/shared/ui/BottomSheet";
 import { Button } from "@/shared/ui/Button";
+import { Card } from "@/shared/ui/Card";
 import { BackspaceIcon } from "@/shared/ui/icons";
 import { formatTimeDigits } from "./draft";
 
@@ -53,7 +54,7 @@ export function TimeKeypad({ open, onClose, digits, onDigit, onBackspace }: Time
         </Button>
       }
     >
-      <div className="rounded-card bg-surface px-4 py-3 text-center shadow-card">
+      <Card className="px-4 py-3 text-center">
         <output
           aria-live="polite"
           className={`block font-display text-[48px] font-bold leading-none ${display ? "text-text" : "text-disabled"}`}
@@ -61,7 +62,7 @@ export function TimeKeypad({ open, onClose, digits, onDigit, onBackspace }: Time
           {display || "0.00"}
         </output>
         <p className="mt-2 text-xs text-text-secondary">{t("keypad.hint")}</p>
-      </div>
+      </Card>
 
       <div className="mt-3 grid grid-cols-3 gap-2">
         {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((digit) => (

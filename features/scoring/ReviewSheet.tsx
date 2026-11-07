@@ -1,9 +1,10 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useState } from "react";
 import { useT } from "@/shared/i18n/useT";
 import { BottomSheet } from "@/shared/ui/BottomSheet";
 import { Button } from "@/shared/ui/Button";
+import { Checkbox } from "@/shared/ui/form";
 import type { ScoreDraft } from "./draft";
 import type { ReviewSummary } from "./review";
 import { ScoreSummary, SummaryCard } from "./ScoreSummary";
@@ -38,7 +39,6 @@ export function ReviewSheet({
   saveFailed,
 }: ReviewSheetProps) {
   const { t } = useT();
-  const checkboxId = useId();
   const [accepted, setAccepted] = useState(false);
   const canSave = accepted && summary.complete && !saving;
 
@@ -63,16 +63,11 @@ export function ReviewSheet({
         <ScoreSummary draft={draft} hitsPerPaperTarget={hitsPerPaperTarget} summary={summary} />
 
         <SummaryCard title={t("review.signOff")}>
-          <label htmlFor={checkboxId} className="flex min-h-11 items-center gap-2.5 text-sm">
-            <input
-              id={checkboxId}
-              type="checkbox"
-              checked={accepted}
-              onChange={(event) => setAccepted(event.target.checked)}
-              className="size-[22px] shrink-0 accent-primary"
-            />
-            {t("review.accept")}
-          </label>
+          <Checkbox
+            checked={accepted}
+            onChange={(event) => setAccepted(event.target.checked)}
+            label={t("review.accept")}
+          />
         </SummaryCard>
 
         {(summary.missingTime || summary.incompleteTargets > 0 || saveFailed) && (

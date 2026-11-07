@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { formatDate } from "@/shared/i18n/format";
 import { useT } from "@/shared/i18n/useT";
+import { cardClass } from "@/shared/ui/Card";
+import { cx } from "@/shared/ui/cx";
 import { ProgressBar } from "@/shared/ui/ProgressBar";
 import type { MatchSummary } from "./summary";
 
@@ -27,7 +29,7 @@ export function MatchCard({ summary }: { summary: MatchSummary }) {
   return (
     <Link
       href={`/matches/${match.id}`}
-      className="relative flex flex-col gap-3 overflow-hidden rounded-event bg-surface p-4 shadow-card"
+      className={cx(cardClass({ radius: "event" }), "relative flex flex-col gap-3 overflow-hidden p-4")}
     >
       {/* Status strip on the left edge: blue = live, green = finished, none = upcoming. */}
       {STRIP[match.status] && (

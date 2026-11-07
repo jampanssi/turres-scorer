@@ -1,7 +1,9 @@
 "use client";
 
 import { useT } from "@/shared/i18n/useT";
+import { Card } from "@/shared/ui/Card";
 import { cx } from "@/shared/ui/cx";
+import { IconButton } from "@/shared/ui/IconButton";
 import { UndoIcon } from "@/shared/ui/icons";
 import type { HitCode, SteelHit } from "@/shared/domain/types";
 import { paperRemaining, steelRemaining } from "./entry";
@@ -33,11 +35,11 @@ export function ScoreMatrix({
   const { t } = useT();
 
   return (
-    <section className="flex flex-col gap-[9px] rounded-card bg-surface px-2 py-2.5 shadow-card">
+    <Card as="section" className="flex flex-col gap-[9px] px-2 py-2.5">
       {paper.length > 0 && (
         <>
           <div className={GRID}>
-            <span className="text-[11px] font-bold uppercase tracking-wide text-text-label">{t("score.paper")}</span>
+            <span className="eyebrow">{t("score.paper")}</span>
             {PAPER_CODES.map((code) => (
               <ColumnHead key={code} code={code} />
             ))}
@@ -74,7 +76,7 @@ export function ScoreMatrix({
       {steel.length > 0 && (
         <>
           <div className={GRID}>
-            <span className="text-[11px] font-bold uppercase tracking-wide text-text-label">{t("score.steel")}</span>
+            <span className="eyebrow">{t("score.steel")}</span>
             <ColumnHead code="A" />
             <span />
             <span />
@@ -111,7 +113,7 @@ export function ScoreMatrix({
           })}
         </>
       )}
-    </section>
+    </Card>
   );
 }
 
@@ -171,14 +173,8 @@ function Cell({ code, count, label, onClick }: { code: HitCode; count: number; l
 
 function UndoButton({ label, disabled, onClick }: { label: string; disabled: boolean; onClick: () => void }) {
   return (
-    <button
-      type="button"
-      aria-label={label}
-      disabled={disabled}
-      onClick={onClick}
-      className="flex size-11 items-center justify-center rounded-cell border-[1.5px] border-border bg-surface text-primary-text disabled:text-disabled"
-    >
+    <IconButton variant="outlineAccent" shape="cell" label={label} disabled={disabled} onClick={onClick}>
       <UndoIcon width={22} height={22} />
-    </button>
+    </IconButton>
   );
 }

@@ -133,10 +133,27 @@
   --shadow-card: var(--elev-card);
   --shadow-bar: var(--elev-bar);
   --shadow-sheet: var(--elev-sheet);
+
+  /* Minimum size of anything you tap (DESIGN.md: 44 px). Use size-touch, min-h-touch, h-touch ... */
+  --spacing-touch: 2.75rem;
+}
+
+/* Small uppercase label above a group (card titles, "PAPER", "STEEL"). */
+@utility eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: var(--text-label);
 }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
+}
+
+/* An open modal dialog (shared/ui/Dialog, used by every sheet) locks the page behind it from scrolling. */
+body:has(dialog[open]) {
+  overflow: hidden;
 }

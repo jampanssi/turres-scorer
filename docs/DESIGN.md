@@ -133,6 +133,8 @@ White, 1 px `border-light` top border, soft upward shadow. Contains the two step
 ### BottomSheet
 Full-screen `scrim` over the previous screen, sheet anchored to the bottom: radius 20 top corners, 10 px top padding, 40 × 5 grab handle (`border` colour) centred, content padding 12–20 px, ends with an action row (Cancel/Edit left, confirm right).
 
+Behaviour (a native modal `<dialog>`, see `shared/ui/Dialog.tsx`): the page behind is inert and cannot scroll; Tab and Shift+Tab move between the sheet's controls and never reach the page behind (they may pass through the browser's own address bar); **Escape and a tap on the empty area above the sheet ask to close it** (a sheet that is saving ignores them); when it closes, focus goes back to the button that opened it. On opening, focus is on the sheet itself, not on its first control, so no field is highlighted when it appears; the sheet is announced with its title.
+
 ---
 
 ## 6. Screens

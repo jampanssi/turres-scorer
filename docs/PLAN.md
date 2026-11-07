@@ -84,7 +84,7 @@ Behaviour-preserving, one commit per phase, all checks green after each:
 - [x] Phase 1: domain consolidation. Scoring rules in `shared/domain/scoring.ts`, one `shared/domain/progress.ts` for the scored/DQ rules, `StageScore` as a scored/DNF/DQ union, `createPersistedStore` for theme, language and session
 - [x] Phase 2: data access. `useRepoQuery` (refetches on repository changes), async repository factory (mock data only in the bundle when configured), repository clock `now()`, session `userId`
 - [x] Phase 3: screen structure. `(app)` route group with one `SessionGate`, `features/shell/Screen` for the header and loading/error/not-found, `ScoringScreen` split into `ScoringForm` and `useSaveResult`
-- [ ] Phase 4: base UI components. Card, form fields, IconButton, native-dialog sheet, Popover, one Confirm sheet for DNF and DQ, tokens
+- [x] Phase 4: base UI components. Card, form fields, IconButton, native-dialog sheet (Dialog), Popover, one ConfirmOutcomeSheet for DNF and DQ, `size-touch` and `eyebrow` tokens. Verified in real Chrome: 27 of 28 screenshots pixel-identical to before, the other differs by 1 px
 - [ ] Phase 5: i18n hygiene. `common.*` keys, typed enum helper, key usage test
 - [ ] Phase 6: component tests (Testing Library) and `fake-indexeddb`
 - [ ] Phase 7: docs and ADRs

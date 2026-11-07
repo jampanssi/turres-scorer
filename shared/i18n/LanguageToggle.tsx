@@ -16,7 +16,7 @@ export function LanguageToggle() {
     <button
       type="button"
       onClick={() => writeLocale(next.code)}
-      className="flex min-h-11 shrink-0 items-center gap-2 rounded-full px-3 text-[15px] font-semibold text-white"
+      className="flex min-h-touch shrink-0 items-center gap-2 rounded-full px-3 text-[15px] font-semibold text-white"
     >
       <GlobeIcon strokeWidth={2} width={20} height={20} />
       <span lang={next.code}>{next.name}</span>
