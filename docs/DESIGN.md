@@ -52,7 +52,7 @@ Reference device: **390 × 844 px** (phone, portrait). Everything must also work
 
 Contrast: all text pairs above meet WCAG AA (4.5:1) at the sizes used.
 
-**Dark mode** (follows `prefers-color-scheme`; the tables above are the light palette). The full dark palette lives in `app/globals.css`. Rules: `primary` and `danger` stay as fill colours with white text; two extra tokens cover text or borders on surfaces, `primary-text` (`#005185` light, `#7DB9E6` dark) and `danger-fg` (`#B42318` light, `#F28B82` dark). Backgrounds and surfaces go dark navy (`bg` `#0B141D`, `surface` `#14212E`), text goes near-white (`#E8EEF4`), and the tints become dark tints. The dark palette has not been checked against the contrast rule yet.
+**Dark mode** (the tables above are the light palette). A toggle sits top right in every header and on Sign in; it cycles system → light → dark (icons: half circle, sun, moon) and the choice is remembered. "System" follows `prefers-color-scheme`. The full dark palette lives in `app/globals.css`. Rules: `primary` and `danger` stay as fill colours with white text; two extra tokens cover text or borders on surfaces, `primary-text` (`#005185` light, `#7DB9E6` dark) and `danger-fg` (`#B42318` light, `#F28B82` dark). Backgrounds and surfaces go dark navy (`bg` `#0B141D`, `surface` `#14212E`), text goes near-white (`#E8EEF4`), and the tints become dark tints. The dark palette has not been checked against the contrast rule yet.
 
 ---
 

@@ -61,11 +61,17 @@ integrations/
 2. [x] Domain types and scoring rules with tests (`shared/domain/types.ts`, `features/scoring/`)
 3. [x] Data layer on mock + IndexedDB (`shared/data/`)
 4. [x] UI primitives (`shared/ui/`)
-5. [ ] Scoring screen with Review/DQ/DNF sheets
-6. [ ] Navigation screens: Shooters → Stages → Squads → Matches → Sign in
-7. [ ] Offline fallback and PWA
-8. [ ] Playwright E2E, including an offline case
-9. [ ] SSI: get API facts (docs, auth, write-back, mapping), then `integrations/ssi/`, `app/api/*`, API-backed repository
+5. [ ] Screens in design order, each one built and checked before the next (SSI-free, mock data):
+   1. [x] Sign in (mock session, `features/auth/`)
+   2. [ ] Matches
+   3. [ ] Squads
+   4. [ ] Stage selection
+   5. [ ] Shooters
+   6. [ ] Scoring (matrix, steppers, sticky bar)
+   7. [ ] Confirm DQ, Confirm DNF and Review sheets, with saving
+6. [ ] Offline fallback and PWA
+7. [ ] Playwright E2E, including an offline case
+8. [ ] SSI: get API facts (docs, auth, write-back, mapping), then `integrations/ssi/`, `app/api/*`, API-backed repository
 
 ## Definition of done (MVP)
 

@@ -45,3 +45,13 @@ export const WarningIcon = (p: SVGProps<SVGSVGElement>) => (
 export const CircleXIcon = (p: SVGProps<SVGSVGElement>) => (
   <Icon {...p}><circle cx="12" cy="12" r="9" /><path d="M9 9l6 6M15 9l-6 6" /></Icon>
 );
+export const SunIcon = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></Icon>
+);
+export const MoonIcon = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z" /></Icon>
+);
+/** Half-filled circle: "follow system". */
+export const ContrastIcon = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 010 18z" fill="currentColor" /></Icon>
+);

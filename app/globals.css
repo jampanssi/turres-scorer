@@ -46,40 +46,38 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Blue stays as the fill colour (white text on it); text uses a lighter blue. */
-    --primary-text: #7db9e6;
-    --primary-tint: #12304a;
-    --primary-tint-2: #163a57;
+:root[data-theme="dark"] {
+  /* Blue stays as the fill colour (white text on it); text uses a lighter blue. */
+  --primary-text: #7db9e6;
+  --primary-tint: #12304a;
+  --primary-tint-2: #163a57;
 
-    --bg: #0b141d;
-    --surface: #14212e;
-    --surface-muted: #1b2a39;
-    --surface-tile: #223446;
-    --border: #3a4d61;
-    --border-light: #2a3b4d;
-    --divider: #243445;
+  --bg: #0b141d;
+  --surface: #14212e;
+  --surface-muted: #1b2a39;
+  --surface-tile: #223446;
+  --border: #3a4d61;
+  --border-light: #2a3b4d;
+  --divider: #243445;
 
-    --text: #e8eef4;
-    --text-secondary: #a3b3c3;
-    --text-label: #b8c6d4;
-    --disabled: #5a6b7c;
+  --text: #e8eef4;
+  --text-secondary: #a3b3c3;
+  --text-label: #b8c6d4;
+  --disabled: #5a6b7c;
 
-    --success-text: #a9d99a;
-    --success-tint: #1c3a22;
+  --success-text: #a9d99a;
+  --success-tint: #1c3a22;
 
-    --danger-fg: #f28b82;
-    --danger-tint: #3e1814;
-    --danger-text: #f4a8a0;
+  --danger-fg: #f28b82;
+  --danger-tint: #3e1814;
+  --danger-text: #f4a8a0;
 
-    --scrim: rgb(0 0 0 / 0.65);
-    --elev-card: 0 1px 2px rgb(0 0 0 / 0.4);
-    --elev-bar: 0 -2px 8px rgb(0 0 0 / 0.35);
-    --elev-sheet: 0 -8px 24px rgb(0 0 0 / 0.5);
+  --scrim: rgb(0 0 0 / 0.65);
+  --elev-card: 0 1px 2px rgb(0 0 0 / 0.4);
+  --elev-bar: 0 -2px 8px rgb(0 0 0 / 0.35);
+  --elev-sheet: 0 -8px 24px rgb(0 0 0 / 0.5);
 
-    color-scheme: dark;
-  }
+  color-scheme: dark;
 }
 
 @theme inline {

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, Inter } from "next/font/google";
+import { THEME_INIT_SCRIPT } from "@/shared/theme/theme";
 import "./globals.css";
 
 const barlowCondensed = Barlow_Condensed({
@@ -27,10 +28,15 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
+    // suppressHydrationWarning: the inline script sets data-theme before React hydrates.
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${barlowCondensed.variable} ${inter.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
