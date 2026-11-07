@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { type ReactNode, useSyncExternalStore } from "react";
 import { ChevronLeftIcon } from "./icons";
+import { cx } from "./cx";
 
 interface AppHeaderProps {
   title: string;
@@ -13,10 +16,32 @@ interface AppHeaderProps {
   children?: ReactNode;
 }
 
-/** Plain header on the page background (no coloured bar). */
+function subscribeToScroll(onChange: () => void): () => void {
+  window.addEventListener("scroll", onChange, { passive: true });
+  return () => window.removeEventListener("scroll", onChange);
+}
+
+/** True once the page has scrolled, i.e. content can be sliding under the sticky header. */
+function useScrolled(): boolean {
+  return useSyncExternalStore(subscribeToScroll, () => window.scrollY > 0, () => false);
+}
+
+/**
+ * Plain header on the page background (no coloured bar). It is sticky: it stays at the top while the
+ * page scrolls, so the shooter, back arrow and user menu are always visible. A divider and a soft
+ * shadow appear only while content has scrolled underneath it. Layering: above the page and the
+ * bottom bar (z-10), below sheets (z-50). The user menu popover lives inside the header.
+ */
 export function AppHeader({ title, subtitle, back, right, children }: AppHeaderProps) {
+  const scrolled = useScrolled();
+
   return (
-    <header className="bg-bg px-3 pb-3 pt-3 text-text">
+    <header
+      className={cx(
+        "sticky top-0 z-20 border-b bg-bg px-3 pb-3 pt-3 text-text transition-shadow",
+        scrolled ? "border-border-light shadow-card" : "border-transparent",
+      )}
+    >
       <div className="flex items-center gap-1">
         {back && (
           <Link
