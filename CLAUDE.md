@@ -27,12 +27,14 @@ npm run format   # Prettier (code only: not docs/*.md); `format:check` only chec
 ```
 
 ```bash
-npm test                              # Vitest, all tests (needs `npm i -D vitest`, see below)
+npm test                              # Vitest, all tests
 npx vitest run features/scoring       # one folder or file
 npx vitest run -t "FIFO"              # tests matching a name
 ```
 
-The `test` script and `vitest.config.ts` exist, but the `vitest` package may still need installing: run `npm i -D vitest` if `npm test` can't find it. Tests use the `@/` alias.
+Tests use the `@/` alias.
+
+**Node 26 is pinned** (`engines` in `package.json` and `.nvmrc`; `nvm use` or `fnm use` picks it). npm only treats a project's own `engines` as advice, so `dev`, `build` and `test` run `scripts/check-node.mjs` first and stop with a clear message on any other major version.
 
 ## No server rendering (hard requirement)
 
