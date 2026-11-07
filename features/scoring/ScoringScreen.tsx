@@ -24,7 +24,7 @@ export function ScoringScreen() {
   const context = useRepoQuery(["scoring", matchId, squadId, stageId, shooterId], (repo) =>
     loadScoringContext(repo, matchId, squadId, stageId, shooterId),
   );
-  const backHref = `/matches/${matchId}/squads/${squadId}/stages/${stageId}`;
+  const backHref = `/matches/${matchId}/stages/${stageId}/squads/${squadId}`;
 
   // Something is typed that is not saved: leaving (the back arrow, closing the tab) asks first.
   const [dirty, setDirty] = useState(false);

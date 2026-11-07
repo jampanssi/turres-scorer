@@ -1,7 +1,7 @@
-import { SquadsScreen } from "@/features/squads/SquadsScreen";
+import { StagesScreen } from "@/features/stages/StagesScreen";
 
-export const metadata = { title: "Squads" };
+export const metadata = { title: "Stages" };
 
-export default function SquadsPage() {
-  return <SquadsScreen />;
+export default function StagesPage() {
+  return <StagesScreen />;
 }

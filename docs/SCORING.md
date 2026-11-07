@@ -5,15 +5,15 @@ Source of truth for scoring. All rules were confirmed by the product owner. Impl
 ## User flow
 
 ```
-Sign in → Matches (Open | Results) → Squads in match (tab: Shooters, to mark DNS) → Stage selection
-        → Shooters on stage (shooting order) → Scoring (matrix)
+Sign in → Matches (Open | Results) → Stages in match (second tab: Shooters, to mark DNS)
+        → Squads on the stage → Shooters of the squad (shooting order) → Scoring (matrix)
               ├─ DQ  → Confirm DQ (bottom sheet)  → back to Shooters
               ├─ DNF → Confirm DNF (bottom sheet) → back to Shooters
               └─ Review → Review score (bottom sheet) → Accept & save → back to Shooters
                                                   └─ Edit → back to Scoring
 ```
 
-Several squads can be on the range at the same time, each on a different stage.
+The order follows the range: a range officer stands at one stage and the squads rotate through it. Several squads can be in progress at the same time, each on a different stage.
 
 ## DNS (did not show)
 

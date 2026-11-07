@@ -41,7 +41,7 @@ app/
   (public)/page.tsx                sign in
   (app)/layout.tsx                 the one session gate
   (app)/matches/page.tsx           (Open | Results)
-  (app)/matches/[matchId]/...      squads, stages, shooters, score (+ sheets)
+  (app)/matches/[matchId]/...      stages, squads, shooters, score (+ sheets)
   api/                             SSI phase only
 features/
   scoring/    ScoreMatrix, ScoreBar, ReviewSheet, ConfirmDQ/DNFSheet, entry.ts, draft.ts, tests
@@ -67,10 +67,10 @@ integrations/
 5. [ ] Screens in design order, each one built and checked before the next (SSI-free, mock data):
    1. [x] Sign in (mock session, `features/auth/`)
    2. [x] Matches (`features/matches/`, route `/matches`)
-   3. [x] Squads (`features/squads/`, route `/matches/[matchId]`)
-   4. [x] Stage selection (`features/stages/`, route `/matches/[matchId]/squads/[squadId]`)
-   5. [x] Shooters (`features/shooters/`, route `/matches/[matchId]/squads/[squadId]/stages/[stageId]`)
-   6. [x] Scoring (matrix, steppers, sticky bar; route `.../stages/[stageId]/score/[shooterId]`). DQ, DNF and Review buttons are inert until step 7
+   3. [x] Stages (`features/stages/`, route `/matches/[matchId]`; built first as squads, reordered, see ADR 0007)
+   4. [x] Squads on a stage (`features/squads/`, route `/matches/[matchId]/stages/[stageId]`)
+   5. [x] Shooters (`features/shooters/`, route `/matches/[matchId]/stages/[stageId]/squads/[squadId]`)
+   6. [x] Scoring (matrix, steppers, sticky bar; route `.../squads/[squadId]/score/[shooterId]`). DQ, DNF and Review buttons are inert until step 7
    7. [x] Review sheet with saving (`ReviewSheet.tsx`, `review.ts`), Confirm DNF (`ConfirmDnfSheet.tsx`) and Confirm DQ (`ConfirmDqSheet.tsx`); results built in `outcome.ts`
 6. [x] Installable PWA: `app/manifest.ts`, icons in `public/icons/` and `app/apple-icon.png`, iOS web-app metadata. Placeholder target icon (replace with club artwork). `public/sw.js` caches the app shell: pages already visited open without a connection
 6b. [ ] Offline fallback: outbox and sync, unsynced indicator (the service worker for the app shell is done; a new page never opened before still needs a connection)
@@ -105,6 +105,11 @@ From a UX pass over every screen; details in DESIGN.md (Toast, Load errors, Stic
 - [x] Domain (`attendance.ts`, DNS in `progress.ts`), attendance stores (IndexedDB v2), repository methods, mock seed (one DNS shooter)
 - [x] Shooters tab on the match view with all squads grouped (always open) and a DNS button per shooter (first built as a roll call with Here/DNS, a gate and counters; simplified after testing), DNS row on the stage's shooter list, Scoring notice, next shooter skips DNS
 - [ ] Not done: the time zone is fixed to Europe/Helsinki; SSI may have its own check-in; a DNS from an earlier day carries over until taken back
+
+## Navigation order (done)
+
+- [x] match → stages → squads → shooters → scoring (the RO stays at a stage and squads rotate); `stageProgressAcross` for the stage cards, `squadProgress` removed
+- [ ] Not done: no redirects from the old URLs (no users yet); squads are listed by number, not by rotation; the UI no longer uses `Squad.stageRotation`
 
 ## Definition of done (MVP)
 

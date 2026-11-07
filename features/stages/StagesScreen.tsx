@@ -4,9 +4,12 @@ import { useParams } from "next/navigation";
 import { Screen } from "@/features/shell/Screen";
 import { useRepoQuery } from "@/shared/data/useRepoQuery";
 import { formatStageTargets } from "@/shared/i18n/format-stage";
+import { formatMatchCounts } from "@/shared/i18n/format-match";
 import { useT } from "@/shared/i18n/useT";
 import { ListCard, type ListCardState } from "@/shared/ui/ListCard";
+import { ProgressBar } from "@/shared/ui/ProgressBar";
 import { SectionHeader } from "@/shared/ui/SectionHeader";
+import { TabLinks } from "@/shared/ui/TabLinks";
 import { loadStagesOverview, type StageStatus } from "./summary";
 
 const CARD_STATE: Record<StageStatus, ListCardState> = {
@@ -15,19 +18,31 @@ const CARD_STATE: Record<StageStatus, ListCardState> = {
   notStarted: "idle",
 };
 
+/** The match view: every stage with its progress over all squads. A stage leads to its squads. */
 export function StagesScreen() {
   const { t, tEnum } = useT();
-  const { matchId, squadId } = useParams<{ matchId: string; squadId: string }>();
-  const overview = useRepoQuery(["stages", matchId, squadId], (repo) => loadStagesOverview(repo, matchId, squadId));
+  const { matchId } = useParams<{ matchId: string }>();
+  const overview = useRepoQuery(["stages", matchId], (repo) => loadStagesOverview(repo, matchId));
 
   return (
     <Screen
       state={overview}
       header={(data) => ({
-        title: data ? t("common.squad", { number: data.squad.number }) : "",
-        subtitle: data ? t("common.shooterCount", { count: data.squad.shooterIds.length }) : undefined,
+        title: data?.match.name ?? "",
+        subtitle: data
+          ? formatMatchCounts({ stages: data.stages.length, squads: data.squadCount, shooters: data.shooterCount }, t)
+          : undefined,
       })}
-      back={{ href: `/matches/${matchId}`, label: t("stages.back") }}
+      back={{ href: "/matches", label: t("stages.back") }}
+      headerExtra={
+        <TabLinks
+          label={t("matchTabs.label")}
+          tabs={[
+            { href: `/matches/${matchId}`, label: t("matchTabs.stages"), current: true },
+            { href: `/matches/${matchId}/roll-call`, label: t("matchTabs.shooters"), current: false },
+          ]}
+        />
+      }
       notFound={t("stages.notFound")}
     >
       {(data) => (
@@ -41,16 +56,17 @@ export function StagesScreen() {
             {data.stages.map((summary) => (
               <li key={summary.stage.id}>
                 <ListCard
-                  href={`/matches/${matchId}/squads/${squadId}/stages/${summary.stage.id}`}
+                  href={`/matches/${matchId}/stages/${summary.stage.id}`}
                   number={summary.stage.number}
                   title={summary.stage.name}
-                  status={tEnum("stages.status", summary.status)}
+                  status={tEnum("progress.status", summary.status)}
                   state={CARD_STATE[summary.status]}
                   lines={[
                     formatStageTargets(summary.stage, t),
                     t("stages.minRounds", { count: summary.stage.minRounds }),
                     t("stages.scored", { scored: summary.scored, total: summary.total }),
                   ]}
+                  footer={<ProgressBar value={summary.scored} max={summary.total} label={t("stages.progress")} />}
                 />
               </li>
             ))}

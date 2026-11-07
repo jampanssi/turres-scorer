@@ -31,17 +31,17 @@ export function RollCallScreen() {
           ? formatMatchCounts({ stages: data.stageCount, squads: data.squads.length, shooters: data.shooterCount }, t)
           : undefined,
       })}
-      back={{ href: "/matches", label: t("squads.back") }}
+      back={{ href: "/matches", label: t("stages.back") }}
       headerExtra={
         <TabLinks
           label={t("matchTabs.label")}
           tabs={[
-            { href: `/matches/${matchId}`, label: t("matchTabs.squads"), current: false },
+            { href: `/matches/${matchId}`, label: t("matchTabs.stages"), current: false },
             { href: `/matches/${matchId}/roll-call`, label: t("matchTabs.shooters"), current: true },
           ]}
         />
       }
-      notFound={t("squads.notFound")}
+      notFound={t("stages.notFound")}
     >
       {(data) => <RosterBody data={data} matchId={matchId} />}
     </Screen>

@@ -66,7 +66,7 @@ export interface StageProgress {
   status: StageStatus;
 }
 
-/** One stage for a group of shooters (a squad). */
+/** One stage for a group of shooters (a squad): the squad cards of a stage. */
 export function stageProgress(stageId: string, shooterIds: readonly string[], index: ResultIndex): StageProgress {
   const expected = expectedShooters(stageId, shooterIds, index);
   const scored = expected.filter((id) => index.has(stageId, id)).length;
@@ -75,34 +75,25 @@ export function stageProgress(stageId: string, shooterIds: readonly string[], in
   return { scored, total, status };
 }
 
-export type SquadStatus = "done" | "onRange" | "notStarted";
-
-export interface SquadProgress {
-  stagesDone: number;
-  stagesTotal: number;
-  /** The first stage, in the order given, that is not done yet; null when all are done. */
-  currentStageId: string | null;
-  /** done = every stage done; onRange = some result saved; notStarted = none. */
-  status: SquadStatus;
+export interface StageAcrossSquads extends StageProgress {
+  /** Squads whose expected shooters all have a result on this stage. */
+  squadsDone: number;
 }
 
-/** A squad over its stages, in the squad's rotation order. */
-export function squadProgress(
-  shooterIds: readonly string[],
-  stageIds: readonly string[],
+/**
+ * One stage for several squads (the match view's stage list): the sums of `stageProgress` over the
+ * squads. Done when every expected shooter of every squad has a result, in progress when some do.
+ */
+export function stageProgressAcross(
+  stageId: string,
+  squads: ReadonlyArray<{ shooterIds: readonly string[] }>,
   index: ResultIndex,
-): SquadProgress {
-  const stages = stageIds.map((id) => ({ id, progress: stageProgress(id, shooterIds, index) }));
-  const stagesDone = stages.filter((s) => s.progress.status === "done").length;
-  const anyResult = stages.some((s) => s.progress.scored > 0);
-  const allDone = stages.length > 0 && stagesDone === stages.length;
-
-  return {
-    stagesDone,
-    stagesTotal: stages.length,
-    currentStageId: stages.find((s) => s.progress.status !== "done")?.id ?? null,
-    status: allDone ? "done" : anyResult ? "onRange" : "notStarted",
-  };
+): StageAcrossSquads {
+  const perSquad = squads.map((squad) => stageProgress(stageId, squad.shooterIds, index));
+  const scored = perSquad.reduce((n, p) => n + p.scored, 0);
+  const total = perSquad.reduce((n, p) => n + p.total, 0);
+  const status: StageStatus = total > 0 && scored === total ? "done" : scored > 0 ? "inProgress" : "notStarted";
+  return { scored, total, status, squadsDone: perSquad.filter((p) => p.status === "done").length };
 }
 
 export interface MatchProgress {

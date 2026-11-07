@@ -28,7 +28,7 @@ export function ShootersScreen() {
           : "",
         subtitle: data ? formatStageTargets(data.stage, t) : undefined,
       })}
-      back={{ href: `/matches/${matchId}/squads/${squadId}`, label: t("shooters.back") }}
+      back={{ href: `/matches/${matchId}/stages/${stageId}`, label: t("shooters.back") }}
       notFound={t("shooters.notFound")}
     >
       {(data) => (
@@ -43,7 +43,7 @@ export function ShootersScreen() {
               <li key={row.shooter.id}>
                 <ShooterRow
                   row={row}
-                  href={`/matches/${matchId}/squads/${squadId}/stages/${stageId}/score/${row.shooter.id}`}
+                  href={`/matches/${matchId}/stages/${stageId}/squads/${squadId}/score/${row.shooter.id}`}
                   justSaved={toast?.shooterId === row.shooter.id}
                 />
               </li>

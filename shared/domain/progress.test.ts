@@ -5,7 +5,7 @@ import {
   expectedShooters,
   indexResults,
   matchProgress,
-  squadProgress,
+  stageProgressAcross,
   stageProgress,
 } from "./progress";
 import type { StageScore } from "./types";
@@ -82,46 +82,62 @@ describe("stageProgress", () => {
   });
 });
 
-describe("squadProgress", () => {
-  const shooters = ["a", "b"];
-  const stages = ["s2", "s3", "s1"]; // the squad's rotation
+describe("stageProgressAcross", () => {
+  const squads = [{ shooterIds: ["a", "b"] }, { shooterIds: ["c", "d"] }, { shooterIds: ["e"] }];
 
-  it("not started", () => {
-    expect(squadProgress(shooters, stages, index([]))).toEqual({
-      stagesDone: 0,
-      stagesTotal: 3,
-      currentStageId: "s2",
+  it("is not started with no results", () => {
+    expect(stageProgressAcross("s1", squads, index([]))).toEqual({
+      scored: 0,
+      total: 5,
       status: "notStarted",
+      squadsDone: 0,
     });
   });
 
-  it("on range: the current stage is the first unfinished one in rotation order", () => {
-    const idx = index([...everyone(["s2"], shooters), ["s3", "a"]]);
-    expect(squadProgress(shooters, stages, idx)).toEqual({
-      stagesDone: 1,
-      stagesTotal: 3,
-      currentStageId: "s3",
-      status: "onRange",
+  it("is in progress while any squad has a missing result, and counts squads that are done", () => {
+    const idx = index([...everyone(["s1"], ["a", "b"]), ["s1", "c"]]);
+    expect(stageProgressAcross("s1", squads, idx)).toEqual({
+      scored: 3,
+      total: 5,
+      status: "inProgress",
+      squadsDone: 1,
     });
   });
 
-  it("done: every stage done, no current stage", () => {
-    const idx = index(everyone(stages, shooters));
-    expect(squadProgress(shooters, stages, idx)).toEqual({
-      stagesDone: 3,
-      stagesTotal: 3,
-      currentStageId: null,
+  it("is done when every squad is done", () => {
+    const idx = index(everyone(["s1"], ["a", "b", "c", "d", "e"]));
+    expect(stageProgressAcross("s1", squads, idx)).toEqual({ scored: 5, total: 5, status: "done", squadsDone: 3 });
+  });
+
+  it("only counts results on this stage", () => {
+    expect(stageProgressAcross("s1", squads, index(everyone(["s2"], ["a", "b", "c", "d", "e"]))).scored).toBe(0);
+  });
+
+  it("does not wait for a disqualified shooter on the stages after the DQ, but counts the DQ stage", () => {
+    const dq = ["b"];
+    const onDqStage = index([...everyone(["s1", "s2"], ["a", "b", "c", "d", "e"])], dq);
+    expect(stageProgressAcross("s2", squads, onDqStage)).toMatchObject({ scored: 5, total: 5, status: "done" });
+    const after = index(everyone(["s3"], ["a", "c", "d", "e"]).concat(everyone(["s1", "s2"], ["b"])), dq);
+    expect(stageProgressAcross("s3", squads, after)).toMatchObject({
+      scored: 4,
+      total: 4,
       status: "done",
+      squadsDone: 3,
     });
   });
 
-  it("does not wait for a disqualified shooter on the stages after the DQ", () => {
-    const idx = index([...everyone(stages, ["a"]), ["s2", "b"]], ["b"]); // b: only the DQ result on s2
-    expect(squadProgress(shooters, stages, idx).status).toBe("done");
+  it("does not wait for a DNS shooter, and a squad of only DNS shooters is not counted as done", () => {
+    const idx = index(everyone(["s1"], ["a", "b", "c"]), [], ["d", "e"]);
+    expect(stageProgressAcross("s1", squads, idx)).toEqual({ scored: 3, total: 3, status: "done", squadsDone: 2 });
   });
 
-  it("a squad with no stages is not started", () => {
-    expect(squadProgress(shooters, [], index([])).status).toBe("notStarted");
+  it("is not started when there are no squads", () => {
+    expect(stageProgressAcross("s1", [], index([]))).toEqual({
+      scored: 0,
+      total: 0,
+      status: "notStarted",
+      squadsDone: 0,
+    });
   });
 });
 
@@ -182,9 +198,7 @@ describe("a DNS shooter (did not show at roll call)", () => {
     const idx = index(everyone(["s1"], ["a", "c"]), [], ["b"]);
     expect(expectedShooters("s1", shooters, idx)).toEqual(["a", "c"]);
     expect(stageProgress("s1", shooters, idx)).toEqual({ scored: 2, total: 2, status: "done" });
-    expect(squadProgress(shooters, ["s1", "s2"], index(everyone(["s1", "s2"], ["a", "c"]), [], ["b"])).status).toBe(
-      "done",
-    );
+    expect(stageProgress("s2", shooters, index(everyone(["s1", "s2"], ["a", "c"]), [], ["b"])).status).toBe("done");
   });
 
   it("is expected again once the DNS is reversed", () => {

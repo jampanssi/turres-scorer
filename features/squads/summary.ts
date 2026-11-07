@@ -1,68 +1,49 @@
 import type { Repository } from "@/shared/data/repository";
-import { indexResults, type ResultIndex, squadProgress, type SquadStatus } from "@/shared/domain/progress";
-import type { Match, Squad, Stage } from "@/shared/domain/types";
+import { indexResults, type ResultIndex, stageProgress, type StageStatus } from "@/shared/domain/progress";
+import type { Squad, Stage } from "@/shared/domain/types";
 
-export type { SquadStatus } from "@/shared/domain/progress";
+export type { StageStatus } from "@/shared/domain/progress";
 
 export interface SquadSummary {
   squad: Squad;
   shooters: number;
-  stagesTotal: number;
-  /** Stages where every expected shooter has a saved result. */
-  stagesDone: number;
-  /** The squad's next unfinished stage in rotation order; null when all are done. */
-  currentStage: Stage | null;
-  status: SquadStatus;
+  /** Expected shooters of this squad with a saved result on the stage (scored, DNF or DQ). */
+  scored: number;
+  total: number;
+  status: StageStatus;
 }
 
 /**
- * Progress of one squad over its rotation. Who is expected, and when a stage or squad is done, is
- * decided in `shared/domain/progress.ts`.
+ * One squad on one stage. Who is expected, and when it is done, is decided in
+ * `shared/domain/progress.ts`; `shooters` is everyone on the squad's list, `total` who is still expected.
  */
-export function summarizeSquad(squad: Squad, stages: Map<string, Stage>, index: ResultIndex): SquadSummary {
-  const rotation = squad.stageRotation.map((id) => stages.get(id)).filter((s): s is Stage => s !== undefined);
-  const progress = squadProgress(
-    squad.shooterIds,
-    rotation.map((stage) => stage.id),
-    index,
-  );
-
-  return {
-    squad,
-    shooters: squad.shooterIds.length,
-    stagesTotal: progress.stagesTotal,
-    stagesDone: progress.stagesDone,
-    currentStage: progress.currentStageId ? (stages.get(progress.currentStageId) ?? null) : null,
-    status: progress.status,
-  };
+export function summarizeSquad(squad: Squad, stage: Stage, index: ResultIndex): SquadSummary {
+  return { squad, shooters: squad.shooterIds.length, ...stageProgress(stage.id, squad.shooterIds, index) };
 }
 
 export interface SquadsOverview {
-  match: Match;
-  stageCount: number;
-  shooterCount: number;
+  stage: Stage;
+  /** Every squad of the match, in squad number order. */
   squads: SquadSummary[];
+  squadsDone: number;
 }
 
-/** Everything the Squads screen needs, or null if the match does not exist. */
-export async function loadSquadsOverview(repo: Repository, matchId: string): Promise<SquadsOverview | null> {
-  const match = await repo.getMatch(matchId);
-  if (!match) return null;
+/** Everything the Squads screen (the squads of one stage) needs, or null if the stage is not in the match. */
+export async function loadSquadsOverview(
+  repo: Repository,
+  matchId: string,
+  stageId: string,
+): Promise<SquadsOverview | null> {
+  const stage = await repo.getStage(stageId);
+  if (!stage || stage.matchId !== matchId) return null;
 
-  const [stageList, squadList, scores, attendance] = await Promise.all([
-    repo.listStages(matchId),
+  const [squadList, scores, attendance] = await Promise.all([
     repo.listSquads(matchId),
     repo.listScores(matchId),
     repo.listAttendance(matchId),
   ]);
-  const stages = new Map(stageList.map((s) => [s.id, s]));
   const index = indexResults(scores, attendance);
-  const squads = squadList.map((squad) => summarizeSquad(squad, stages, index));
+  const squads = squadList.map((squad) => summarizeSquad(squad, stage, index));
 
-  return {
-    match,
-    stageCount: stageList.length,
-    shooterCount: squads.reduce((sum, s) => sum + s.shooters, 0),
-    squads,
-  };
+  return { stage, squads, squadsDone: squads.filter((s) => s.status === "done").length };
 }
