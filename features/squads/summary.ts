@@ -1,14 +1,14 @@
 import type { Repository } from "@/shared/data/repository";
-import { disqualifiedShooterIds } from "@/shared/domain/disqualified";
+import { indexResults, type ResultIndex, squadProgress, type SquadStatus } from "@/shared/domain/progress";
 import type { Match, Squad, Stage } from "@/shared/domain/types";
 
-export type SquadStatus = "done" | "onRange" | "notStarted";
+export type { SquadStatus } from "@/shared/domain/progress";
 
 export interface SquadSummary {
   squad: Squad;
   shooters: number;
   stagesTotal: number;
-  /** Stages where every shooter still in the match has a saved result. */
+  /** Stages where every expected shooter has a saved result. */
   stagesDone: number;
   /** The squad's next unfinished stage in rotation order; null when all are done. */
   currentStage: Stage | null;
@@ -16,34 +16,24 @@ export interface SquadSummary {
 }
 
 /**
- * Progress of one squad. A stage is done when every shooter still in the match has a saved result
- * (scored or DNF); shooters disqualified from the match are not waited for.
- * Status: done = every stage done; onRange = some result saved; notStarted = none.
- * `scored` holds `${stageId}:${shooterId}` keys of saved results.
+ * Progress of one squad over its rotation. Who is expected, and when a stage or squad is done, is
+ * decided in `shared/domain/progress.ts`.
  */
-export function summarizeSquad(
-  squad: Squad,
-  stages: Map<string, Stage>,
-  scored: Set<string>,
-  disqualified: Set<string> = new Set(),
-): SquadSummary {
-  const active = squad.shooterIds.filter((id) => !disqualified.has(id));
+export function summarizeSquad(squad: Squad, stages: Map<string, Stage>, index: ResultIndex): SquadSummary {
   const rotation = squad.stageRotation.map((id) => stages.get(id)).filter((s): s is Stage => s !== undefined);
-  const hasResult = (stageId: string, shooterId: string) => scored.has(`${stageId}:${shooterId}`);
-
-  const isDone = (stage: Stage) => active.length > 0 && active.every((shooterId) => hasResult(stage.id, shooterId));
-
-  const stagesDone = rotation.filter(isDone).length;
-  const anyResult = rotation.some((stage) => squad.shooterIds.some((id) => hasResult(stage.id, id)));
-  const allDone = rotation.length > 0 && stagesDone === rotation.length;
+  const progress = squadProgress(
+    squad.shooterIds,
+    rotation.map((stage) => stage.id),
+    index,
+  );
 
   return {
     squad,
     shooters: squad.shooterIds.length,
-    stagesTotal: rotation.length,
-    stagesDone,
-    currentStage: rotation.find((stage) => !isDone(stage)) ?? null,
-    status: allDone ? "done" : anyResult ? "onRange" : "notStarted",
+    stagesTotal: progress.stagesTotal,
+    stagesDone: progress.stagesDone,
+    currentStage: progress.currentStageId ? (stages.get(progress.currentStageId) ?? null) : null,
+    status: progress.status,
   };
 }
 
@@ -65,9 +55,8 @@ export async function loadSquadsOverview(repo: Repository, matchId: string): Pro
     repo.listScores(matchId),
   ]);
   const stages = new Map(stageList.map((s) => [s.id, s]));
-  const scored = new Set(scores.map((s) => `${s.stageId}:${s.shooterId}`));
-  const disqualified = disqualifiedShooterIds(scores);
-  const squads = squadList.map((squad) => summarizeSquad(squad, stages, scored, disqualified));
+  const index = indexResults(scores);
+  const squads = squadList.map((squad) => summarizeSquad(squad, stages, index));
 
   return {
     match,

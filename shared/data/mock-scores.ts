@@ -1,5 +1,5 @@
 import type { Catalog } from "./mock";
-import { scoreId } from "./repository";
+import { scoreId } from "@/shared/domain/ids";
 import type { HitCode, Squad, Stage, StageScore, SteelHit } from "@/shared/domain/types";
 
 /**
@@ -66,23 +66,12 @@ function makeScore(matchId: string, stage: Stage, shooterId: string, kind: "scor
     stageId: stage.id,
     shooterId,
     roId: "ro-1",
-    shooterAccepted: true,
     createdAt: "2026-11-07T09:00:00.000Z",
     updatedAt: "2026-11-07T09:00:00.000Z",
   };
 
-  if (kind === "dnf" || kind === "dq") {
-    return {
-      ...base,
-      status: kind,
-      timeSec: null,
-      paper: [],
-      steel: [],
-      noShoots: 0,
-      procedurals: 0,
-      ...(kind === "dnf" ? { dnfReason: "equipment_failure" as const } : { dqReason: "unsafe_handling" as const }),
-    };
-  }
+  if (kind === "dnf") return { ...base, status: "dnf", dnfReason: "equipment_failure" };
+  if (kind === "dq") return { ...base, status: "dq", dqReason: "unsafe_handling" };
 
   const paper: HitCode[][] = Array.from({ length: stage.paperTargets }, () =>
     Array.from({ length: stage.hitsPerPaperTarget }, () => pickHit(rand)),
@@ -92,7 +81,7 @@ function makeScore(matchId: string, stage: Stage, shooterId: string, kind: "scor
   const procedurals = rand() < 0.05 ? 1 : 0;
   const timeSec = Math.round((6 + rand() * 14) * 100) / 100;
 
-  return { ...base, status: "scored", timeSec, paper, steel, noShoots, procedurals };
+  return { ...base, status: "scored", timeSec, paper, steel, noShoots, procedurals, shooterAccepted: true };
 }
 
 export function buildMockScores(catalog: Catalog): StageScore[] {

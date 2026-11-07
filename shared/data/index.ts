@@ -6,7 +6,6 @@ import type { Repository } from "./repository";
 import { createMemoryScoreStore } from "./score-store";
 
 export type { Repository } from "./repository";
-export { scoreId } from "./repository";
 
 let instance: Repository | null = null;
 

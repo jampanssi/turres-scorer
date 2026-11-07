@@ -3,6 +3,7 @@ import { buildMockCatalog } from "@/shared/data/mock";
 import { createCatalogRepository } from "@/shared/data/mock-repository";
 import { buildMockScores } from "@/shared/data/mock-scores";
 import { createMemoryScoreStore } from "@/shared/data/score-store";
+import { createResultIndex } from "@/shared/domain/progress";
 import { loadSquadsOverview, summarizeSquad } from "./summary";
 
 const catalog = buildMockCatalog();
@@ -16,27 +17,27 @@ describe("summarizeSquad", () => {
   const key = (stageId: string, shooterId: string) => `${stageId}:${shooterId}`;
 
   it("is not started with no results", () => {
-    const summary = summarizeSquad(squad, stages, new Set());
+    const summary = summarizeSquad(squad, stages, createResultIndex([]));
     expect(summary).toMatchObject({ status: "notStarted", stagesDone: 0, stagesTotal: 6 });
     expect(summary.currentStage?.id).toBe(squad.stageRotation[0]);
   });
 
   it("is on range after the first result, and the stage is not done until every shooter has one", () => {
     const scored = new Set([key(squad.stageRotation[0], squad.shooterIds[0])]);
-    const summary = summarizeSquad(squad, stages, scored);
+    const summary = summarizeSquad(squad, stages, createResultIndex(scored));
     expect(summary).toMatchObject({ status: "onRange", stagesDone: 0 });
   });
 
   it("moves the current stage along the squad's rotation", () => {
     const scored = new Set(squad.shooterIds.map((id) => key(squad.stageRotation[0], id)));
-    const summary = summarizeSquad(squad, stages, scored);
+    const summary = summarizeSquad(squad, stages, createResultIndex(scored));
     expect(summary).toMatchObject({ status: "onRange", stagesDone: 1 });
     expect(summary.currentStage?.id).toBe(squad.stageRotation[1]);
   });
 
   it("is done when every stage is done", () => {
     const scored = new Set(squad.stageRotation.flatMap((stageId) => squad.shooterIds.map((id) => key(stageId, id))));
-    const summary = summarizeSquad(squad, stages, scored);
+    const summary = summarizeSquad(squad, stages, createResultIndex(scored));
     expect(summary).toMatchObject({ status: "done", stagesDone: 6, currentStage: null });
   });
 });
@@ -68,15 +69,18 @@ describe("summarizeSquad with a disqualified shooter", () => {
 
   it("is done when every shooter still in the match finished every stage", () => {
     const scored = new Set(squad.stageRotation.flatMap((stageId) => rest.map((id) => `${stageId}:${id}`)));
-    expect(summarizeSquad(squad, stages, scored, new Set([out]))).toMatchObject({ status: "done", stagesDone: 6 });
+    expect(summarizeSquad(squad, stages, createResultIndex(scored, [out]))).toMatchObject({
+      status: "done",
+      stagesDone: 6,
+    });
   });
 
   it("would not be done without the DQ (the missing shooter blocks it)", () => {
     const scored = new Set(squad.stageRotation.flatMap((stageId) => rest.map((id) => `${stageId}:${id}`)));
-    expect(summarizeSquad(squad, stages, scored).status).toBe("onRange");
+    expect(summarizeSquad(squad, stages, createResultIndex(scored)).status).toBe("onRange");
   });
 
   it("keeps the roster size in the shooter count", () => {
-    expect(summarizeSquad(squad, stages, new Set(), new Set([out])).shooters).toBe(8);
+    expect(summarizeSquad(squad, stages, createResultIndex([], [out])).shooters).toBe(8);
   });
 });

@@ -1,4 +1,4 @@
-import type { HitCode, SteelHit } from "@/shared/domain/types";
+import type { HitCode, SteelHit } from "./types";
 
 /** Pure scoring rules, see docs/SCORING.md. No React or UI imports. */
 

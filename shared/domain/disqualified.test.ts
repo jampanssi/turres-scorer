@@ -1,30 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { disqualifiedShooterIds } from "./disqualified";
-import type { StageScore } from "./types";
+import { dnfResult, dqResult, scoredResult } from "./test-fixtures";
 
-const score = (shooterId: string, stageId: string, status: StageScore["status"]): StageScore => ({
-  id: `${stageId}:${shooterId}`,
-  matchId: "m",
-  stageId,
-  shooterId,
-  roId: "ro",
-  status,
-  timeSec: null,
-  paper: [],
-  steel: [],
-  noShoots: 0,
-  procedurals: 0,
-  shooterAccepted: false,
-  createdAt: "",
-  updatedAt: "",
-});
+const at = (shooterId: string, stageId: string) => ({ shooterId, stageId });
 
 describe("disqualifiedShooterIds", () => {
   it("collects shooters with a DQ result on any stage", () => {
-    const ids = disqualifiedShooterIds([score("a", "s1", "scored"), score("a", "s2", "dq"), score("b", "s1", "dnf")]);
+    const ids = disqualifiedShooterIds([
+      scoredResult(at("a", "s1")),
+      dqResult(at("a", "s2")),
+      dnfResult(at("b", "s1")),
+    ]);
     expect([...ids]).toEqual(["a"]);
   });
   it("is empty when nobody is disqualified (a DNF is not a DQ)", () => {
-    expect(disqualifiedShooterIds([score("a", "s1", "dnf"), score("b", "s1", "scored")]).size).toBe(0);
+    expect(disqualifiedShooterIds([dnfResult(at("a", "s1")), scoredResult(at("b", "s1"))]).size).toBe(0);
   });
 });

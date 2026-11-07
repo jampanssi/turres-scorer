@@ -1,8 +1,8 @@
 import { secondsFromDigits, type ScoreDraft } from "./draft";
 import { paperRemaining, steelRemaining } from "./entry";
-import { codePoints, hitFactor, pointsOf, totalsOf, type Totals } from "./rules";
-import type { Stage, StageScore } from "@/shared/domain/types";
-import { scoreId } from "@/shared/data/repository";
+import { codePoints, hitFactor, pointsOf, totalsOf, type Totals } from "@/shared/domain/scoring";
+import type { ScoredStageScore, Stage, StageScore } from "@/shared/domain/types";
+import { scoreId } from "@/shared/domain/ids";
 
 /** What the Review sheet shows, and whether the draft is complete enough to save. */
 export interface ReviewSummary {
@@ -64,7 +64,10 @@ export function buildStageScore({
   roId,
   now,
   existing,
-}: BuildScoreInput): StageScore {
+}: BuildScoreInput): ScoredStageScore {
+  const timeSec = secondsFromDigits(draft.timeDigits);
+  if (timeSec === null || timeSec <= 0) throw new Error("Cannot build a score without a time");
+
   return {
     id: scoreId(stageId, shooterId),
     matchId,
@@ -72,7 +75,7 @@ export function buildStageScore({
     shooterId,
     roId,
     status: "scored",
-    timeSec: secondsFromDigits(draft.timeDigits),
+    timeSec,
     paper: draft.paper.map((hits) => [...hits]),
     steel: [...draft.steel],
     noShoots: draft.noShoots,

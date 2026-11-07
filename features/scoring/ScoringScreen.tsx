@@ -24,7 +24,7 @@ import {
   undoPaper,
   undoSteel,
 } from "./draft";
-import { maxNoShoots, maxProcedurals } from "./rules";
+import { maxNoShoots, maxProcedurals } from "@/shared/domain/scoring";
 import { buildDnfScore, buildDqScore } from "./outcome";
 import { ReviewSheet } from "./ReviewSheet";
 import { ScoreReadOnly } from "./ScoreReadOnly";

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { StageScore } from "@/shared/domain/types";
+import { dnfResult, dqResult } from "@/shared/domain/test-fixtures";
+import type { ScoredStageScore } from "@/shared/domain/types";
 import {
   appendTimeDigit,
   backspaceTimeDigit,
@@ -92,7 +93,7 @@ describe("penalties", () => {
 });
 
 describe("draftFromScore", () => {
-  const saved: StageScore = {
+  const saved: ScoredStageScore = {
     id: "st:sh",
     matchId: "m",
     stageId: "st",
@@ -124,12 +125,16 @@ describe("draftFromScore", () => {
 
   it("starts empty with no score, or with a DNF or DQ result", () => {
     expect(draftFromScore(null, stage)).toEqual(emptyDraft(stage));
-    expect(draftFromScore({ ...saved, status: "dnf" }, stage)).toEqual(emptyDraft(stage));
-    expect(draftFromScore({ ...saved, status: "dq" }, stage)).toEqual(emptyDraft(stage));
+    expect(draftFromScore(dnfResult({ stageId: saved.stageId, shooterId: saved.shooterId }), stage)).toEqual(
+      emptyDraft(stage),
+    );
+    expect(draftFromScore(dqResult({ stageId: saved.stageId, shooterId: saved.shooterId }), stage)).toEqual(
+      emptyDraft(stage),
+    );
   });
 
-  it("keeps an empty time empty", () => {
-    expect(draftFromScore({ ...saved, timeSec: null }, stage).timeDigits).toBe("");
+  it("shows no time digits for a time of 0", () => {
+    expect(draftFromScore({ ...saved, timeSec: 0 }, stage).timeDigits).toBe("");
   });
 });
 
@@ -219,7 +224,7 @@ describe("hits per paper target set by the stage", () => {
 
   it("a saved score with more hits than the stage asks for is trimmed to the most recent ones", () => {
     const oneHit = { paperTargets: 2, hitsPerPaperTarget: 1 as const, steelTargets: 0, noShootTargets: 0 };
-    const saved: StageScore = {
+    const saved: ScoredStageScore = {
       id: "st:sh",
       matchId: "m",
       stageId: "st",

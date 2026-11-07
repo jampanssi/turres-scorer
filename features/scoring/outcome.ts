@@ -1,5 +1,5 @@
-import { scoreId } from "@/shared/data/repository";
-import type { DnfReason, DqReason, StageScore } from "@/shared/domain/types";
+import { scoreId } from "@/shared/domain/ids";
+import type { DnfReason, DnfStageScore, DqReason, DqStageScore, StageScore } from "@/shared/domain/types";
 
 interface BuildDnfInput {
   matchId: string;
@@ -15,10 +15,18 @@ interface BuildDnfInput {
 }
 
 /**
- * A DNF (did not finish) for one stage. It is a saved result with no time and no hits: whatever was
- * entered or saved on this stage before is discarded. There is no shooter sign-off for a DNF.
+ * A DNF (did not finish) for one stage. The result has no time and no hits: whatever was entered or
+ * saved on this stage before is replaced and discarded.
  */
-export function buildDnfScore({ matchId, stageId, shooterId, roId, reason, now, existing }: BuildDnfInput): StageScore {
+export function buildDnfScore({
+  matchId,
+  stageId,
+  shooterId,
+  roId,
+  reason,
+  now,
+  existing,
+}: BuildDnfInput): DnfStageScore {
   return {
     id: scoreId(stageId, shooterId),
     matchId,
@@ -26,13 +34,7 @@ export function buildDnfScore({ matchId, stageId, shooterId, roId, reason, now, 
     shooterId,
     roId,
     status: "dnf",
-    timeSec: null,
-    paper: [],
-    steel: [],
-    noShoots: 0,
-    procedurals: 0,
     dnfReason: reason,
-    shooterAccepted: false,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   };
@@ -54,9 +56,9 @@ interface BuildDqInput {
 }
 
 /**
- * A disqualification, recorded on the stage where it happens. Like a DNF it carries no time or hits
- * and has no shooter sign-off. A DQ removes the shooter from the rest of the match: see
- * `disqualifiedShooterIds` (shared/domain), which the lists use to show them last and unselectable.
+ * A disqualification, recorded on the stage where it happens. Like a DNF it has no time or hits.
+ * A DQ removes the shooter from the rest of the match: see shared/domain/progress.ts, which the
+ * lists use to show them last and unselectable.
  */
 export function buildDqScore({
   matchId,
@@ -67,7 +69,7 @@ export function buildDqScore({
   note,
   now,
   existing,
-}: BuildDqInput): StageScore {
+}: BuildDqInput): DqStageScore {
   const trimmed = note?.trim();
   return {
     id: scoreId(stageId, shooterId),
@@ -76,14 +78,8 @@ export function buildDqScore({
     shooterId,
     roId,
     status: "dq",
-    timeSec: null,
-    paper: [],
-    steel: [],
-    noShoots: 0,
-    procedurals: 0,
     dqReason: reason,
     ...(trimmed ? { note: trimmed } : {}),
-    shooterAccepted: false,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   };

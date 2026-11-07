@@ -1,31 +1,19 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { StageScore } from "@/shared/domain/types";
+import { scoredResult } from "@/shared/domain/test-fixtures";
+import type { ScoredStageScore, StageScore } from "@/shared/domain/types";
 import { buildMockCatalog } from "./mock";
 import { createCatalogRepository } from "./mock-repository";
-import { type Repository, scoreId } from "./repository";
+import { type Repository } from "./repository";
 import { createMemoryScoreStore } from "./score-store";
 
 const MATCH = "autumn-2026";
 
-function makeScore(stageId: string, shooterId: string, overrides: Partial<StageScore> = {}): StageScore {
-  return {
-    id: scoreId(stageId, shooterId),
-    matchId: MATCH,
-    stageId,
-    shooterId,
-    roId: "ro-1",
-    status: "scored",
-    timeSec: 8.42,
-    paper: [["A", "A"]],
-    steel: ["A"],
-    noShoots: 0,
-    procedurals: 0,
-    shooterAccepted: true,
-    createdAt: "2026-11-07T10:00:00Z",
-    updatedAt: "2026-11-07T10:00:00Z",
-    ...overrides,
-  };
+function makeScore(stageId: string, shooterId: string, overrides: Partial<ScoredStageScore> = {}): StageScore {
+  return scoredResult({ stageId, shooterId, matchId: MATCH, timeSec: 8.42, ...overrides });
 }
+
+/** The time of a scored result (DNF and DQ have none). */
+const timeOf = (score: StageScore | null) => (score?.status === "scored" ? score.timeSec : undefined);
 
 describe("mock catalog", () => {
   const catalog = buildMockCatalog();
@@ -107,10 +95,10 @@ describe("repository", () => {
     expect(await repo.getScore(stageId, shooterId)).toBeNull();
 
     await repo.saveScore(makeScore(stageId, shooterId));
-    expect((await repo.getScore(stageId, shooterId))?.timeSec).toBe(8.42);
+    expect(timeOf(await repo.getScore(stageId, shooterId))).toBe(8.42);
 
     await repo.saveScore(makeScore(stageId, shooterId, { timeSec: 7.9 }));
-    expect((await repo.getScore(stageId, shooterId))?.timeSec).toBe(7.9);
+    expect(timeOf(await repo.getScore(stageId, shooterId))).toBe(7.9);
     expect(await repo.listScores(MATCH)).toHaveLength(1);
   });
 

@@ -3,30 +3,16 @@ import { buildMockCatalog } from "@/shared/data/mock";
 import { createCatalogRepository } from "@/shared/data/mock-repository";
 import { buildMockScores } from "@/shared/data/mock-scores";
 import { createMemoryScoreStore } from "@/shared/data/score-store";
-import type { Shooter, StageScore } from "@/shared/domain/types";
+import { dnfResult, dqResult, scoredResult } from "@/shared/domain/test-fixtures";
+import type { ScoredStageScore, Shooter } from "@/shared/domain/types";
 import { buildShooterRows, loadShootersOverview } from "./rows";
 
 const shooters: Shooter[] = [1, 2, 3, 4, 5].map((n) => ({ id: `s${n}`, name: `Shooter ${n}`, competitorNumber: n }));
 
-function result(shooterId: string, overrides: Partial<StageScore> = {}): StageScore {
-  return {
-    id: `st:${shooterId}`,
-    matchId: "m",
-    stageId: "st",
-    shooterId,
-    roId: "ro",
-    status: "scored",
-    timeSec: 10,
-    paper: [["A", "A"]],
-    steel: ["A"],
-    noShoots: 0,
-    procedurals: 0,
-    shooterAccepted: true,
-    createdAt: "",
-    updatedAt: "",
-    ...overrides,
-  };
-}
+const result = (shooterId: string, overrides: Partial<ScoredStageScore> = {}) =>
+  scoredResult({ stageId: "st", shooterId, ...overrides });
+const dnf = (shooterId: string) => dnfResult({ stageId: "st", shooterId });
+const dq = (shooterId: string) => dqResult({ stageId: "st", shooterId });
 
 const states = (rows: ReturnType<typeof buildShooterRows>) => rows.map((r) => r.state);
 
@@ -67,13 +53,13 @@ describe("buildShooterRows", () => {
   });
 
   it("shows a DNF in place, as a result", () => {
-    const rows = buildShooterRows(shooters, [result("s1", { status: "dnf" })]);
+    const rows = buildShooterRows(shooters, [dnf("s1")]);
     expect(states(rows)).toEqual(["dnf", "shooting", "onDeck", "waiting", "waiting"]);
     expect(rows[0].hitFactor).toBeNull();
   });
 
   it("moves a shooter with a DQ result to the end, without an order number", () => {
-    const rows = buildShooterRows(shooters, [result("s2", { status: "dq" })]);
+    const rows = buildShooterRows(shooters, [dq("s2")]);
     expect(rows.map((r) => r.shooter.id)).toEqual(["s1", "s3", "s4", "s5", "s2"]);
     expect(states(rows)).toEqual(["shooting", "onDeck", "waiting", "waiting", "dq"]);
     expect(rows.map((r) => r.order)).toEqual([1, 2, 3, 4, null]);
@@ -96,7 +82,7 @@ describe("buildShooterRows", () => {
   });
 
   it("gives a hit factor of 0 when the time is missing", () => {
-    expect(buildShooterRows(shooters, [result("s1", { timeSec: null })])[0].hitFactor).toBe(0);
+    expect(buildShooterRows(shooters, [result("s1", { timeSec: 0 })])[0].hitFactor).toBe(0);
   });
 
   it("numbers rows from 1 in the given order", () => {

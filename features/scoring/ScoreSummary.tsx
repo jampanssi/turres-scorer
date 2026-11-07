@@ -7,7 +7,7 @@ import { cx } from "@/shared/ui/cx";
 import type { ScoreDraft } from "./draft";
 import { paperRemaining, steelRemaining } from "./entry";
 import type { ReviewSummary } from "./review";
-import type { Totals } from "./rules";
+import type { Totals } from "@/shared/domain/scoring";
 
 const CODES: Array<keyof Totals> = ["A", "C", "D", "M", "NS", "PE"];
 const PENALTY_CODES = new Set<keyof Totals>(["M", "NS", "PE"]);

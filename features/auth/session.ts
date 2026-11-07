@@ -1,3 +1,6 @@
+import { createPersistedStore } from "@/shared/lib/persisted-store";
+import { STORAGE } from "@/shared/lib/storage-keys";
+
 /**
  * Mock session until the auth provider is decided (see docs/PLAN.md open questions).
  * Any valid-looking email and any password signs in; the session lives in localStorage
@@ -11,10 +14,7 @@ export interface Session {
   initials: string;
 }
 
-const KEY = "turres-scorer.session";
-export const SESSION_CHANGE_EVENT = "turres-scorer:session";
-
-let memoryRaw: string | null = null;
+const store = createPersistedStore(STORAGE.session);
 
 export function initialsOf(email: string): string {
   const local = email.split("@")[0] ?? "";
@@ -32,23 +32,13 @@ export async function signIn(email: string, password: string): Promise<SignInRes
   if (!/^\S+@\S+\.\S+$/.test(trimmed)) return { ok: false, error: "invalidEmail" };
   if (password.length === 0) return { ok: false, error: "missingPassword" };
   const session: Session = { email: trimmed, initials: initialsOf(trimmed) };
-  memoryRaw = JSON.stringify(session);
-  try {
-    localStorage.setItem(KEY, memoryRaw);
-  } catch {
-    // Storage can be blocked (private mode); the in-memory copy keeps this page load signed in.
-  }
-  window.dispatchEvent(new Event(SESSION_CHANGE_EVENT));
+  store.write(JSON.stringify(session));
   return { ok: true, session };
 }
 
 /** The stored session as a raw string (a stable primitive, safe for useSyncExternalStore), or null. */
 export function readSessionRaw(): string | null {
-  try {
-    return localStorage.getItem(KEY) ?? memoryRaw;
-  } catch {
-    return memoryRaw;
-  }
+  return store.read();
 }
 
 export function parseSession(raw: string | null): Session | null {
@@ -64,20 +54,9 @@ export function parseSession(raw: string | null): Session | null {
 }
 
 export function subscribeSession(onChange: () => void): () => void {
-  window.addEventListener(SESSION_CHANGE_EVENT, onChange);
-  window.addEventListener("storage", onChange);
-  return () => {
-    window.removeEventListener(SESSION_CHANGE_EVENT, onChange);
-    window.removeEventListener("storage", onChange);
-  };
+  return store.subscribe(onChange);
 }
 
 export function signOut(): void {
-  memoryRaw = null;
-  try {
-    localStorage.removeItem(KEY);
-  } catch {
-    // ignore
-  }
-  window.dispatchEvent(new Event(SESSION_CHANGE_EVENT));
+  store.remove();
 }

@@ -42,7 +42,7 @@ app/
   matches/[matchId]/...            squads, stages, shooters, score (+ sheets)
   api/                             SSI phase only
 features/
-  scoring/    ScoreMatrix, MatrixRow, ScoreBar, ReviewSheet, ConfirmDQ/DNFSheet, rules.ts, entry.ts, tests
+  scoring/    ScoreMatrix, ScoreBar, ReviewSheet, ConfirmDQ/DNFSheet, entry.ts, draft.ts, tests
   matches/    MatchCard, SquadList, StageList, ShooterList
   auth/       sign-in form, session hook
   (registration/ later)
@@ -78,7 +78,7 @@ integrations/
 Behaviour-preserving, one commit per phase, all checks green after each:
 
 - [x] Phase 0: safety net. Prettier, CI, ESLint import boundaries, `app/error.tsx`, `app/not-found.tsx`, page titles
-- [ ] Phase 1: domain consolidation. Scoring rules to `shared/domain`, one `progress` module for the scored/DQ rules, `StageResult` union, one persisted-store helper
+- [x] Phase 1: domain consolidation. Scoring rules in `shared/domain/scoring.ts`, one `shared/domain/progress.ts` for the scored/DQ rules, `StageScore` as a scored/DNF/DQ union, `createPersistedStore` for theme, language and session
 - [ ] Phase 2: data access. `useRepoQuery` with invalidation, repository factory (mock only when configured), injected clock
 - [ ] Phase 3: screen structure. `(app)` route group with one session gate, `features/shell/Screen`, split `ScoringScreen`
 - [ ] Phase 4: base UI components. Card, form fields, IconButton, native-dialog sheet, Popover, one Confirm sheet for DNF and DQ, tokens

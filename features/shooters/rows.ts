@@ -1,6 +1,6 @@
-import { hitFactor, pointsOf, totalsOf } from "@/features/scoring/rules";
+import { hitFactor, pointsOf, totalsOf } from "@/shared/domain/scoring";
 import type { Repository } from "@/shared/data/repository";
-import { disqualifiedShooterIds } from "@/shared/domain/disqualified";
+import { indexResults, stageProgress } from "@/shared/domain/progress";
 import type { Shooter, Squad, Stage, StageScore } from "@/shared/domain/types";
 
 /**
@@ -29,7 +29,7 @@ export interface ShooterRowData {
 export function buildShooterRows(
   shooters: Shooter[],
   scores: StageScore[],
-  disqualified: Set<string> = new Set(),
+  disqualified: ReadonlySet<string> = new Set(),
 ): ShooterRowData[] {
   const byShooter = new Map(scores.map((s) => [s.shooterId, s]));
   const isDisqualified = (shooter: Shooter) =>
@@ -44,7 +44,8 @@ export function buildShooterRows(
     const result = byShooter.get(shooter.id);
 
     if (result) {
-      if (result.status === "dnf") return { ...base, state: "dnf", hitFactor: null };
+      // A DQ never gets here (it is split out above), so a result without hits is a DNF.
+      if (result.status !== "scored") return { ...base, state: "dnf", hitFactor: null };
       return {
         ...base,
         state: "scored",
@@ -91,16 +92,8 @@ export async function loadShootersOverview(
 
   const [shooters, matchScores] = await Promise.all([repo.listShooters(squadId), repo.listScores(matchId)]);
   const stageScores = matchScores.filter((s) => s.stageId === stageId);
-  const disqualified = disqualifiedShooterIds(matchScores);
-  const rows = buildShooterRows(shooters, stageScores, disqualified);
-
-  const hasResult = new Set(stageScores.map((s) => s.shooterId));
-  const expected = shooters.filter((s) => !disqualified.has(s.id) || hasResult.has(s.id));
-  return {
-    squad,
-    stage,
-    rows,
-    scoredCount: expected.filter((s) => hasResult.has(s.id)).length,
-    totalCount: expected.length,
-  };
+  const index = indexResults(matchScores);
+  const rows = buildShooterRows(shooters, stageScores, index.disqualified);
+  const progress = stageProgress(stageId, squad.shooterIds, index);
+  return { squad, stage, rows, scoredCount: progress.scored, totalCount: progress.total };
 }

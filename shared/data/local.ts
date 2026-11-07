@@ -1,9 +1,10 @@
+import { INDEXED_DB_NAME } from "@/shared/lib/storage-keys";
 import type { StageScore } from "@/shared/domain/types";
 import type { ScoreStore } from "./score-store";
 
 /** IndexedDB-backed ScoreStore. Browser only: call from effects or event handlers, never during render on the server. */
 
-const DB_NAME = "turres-scorer";
+const DB_NAME = INDEXED_DB_NAME;
 const DB_VERSION = 1;
 const STORE = "scores";
 

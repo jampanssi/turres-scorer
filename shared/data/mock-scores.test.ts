@@ -3,6 +3,7 @@ import { buildMockCatalog } from "./mock";
 import { createCatalogRepository } from "./mock-repository";
 import { buildMockScores } from "./mock-scores";
 import { createMemoryScoreStore } from "./score-store";
+import type { ScoredStageScore } from "@/shared/domain/types";
 
 const catalog = buildMockCatalog();
 const scores = buildMockScores(catalog);
@@ -48,10 +49,11 @@ describe("mock scores", () => {
     expect(scores).toHaveLength(151); // squad 3 has one result fewer: its DQ'd shooter is out after stage 2
   });
 
-  it("includes one DNF without hits", () => {
+  it("includes one DNF, which has a reason but no time or hits", () => {
     const dnf = scores.filter((s) => s.status === "dnf");
     expect(dnf).toHaveLength(1);
-    expect(dnf[0]).toMatchObject({ timeSec: null, paper: [], dnfReason: "equipment_failure" });
+    expect(dnf[0]).toMatchObject({ dnfReason: "equipment_failure" });
+    expect("timeSec" in dnf[0] || "paper" in dnf[0]).toBe(false);
   });
 });
 
@@ -61,11 +63,12 @@ describe("repository with seed scores", () => {
     expect(await repo.listScores("autumn-2026")).toHaveLength(151);
     expect(await repo.listScores("club-night-11")).toHaveLength(0);
 
-    const seed = scores[0];
+    const seed = scores.find((s): s is ScoredStageScore => s.status === "scored")!;
     expect((await repo.getScore(seed.stageId, seed.shooterId))?.id).toBe(seed.id);
 
     await repo.saveScore({ ...seed, timeSec: 1.23 });
-    expect((await repo.getScore(seed.stageId, seed.shooterId))?.timeSec).toBe(1.23);
+    const saved = await repo.getScore(seed.stageId, seed.shooterId);
+    expect(saved?.status === "scored" && saved.timeSec).toBe(1.23);
     expect(await repo.listScores("autumn-2026")).toHaveLength(151);
   });
 });
@@ -74,7 +77,8 @@ describe("sample DQ", () => {
   it("has one disqualified shooter with no results after the DQ stage", () => {
     const dq = scores.filter((s) => s.status === "dq");
     expect(dq).toHaveLength(1);
-    expect(dq[0]).toMatchObject({ timeSec: null, paper: [], dqReason: "unsafe_handling" });
+    expect(dq[0]).toMatchObject({ dqReason: "unsafe_handling" });
+    expect("timeSec" in dq[0] || "paper" in dq[0]).toBe(false);
 
     const squad = catalog.squads.find((s) => s.shooterIds.includes(dq[0].shooterId))!;
     const dqStageIndex = squad.stageRotation.indexOf(dq[0].stageId);

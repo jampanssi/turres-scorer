@@ -3,29 +3,26 @@ import { buildMockCatalog } from "@/shared/data/mock";
 import { createCatalogRepository } from "@/shared/data/mock-repository";
 import { createMemoryScoreStore } from "@/shared/data/score-store";
 import { disqualifiedShooterIds } from "@/shared/domain/disqualified";
+import { scoredResult } from "@/shared/domain/test-fixtures";
 import { DNF_REASONS, DQ_REASONS, type StageScore } from "@/shared/domain/types";
 import { buildDnfScore, buildDqScore } from "./outcome";
 
 const base = { matchId: "m", stageId: "st", shooterId: "sh", roId: "ro@example.fi", now: "2026-11-07T10:00:00.000Z" };
 
 describe("buildDnfScore", () => {
-  it("is a result with no time and no hits, and the chosen reason", () => {
+  it("is a result with only the chosen reason: no time, no hits", () => {
     const score = buildDnfScore({ ...base, reason: "injury", existing: null });
-    expect(score).toMatchObject({
+    expect(score).toEqual({
       id: "st:sh",
+      matchId: "m",
+      stageId: "st",
+      shooterId: "sh",
+      roId: "ro@example.fi",
       status: "dnf",
       dnfReason: "injury",
-      timeSec: null,
-      paper: [],
-      steel: [],
-      noShoots: 0,
-      procedurals: 0,
-      roId: "ro@example.fi",
-      shooterAccepted: false,
       createdAt: base.now,
       updatedAt: base.now,
     });
-    expect(score.dqReason).toBeUndefined();
   });
 
   it("accepts every DNF reason", () => {
@@ -44,39 +41,31 @@ describe("buildDnfScore", () => {
     const repo = createCatalogRepository(catalog, createMemoryScoreStore());
     const stageId = "autumn-2026-st3";
     const shooterId = "autumn-2026-sh10";
-    await repo.saveScore({
-      ...buildDnfScore({ ...base, matchId: "autumn-2026", stageId, shooterId, reason: "injury", existing: null }),
-      status: "scored",
-      timeSec: 8.42,
-      paper: [["A", "A"]],
-      dnfReason: undefined,
-    });
+    await repo.saveScore(scoredResult({ matchId: "autumn-2026", stageId, shooterId, timeSec: 8.42 }));
+    expect((await repo.getScore(stageId, shooterId))?.status).toBe("scored");
     await repo.saveScore(
       buildDnfScore({ ...base, matchId: "autumn-2026", stageId, shooterId, reason: "injury", existing: null }),
     );
     const saved = (await repo.getScore(stageId, shooterId))!;
-    expect(saved).toMatchObject({ status: "dnf", timeSec: null, paper: [] });
+    expect(saved).toMatchObject({ status: "dnf", dnfReason: "injury" });
+    expect("paper" in saved || "timeSec" in saved).toBe(false);
   });
 });
 
 describe("buildDqScore", () => {
   it("is a result with no time and no hits, and the chosen reason", () => {
     const score = buildDqScore({ ...base, reason: "unsafe_handling", existing: null });
-    expect(score).toMatchObject({
+    expect(score).toEqual({
       id: "st:sh",
+      matchId: "m",
+      stageId: "st",
+      shooterId: "sh",
+      roId: "ro@example.fi",
       status: "dq",
       dqReason: "unsafe_handling",
-      timeSec: null,
-      paper: [],
-      steel: [],
-      noShoots: 0,
-      procedurals: 0,
-      roId: "ro@example.fi",
-      shooterAccepted: false,
       createdAt: base.now,
       updatedAt: base.now,
     });
-    expect(score.dnfReason).toBeUndefined();
   });
 
   it("accepts every DQ reason", () => {

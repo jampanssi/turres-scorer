@@ -1,3 +1,4 @@
+import { scoreId } from "@/shared/domain/ids";
 import type { StageScore } from "@/shared/domain/types";
 import type { Repository } from "./repository";
 import type { Catalog } from "./mock";
@@ -55,7 +56,7 @@ export function createCatalogRepository(
       return filter?.stageId ? all.filter((s) => s.stageId === filter.stageId) : all;
     },
     async getScore(stageId, shooterId) {
-      const id = `${stageId}:${shooterId}`;
+      const id = scoreId(stageId, shooterId);
       return (await scores.get(id)) ?? seeds.get(id) ?? null;
     },
     async saveScore(score) {

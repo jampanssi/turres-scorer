@@ -16,11 +16,9 @@ const FEATURES = ["auth", "matches", "squads", "stages", "shooters", "scoring"];
 /**
  * Temporary exceptions, removed as the refactoring lands (docs/PLAN.md):
  * - every feature may import features/auth (the session guard and UserMenu move to features/shell)
- * - shooters may import the pure scoring rules (they move to shared/domain)
+ * Format: { feature: ["otherFeature/module"] }; none left besides auth.
  */
-const TEMPORARY_EXCEPTIONS = {
-  shooters: ["scoring/rules"],
-};
+const TEMPORARY_EXCEPTIONS = {};
 
 function featureRestrictions(name) {
   const others = FEATURES.filter((feature) => feature !== name && feature !== "auth");

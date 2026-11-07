@@ -3,6 +3,7 @@ import { buildMockCatalog } from "@/shared/data/mock";
 import { createCatalogRepository } from "@/shared/data/mock-repository";
 import { buildMockScores } from "@/shared/data/mock-scores";
 import { createMemoryScoreStore } from "@/shared/data/score-store";
+import { createResultIndex } from "@/shared/domain/progress";
 import { loadStagesOverview, summarizeStage } from "./summary";
 
 const catalog = buildMockCatalog();
@@ -15,18 +16,30 @@ describe("summarizeStage", () => {
   const key = (shooterId: string) => `${stage.id}:${shooterId}`;
 
   it("is not started with no results", () => {
-    expect(summarizeStage(stage, squad2, new Set())).toMatchObject({ scored: 0, total: 8, status: "notStarted" });
+    expect(summarizeStage(stage, squad2, createResultIndex([]))).toMatchObject({
+      scored: 0,
+      total: 8,
+      status: "notStarted",
+    });
   });
   it("is in progress while some shooters are missing", () => {
     const scored = new Set(squad2.shooterIds.slice(0, 3).map(key));
-    expect(summarizeStage(stage, squad2, scored)).toMatchObject({ scored: 3, total: 8, status: "inProgress" });
+    expect(summarizeStage(stage, squad2, createResultIndex(scored))).toMatchObject({
+      scored: 3,
+      total: 8,
+      status: "inProgress",
+    });
   });
   it("is done when every shooter has a result", () => {
     const scored = new Set(squad2.shooterIds.map(key));
-    expect(summarizeStage(stage, squad2, scored)).toMatchObject({ scored: 8, total: 8, status: "done" });
+    expect(summarizeStage(stage, squad2, createResultIndex(scored))).toMatchObject({
+      scored: 8,
+      total: 8,
+      status: "done",
+    });
   });
   it("ignores results of other shooters", () => {
-    expect(summarizeStage(stage, squad2, new Set([key("someone-else")])).scored).toBe(0);
+    expect(summarizeStage(stage, squad2, createResultIndex([key("someone-else")])).scored).toBe(0);
   });
 });
 
@@ -56,12 +69,12 @@ describe("summarizeStage with a disqualified shooter", () => {
 
   it("does not wait for a disqualified shooter: the stage can be done without them", () => {
     const [out, ...rest] = squad.shooterIds;
-    const summary = summarizeStage(stage, squad, new Set(rest.map(key)), new Set([out]));
+    const summary = summarizeStage(stage, squad, createResultIndex(rest.map(key), [out]));
     expect(summary).toMatchObject({ scored: 7, total: 7, status: "done" });
   });
 
   it("counts a disqualified shooter's own result as scored, on the stage where they have one", () => {
-    const summary = summarizeStage(stage, squad, new Set(squad.shooterIds.map(key)), new Set([squad.shooterIds[0]]));
+    const summary = summarizeStage(stage, squad, createResultIndex(squad.shooterIds.map(key), [squad.shooterIds[0]]));
     expect(summary).toMatchObject({ scored: 8, total: 8, status: "done" });
   });
 });

@@ -49,25 +49,49 @@ export interface Shooter {
   competitorNumber: number;
 }
 
-export interface StageScore {
+/** Fields every saved result has, whatever its outcome. */
+interface StageScoreBase {
   id: string;
   matchId: string;
   stageId: string;
   shooterId: string;
   roId: string;
-  status: "scored" | "dnf" | "dq";
-  timeSec: number | null;
+  note?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** A shot stage: time and hits. Only a scored result carries them. */
+export interface ScoredStageScore extends StageScoreBase {
+  status: "scored";
+  /** Seconds, always above 0: a result cannot be saved without a time. */
+  timeSec: number;
   /** One array per paper target; each has at most the stage's hitsPerPaperTarget hits, in tap order. */
   paper: HitCode[][];
   /** One entry per steel target. */
   steel: SteelHit[];
   noShoots: number;
   procedurals: number;
-  /** Stable codes, shown through messages `reason.dnf.<code>` / `reason.dq.<code>`. */
-  dnfReason?: DnfReason;
-  dqReason?: DqReason;
-  note?: string;
+  /** The shooter accepted the reviewed score. */
   shooterAccepted: boolean;
-  createdAt: string;
-  updatedAt: string;
 }
+
+/** Did not finish the stage. No time, no hits. */
+export interface DnfStageScore extends StageScoreBase {
+  status: "dnf";
+  /** Stable code, shown through the message `reason.dnf.<code>`. */
+  dnfReason: DnfReason;
+}
+
+/** Disqualified. Lasts for the rest of the match (see shared/domain/progress.ts). No time, no hits. */
+export interface DqStageScore extends StageScoreBase {
+  status: "dq";
+  /** Stable code, shown through the message `reason.dq.<code>`. */
+  dqReason: DqReason;
+}
+
+/**
+ * One saved result of one shooter on one stage. Switch on `status` to get the fields that belong to
+ * it: a DNF or DQ cannot have hits, and a scored result always has a time.
+ */
+export type StageScore = ScoredStageScore | DnfStageScore | DqStageScore;

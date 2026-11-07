@@ -1,6 +1,6 @@
 "use client";
 
-import type { Stage, StageScore } from "@/shared/domain/types";
+import type { DnfStageScore, DqStageScore, Stage, StageScore } from "@/shared/domain/types";
 import { useT } from "@/shared/i18n/useT";
 import { Button } from "@/shared/ui/Button";
 import { draftFromScore } from "./draft";
@@ -46,12 +46,14 @@ export function ScoreReadOnly({ existing, stage, onEdit }: ScoreReadOnlyProps) {
 }
 
 /** A saved DNF (or DQ): the outcome, the reason and the note. These results have no time or hits. */
-function Outcome({ existing }: { existing: StageScore }) {
+function Outcome({ existing }: { existing: DnfStageScore | DqStageScore }) {
   const { t } = useT();
   const disqualified = existing.status === "dq";
-  const reason = disqualified
-    ? existing.dqReason && t(`reason.dq.${existing.dqReason}` as const)
-    : existing.dnfReason && t(`reason.dnf.${existing.dnfReason}` as const);
+  const reason = t(
+    existing.status === "dq"
+      ? (`reason.dq.${existing.dqReason}` as const)
+      : (`reason.dnf.${existing.dnfReason}` as const),
+  );
 
   return (
     <>
@@ -61,11 +63,9 @@ function Outcome({ existing }: { existing: StageScore }) {
           {t(disqualified ? "shooters.status.dq" : "shooters.status.dnf")}
         </span>
       </div>
-      {reason && (
-        <SummaryCard title={t(disqualified ? "dq.reason" : "dnf.reason")}>
-          <p className="text-base">{reason}</p>
-        </SummaryCard>
-      )}
+      <SummaryCard title={t(disqualified ? "dq.reason" : "dnf.reason")}>
+        <p className="text-base">{reason}</p>
+      </SummaryCard>
       {existing.note && (
         <SummaryCard title={t("dq.note")}>
           <p className="whitespace-pre-wrap text-base">{existing.note}</p>

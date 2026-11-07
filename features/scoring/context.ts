@@ -1,5 +1,5 @@
 import type { Repository } from "@/shared/data/repository";
-import { disqualifiedShooterIds } from "@/shared/domain/disqualified";
+import { indexResults } from "@/shared/domain/progress";
 import type { Shooter, Squad, Stage, StageScore } from "@/shared/domain/types";
 
 export interface ScoringContext {
@@ -32,5 +32,5 @@ export async function loadScoringContext(
   if (squad.matchId !== matchId || stage.matchId !== matchId || !squad.shooterIds.includes(shooterId)) return null;
 
   const [existing, matchScores] = await Promise.all([repo.getScore(stageId, shooterId), repo.listScores(matchId)]);
-  return { squad, stage, shooter, existing, disqualified: disqualifiedShooterIds(matchScores).has(shooterId) };
+  return { squad, stage, shooter, existing, disqualified: indexResults(matchScores).disqualified.has(shooterId) };
 }

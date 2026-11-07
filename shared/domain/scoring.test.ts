@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codePoints, hitFactor, maxNoShoots, maxProcedurals, pointsOf, totalsOf } from "./rules";
+import { codePoints, hitFactor, maxNoShoots, maxProcedurals, pointsOf, totalsOf } from "./scoring";
 
 describe("points", () => {
   it("scores A=5, C=3, D=1", () => {

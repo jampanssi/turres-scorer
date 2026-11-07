@@ -1,6 +1,6 @@
 import type { HitCode, Stage, StageScore, SteelHit } from "@/shared/domain/types";
 import { addPaperHit, setSteelHit, undoPaperHit, undoSteelHit } from "./entry";
-import { maxNoShoots, maxProcedurals } from "./rules";
+import { maxNoShoots, maxProcedurals } from "@/shared/domain/scoring";
 
 /**
  * The score being entered on the Scoring screen, before it is reviewed and saved.

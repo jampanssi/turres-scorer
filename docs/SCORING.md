@@ -71,18 +71,23 @@ interface Squad   { id: string; matchId: string; number: number; shooterIds: str
                     stageRotation: string[]; }
 interface Shooter { id: string; name: string; competitorNumber: number; }
 
-interface StageScore {
-  id: string; matchId: string; stageId: string; shooterId: string; roId: string;
-  status: 'scored' | 'dnf' | 'dq';
-  timeSec: number | null;
+// One saved result of one shooter on one stage. Switch on `status`.
+interface ResultBase { id: string; matchId: string; stageId: string; shooterId: string; roId: string;
+                       note?: string; createdAt: string; updatedAt: string; }
+
+interface ScoredStageScore extends ResultBase {
+  status: 'scored';
+  timeSec: number;             // always above 0: a result cannot be saved without a time
   paper: HitCode[][];          // one array per paper target, at most hitsPerPaperTarget hits, order = tap order
   steel: ('A' | 'M' | null)[]; // one per steel target
   noShoots: number;
   procedurals: number;
-  dnfReason?: string; dqReason?: string; note?: string;
   shooterAccepted: boolean;
-  createdAt: string; updatedAt: string;
 }
+interface DnfStageScore extends ResultBase { status: 'dnf'; dnfReason: DnfReason }  // no time, no hits
+interface DqStageScore  extends ResultBase { status: 'dq';  dqReason: DqReason }   // no time, no hits
+
+type StageScore = ScoredStageScore | DnfStageScore | DqStageScore;
 ```
 
 Derived, never stored as source of truth: points, HF, totals per code, row completeness, stage/squad progress ("2 / 6 stages done", "3 / 8 scored").

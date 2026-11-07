@@ -24,8 +24,3 @@ export interface Repository {
   /** Insert or replace the score of one shooter on one stage. */
   saveScore(score: StageScore): Promise<void>;
 }
-
-/** One score per shooter per stage, so the id is derived from both. */
-export function scoreId(stageId: string, shooterId: string): string {
-  return `${stageId}:${shooterId}`;
-}
