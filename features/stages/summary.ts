@@ -1,11 +1,12 @@
 import type { Repository } from "@/shared/data/repository";
+import { disqualifiedShooterIds } from "@/shared/domain/disqualified";
 import type { Squad, Stage } from "@/shared/domain/types";
 
 export type StageStatus = "done" | "inProgress" | "notStarted";
 
 export interface StageSummary {
   stage: Stage;
-  /** Shooters of the squad with a saved result on this stage (scored, DNF or DQ). */
+  /** Expected shooters with a saved result on this stage (scored, DNF or DQ). */
   scored: number;
   total: number;
   status: StageStatus;
@@ -14,10 +15,19 @@ export interface StageSummary {
 /**
  * Progress of one stage for one squad: done = every shooter has a result, inProgress = some,
  * notStarted = none. `scoredKeys` holds `${stageId}:${shooterId}` keys of saved results.
+ * A shooter disqualified from the match is only counted on stages where they have a result (the stage
+ * of the DQ itself counts as scored); on later stages they are out of the match and not waited for.
  */
-export function summarizeStage(stage: Stage, squad: Squad, scoredKeys: Set<string>): StageSummary {
-  const total = squad.shooterIds.length;
-  const scored = squad.shooterIds.filter((id) => scoredKeys.has(`${stage.id}:${id}`)).length;
+export function summarizeStage(
+  stage: Stage,
+  squad: Squad,
+  scoredKeys: Set<string>,
+  disqualified: Set<string> = new Set(),
+): StageSummary {
+  const hasResult = (id: string) => scoredKeys.has(`${stage.id}:${id}`);
+  const expected = squad.shooterIds.filter((id) => !disqualified.has(id) || hasResult(id));
+  const total = expected.length;
+  const scored = expected.filter(hasResult).length;
   const status: StageStatus = total > 0 && scored === total ? "done" : scored > 0 ? "inProgress" : "notStarted";
   return { stage, scored, total, status };
 }
@@ -39,7 +49,8 @@ export async function loadStagesOverview(
 
   const [stageList, scores] = await Promise.all([repo.listStages(matchId), repo.listScores(matchId)]);
   const scoredKeys = new Set(scores.map((s) => `${s.stageId}:${s.shooterId}`));
-  const stages = stageList.map((stage) => summarizeStage(stage, squad, scoredKeys));
+  const disqualified = disqualifiedShooterIds(scores);
+  const stages = stageList.map((stage) => summarizeStage(stage, squad, scoredKeys, disqualified));
 
   return { squad, stages, stagesDone: stages.filter((s) => s.status === "done").length };
 }

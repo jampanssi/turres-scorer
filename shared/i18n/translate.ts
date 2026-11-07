@@ -48,3 +48,6 @@ export function translateKey(locale: Locale, key: string, params?: Params, catal
     params && name in params ? String(params[name]) : placeholder,
   );
 }
+
+/** The `t` function returned by useT(), for helpers that format text. */
+export type TFn = (key: MessageKey | PluralKey, params?: Params) => string;

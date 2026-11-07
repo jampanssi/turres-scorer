@@ -1,4 +1,5 @@
 import type { Repository } from "@/shared/data/repository";
+import { disqualifiedShooterIds } from "@/shared/domain/disqualified";
 import type { Match } from "@/shared/domain/types";
 
 export type MatchTab = "open" | "results";
@@ -10,7 +11,7 @@ export interface MatchSummary {
   shooters: number;
   /** Saved results (scored, DNF or DQ). */
   scored: number;
-  /** Every shooter on every stage. */
+  /** Every shooter on every stage they are still expected on (after a DQ, the later stages drop out). */
   totalScores: number;
 }
 
@@ -24,13 +25,21 @@ export async function loadMatchSummaries(repo: Repository): Promise<MatchSummary
         repo.listScores(match.id),
       ]);
       const shooters = squads.reduce((sum, squad) => sum + squad.shooterIds.length, 0);
+      // A disqualified shooter is out of the match: every result they have counts (the DQ stage
+      // included), but the stages after the DQ are not expected, so they leave the total.
+      const disqualified = disqualifiedShooterIds(scores);
+      const disqualifiedCount = squads.reduce(
+        (sum, squad) => sum + squad.shooterIds.filter((id) => disqualified.has(id)).length,
+        0,
+      );
+      const disqualifiedResults = scores.filter((s) => disqualified.has(s.shooterId)).length;
       return {
         match,
         stages: stages.length,
         squads: squads.length,
         shooters,
         scored: scores.length,
-        totalScores: shooters * stages.length,
+        totalScores: (shooters - disqualifiedCount) * stages.length + disqualifiedResults,
       };
     }),
   );

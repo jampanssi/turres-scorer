@@ -75,6 +75,18 @@ export const fi: Record<MessageKey, string> = {
   "stages.scored": "{scored} / {total} pisteytetty",
   "stages.notFound": "Ryhmää ei löytynyt.",
 
+  "shooters.back": "Takaisin radoille",
+  "shooters.stage": "Rata {number}",
+  "shooters.section": "Ampumajärjestys",
+  "shooters.scoredLabel": "pisteytetty",
+  "shooters.hf": "HF",
+  "shooters.status.shooting": "Ampumassa",
+  "shooters.status.onDeck": "Seuraavana",
+  "shooters.status.waiting": "Odottaa",
+  "shooters.status.dnf": "DNF",
+  "shooters.status.dq": "DQ",
+  "shooters.notFound": "Rataa ei löytynyt.",
+
   "stepper.max": "Enintään {max}",
   "stepper.decrease": "Vähennä: {label}",
   "stepper.increase": "Lisää: {label}",

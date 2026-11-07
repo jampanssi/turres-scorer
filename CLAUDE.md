@@ -50,7 +50,7 @@ Feature-based, so new features (e.g. match registration) are new folders:
 - `shared/`: `domain/` (types), `data/` (repository, mock, IndexedDB, sync), `ui/` (primitives), `i18n/`.
 - `integrations/ssi/`: added last.
 
-Dependencies point one way: `features/*` → `shared/*`, and `integrations/ssi` → `shared/domain`.
+Dependencies point one way: `features/*` → `shared/*`, and `integrations/ssi` → `shared/domain`. The one allowed feature-to-feature import is the pure rules in `features/scoring` (used by Shooters for hit factor).
 
 ## Stack notes
 
@@ -74,4 +74,4 @@ Settings in [next.config.ts](next.config.ts) that change how code is written:
 - The app is an installable **PWA**. The server is the primary store: a saved score is sent to the server right away. If the connection drops, offline is the **fallback**. Keep the score locally, show that it is unsynced, retry automatically, and let the RO keep scoring. An entered score must never be lost, and no screen may block on the network once loaded. Ranges have poor coverage. The sync approach and local storage choice are in PLAN.md.
 - Screens read data through `useLoad(loader)` (`shared/data/useLoad.ts`) with a loader defined outside the component, and guard access with `useSession()` (`features/auth/useSession.ts`): signed-out visitors are redirected to `/`.
 - The mock repository ships read-only **sample scores** for the live match (`shared/data/mock-scores.ts`, deterministic) so Done / On range states show without scoring by hand. A score saved through the repository overrides a sample with the same id. They are replaced by real data later.
-- Squad and stage progress is derived, never stored: a stage is done for a squad when every shooter has a saved result (scored, DNF or DQ) — see `features/squads/summary.ts`.
+- Squad, stage and match progress is derived, never stored: a stage is done for a squad when every **expected** shooter has a saved result (scored, DNF or DQ). A DQ removes the shooter from the whole match (`disqualifiedShooterIds` in `shared/domain/disqualified.ts`): they are shown last and unselectable on Shooters. A disqualified shooter is expected only on stages where they have a result: the DQ stage counts as scored, later stages do not wait for them. See `features/squads/summary.ts`.

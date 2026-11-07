@@ -66,7 +66,7 @@ integrations/
    2. [x] Matches (`features/matches/`, route `/matches`)
    3. [x] Squads (`features/squads/`, route `/matches/[matchId]`)
    4. [x] Stage selection (`features/stages/`, route `/matches/[matchId]/squads/[squadId]`)
-   5. [ ] Shooters
+   5. [x] Shooters (`features/shooters/`, route `/matches/[matchId]/squads/[squadId]/stages/[stageId]`)
    6. [ ] Scoring (matrix, steppers, sticky bar)
    7. [ ] Confirm DQ, Confirm DNF and Review sheets, with saving
 6. [ ] Offline fallback and PWA
@@ -89,6 +89,6 @@ integrations/
 - PWA service worker: Next.js has no built-in one, so it's hand-written or a library. It must cache the app shell for offline use.
 
 - Backend / auth provider and how ROs are provisioned.
-- Who can reverse a DQ and how (current copy says "needs the Range Master's approval").
+- Who can reverse a DQ and how (current copy says "needs the Range Master's approval"). DQ rows are not selectable in the app, so a reversal would need its own flow.
 - Final DQ / DNF reason lists.
 - Review the Finnish translations (`shared/i18n/messages/fi.ts`) with someone who knows the sport's terms. Should Finnish also use `,` as the decimal separator for HF and time?

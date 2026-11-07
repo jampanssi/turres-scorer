@@ -29,6 +29,10 @@ const SEED_PROGRESS: Record<string, Record<number, SquadProgress>> = {
 // One shooter is marked DNF so that status is visible too: squad 1, its second stage, 4th shooter.
 const DNF = { matchId: "autumn-2026", squad: 1, stageIndex: 1, shooterIndex: 3 };
 
+// One shooter is disqualified: squad 3, its second stage, 7th shooter. A DQ removes the shooter
+// from the rest of the match, so they have no results on the squad's later stages.
+const DQ = { matchId: "autumn-2026", squad: 3, stageIndex: 1, shooterIndex: 6 };
+
 /** Small seeded PRNG (mulberry32) so the same ids always give the same numbers. */
 function seededRandom(seed: string): () => number {
   let h = 1779033703 ^ seed.length;
@@ -54,7 +58,7 @@ function pickHit(rand: () => number): HitCode {
   return "M";
 }
 
-function makeScore(matchId: string, stage: Stage, shooterId: string, dnf: boolean): StageScore {
+function makeScore(matchId: string, stage: Stage, shooterId: string, kind: "scored" | "dnf" | "dq"): StageScore {
   const rand = seededRandom(`${stage.id}:${shooterId}`);
   const base = {
     id: scoreId(stage.id, shooterId),
@@ -67,17 +71,16 @@ function makeScore(matchId: string, stage: Stage, shooterId: string, dnf: boolea
     updatedAt: "2026-11-07T09:00:00.000Z",
   };
 
-  if (dnf) {
+  if (kind === "dnf" || kind === "dq") {
     return {
       ...base,
-      status: "dnf",
+      status: kind,
       timeSec: null,
       paper: [],
       steel: [],
       noShoots: 0,
       procedurals: 0,
-      dnfReason: "equipment_failure",
-      shooterAccepted: true,
+      ...(kind === "dnf" ? { dnfReason: "equipment_failure" as const } : { dqReason: "unsafe_handling" as const }),
     };
   }
 
@@ -109,12 +112,12 @@ export function buildMockScores(catalog: Catalog): StageScore[] {
               ? squad.shooterIds.slice(0, progress.partial)
               : [];
         shooterIds.forEach((shooterId, shooterIndex) => {
-          const dnf =
-            matchId === DNF.matchId &&
-            squad.number === DNF.squad &&
-            stageIndex === DNF.stageIndex &&
-            shooterIndex === DNF.shooterIndex;
-          scores.push(makeScore(matchId, stage, shooterId, dnf));
+          const at = (spot: typeof DNF) =>
+            matchId === spot.matchId && squad.number === spot.squad && shooterIndex === spot.shooterIndex;
+
+          if (at(DQ) && stageIndex > DQ.stageIndex) return; // disqualified earlier: out of the match
+          const kind = at(DNF) && stageIndex === DNF.stageIndex ? "dnf" : at(DQ) && stageIndex === DQ.stageIndex ? "dq" : "scored";
+          scores.push(makeScore(matchId, stage, shooterId, kind));
         });
       });
     }

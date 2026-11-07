@@ -59,3 +59,24 @@ describe("loadSquadsOverview with the sample scores", () => {
     expect(await loadSquadsOverview(repo(), "nope")).toBeNull();
   });
 });
+
+describe("summarizeSquad with a disqualified shooter", () => {
+  const stageList = catalog.stages.filter((s) => s.matchId === MATCH);
+  const stages = new Map(stageList.map((s) => [s.id, s]));
+  const squad = catalog.squads.find((s) => s.matchId === MATCH && s.number === 2)!;
+  const [out, ...rest] = squad.shooterIds;
+
+  it("is done when every shooter still in the match finished every stage", () => {
+    const scored = new Set(squad.stageRotation.flatMap((stageId) => rest.map((id) => `${stageId}:${id}`)));
+    expect(summarizeSquad(squad, stages, scored, new Set([out]))).toMatchObject({ status: "done", stagesDone: 6 });
+  });
+
+  it("would not be done without the DQ (the missing shooter blocks it)", () => {
+    const scored = new Set(squad.stageRotation.flatMap((stageId) => rest.map((id) => `${stageId}:${id}`)));
+    expect(summarizeSquad(squad, stages, scored).status).toBe("onRange");
+  });
+
+  it("keeps the roster size in the shooter count", () => {
+    expect(summarizeSquad(squad, stages, new Set(), new Set([out])).shooters).toBe(8);
+  });
+});

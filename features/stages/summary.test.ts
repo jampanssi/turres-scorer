@@ -48,3 +48,30 @@ describe("loadStagesOverview with the sample scores", () => {
     expect(await loadStagesOverview(repo(), "club-night-11", squad2.id)).toBeNull();
   });
 });
+
+describe("summarizeStage with a disqualified shooter", () => {
+  const stage = catalog.stages.find((s) => s.matchId === MATCH && s.number === 3)!;
+  const squad = catalog.squads.find((s) => s.matchId === MATCH && s.number === 2)!;
+  const key = (id: string) => `${stage.id}:${id}`;
+
+  it("does not wait for a disqualified shooter: the stage can be done without them", () => {
+    const [out, ...rest] = squad.shooterIds;
+    const summary = summarizeStage(stage, squad, new Set(rest.map(key)), new Set([out]));
+    expect(summary).toMatchObject({ scored: 7, total: 7, status: "done" });
+  });
+
+  it("counts a disqualified shooter's own result as scored, on the stage where they have one", () => {
+    const summary = summarizeStage(stage, squad, new Set(squad.shooterIds.map(key)), new Set([squad.shooterIds[0]]));
+    expect(summary).toMatchObject({ scored: 8, total: 8, status: "done" });
+  });
+});
+
+describe("loadStagesOverview with the sample DQ (squad 3)", () => {
+  it("counts squad 3's stages as done although one shooter is out after stage 2", async () => {
+    const squad3 = catalog.squads.find((s) => s.matchId === MATCH && s.number === 3)!;
+    const overview = (await loadStagesOverview(repo(), MATCH, squad3.id))!;
+    expect(overview.stagesDone).toBe(3);
+    const third = overview.stages.find((s) => s.stage.id === squad3.stageRotation[2])!;
+    expect(third).toMatchObject({ status: "done", scored: 7, total: 7 });
+  });
+});

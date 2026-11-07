@@ -6,11 +6,12 @@ import { UserMenu } from "@/features/auth/UserMenu";
 import { useRequireSession } from "@/features/auth/useRequireSession";
 import { getRepository } from "@/shared/data";
 import { useLoad } from "@/shared/data/useLoad";
+import { formatStageTargets } from "@/shared/i18n/format-stage";
 import { useT } from "@/shared/i18n/useT";
 import { AppHeader } from "@/shared/ui/AppHeader";
 import { ListCard, type ListCardState } from "@/shared/ui/ListCard";
 import { SectionHeader } from "@/shared/ui/SectionHeader";
-import { loadStagesOverview, type StageStatus, type StageSummary } from "./summary";
+import { loadStagesOverview, type StageStatus } from "./summary";
 
 const CARD_STATE: Record<StageStatus, ListCardState> = {
   done: "done",
@@ -26,16 +27,6 @@ export function StagesScreen() {
   const overview = useLoad(load);
 
   if (session.status !== "signedIn") return <div className="min-h-dvh bg-bg" />;
-
-  /** "6 paper · 3 steel · 2 no-shoots": parts with a count of 0 are left out. */
-  const targets = ({ stage }: StageSummary) =>
-    [
-      stage.paperTargets > 0 && t("stages.paper", { count: stage.paperTargets }),
-      stage.steelTargets > 0 && t("stages.steel", { count: stage.steelTargets }),
-      stage.noShootTargets > 0 && t("stages.noShoot", { count: stage.noShootTargets }),
-    ]
-      .filter(Boolean)
-      .join(" · ");
 
   const data = overview.status === "ready" ? overview.data : null;
 
@@ -74,7 +65,7 @@ export function StagesScreen() {
                     status={t(`stages.status.${summary.status}` as const)}
                     state={CARD_STATE[summary.status]}
                     lines={[
-                      targets(summary),
+                      formatStageTargets(summary.stage, t),
                       t("stages.minRounds", { count: summary.stage.minRounds }),
                       t("stages.scored", { scored: summary.scored, total: summary.total }),
                     ]}

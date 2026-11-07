@@ -43,7 +43,7 @@ describe("mock scores", () => {
     expect(scoredBy(1)).toBe(48); // 6 stages x 8 shooters
     expect(scoredBy(2)).toBe(19); // 2 stages + 3 on the third
     expect(scoredBy(6)).toBe(0);
-    expect(scores).toHaveLength(152);
+    expect(scores).toHaveLength(151); // squad 3 has one result fewer: its DQ'd shooter is out after stage 2
   });
 
   it("includes one DNF without hits", () => {
@@ -56,7 +56,7 @@ describe("mock scores", () => {
 describe("repository with seed scores", () => {
   it("lists seeds, and a saved score overrides a seed with the same id", async () => {
     const repo = createCatalogRepository(catalog, createMemoryScoreStore(), scores);
-    expect(await repo.listScores("autumn-2026")).toHaveLength(152);
+    expect(await repo.listScores("autumn-2026")).toHaveLength(151);
     expect(await repo.listScores("club-night-11")).toHaveLength(0);
 
     const seed = scores[0];
@@ -64,6 +64,20 @@ describe("repository with seed scores", () => {
 
     await repo.saveScore({ ...seed, timeSec: 1.23 });
     expect((await repo.getScore(seed.stageId, seed.shooterId))?.timeSec).toBe(1.23);
-    expect(await repo.listScores("autumn-2026")).toHaveLength(152);
+    expect(await repo.listScores("autumn-2026")).toHaveLength(151);
+  });
+});
+
+describe("sample DQ", () => {
+  it("has one disqualified shooter with no results after the DQ stage", () => {
+    const dq = scores.filter((s) => s.status === "dq");
+    expect(dq).toHaveLength(1);
+    expect(dq[0]).toMatchObject({ timeSec: null, paper: [], dqReason: "unsafe_handling" });
+
+    const squad = catalog.squads.find((s) => s.shooterIds.includes(dq[0].shooterId))!;
+    const dqStageIndex = squad.stageRotation.indexOf(dq[0].stageId);
+    const later = squad.stageRotation.slice(dqStageIndex + 1);
+    expect(later.length).toBeGreaterThan(0);
+    expect(scores.filter((s) => s.shooterId === dq[0].shooterId && later.includes(s.stageId))).toHaveLength(0);
   });
 });

@@ -75,6 +75,18 @@ export const en = {
   "stages.scored": "{scored} / {total} scored",
   "stages.notFound": "Squad not found.",
 
+  "shooters.back": "Back to stages",
+  "shooters.stage": "Stage {number}",
+  "shooters.section": "Shooting order",
+  "shooters.scoredLabel": "scored",
+  "shooters.hf": "HF",
+  "shooters.status.shooting": "Shooting",
+  "shooters.status.onDeck": "On deck",
+  "shooters.status.waiting": "Waiting",
+  "shooters.status.dnf": "DNF",
+  "shooters.status.dq": "DQ",
+  "shooters.notFound": "Stage not found.",
+
   "stepper.max": "Max {max}",
   "stepper.decrease": "Decrease {label}",
   "stepper.increase": "Increase {label}",

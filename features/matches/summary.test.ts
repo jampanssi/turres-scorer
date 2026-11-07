@@ -20,17 +20,46 @@ describe("loadMatchSummaries", () => {
     expect(autumn).toMatchObject({ stages: 6, squads: 8, shooters: 64, scored: 0, totalScores: 384 });
   });
 
-  it("counts saved scores, including DNF and DQ", async () => {
-    const base = {
-      matchId: "autumn-2026", roId: "ro-1", timeSec: null, paper: [], steel: [], noShoots: 0, procedurals: 0,
-      shooterAccepted: false, createdAt: "", updatedAt: "",
-    };
+  const base = {
+    matchId: "autumn-2026", roId: "ro-1", timeSec: null, paper: [], steel: [], noShoots: 0, procedurals: 0,
+    shooterAccepted: false, createdAt: "", updatedAt: "",
+  };
+  const autumn = async (scores: StageScore[]) => (await load(scores)).find((s) => s.match.id === "autumn-2026")!;
+
+  it("counts saved results: scored and DNF", async () => {
     const scores: StageScore[] = [
       { ...base, id: scoreId("s1", "a"), stageId: "s1", shooterId: "a", status: "scored" },
       { ...base, id: scoreId("s1", "b"), stageId: "s1", shooterId: "b", status: "dnf" },
-      { ...base, id: scoreId("s2", "a"), stageId: "s2", shooterId: "a", status: "dq" },
     ];
-    expect((await load(scores)).find((s) => s.match.id === "autumn-2026")!.scored).toBe(3);
+    expect((await autumn(scores)).scored).toBe(2);
+  });
+
+  it("counts every saved result, the DQ included", async () => {
+    const scores: StageScore[] = [
+      { ...base, id: scoreId("s1", "a"), stageId: "s1", shooterId: "a", status: "scored" },
+      { ...base, id: scoreId("s2", "a"), stageId: "s2", shooterId: "a", status: "dq" },
+      { ...base, id: scoreId("s1", "b"), stageId: "s1", shooterId: "b", status: "scored" },
+    ];
+    expect((await autumn(scores)).scored).toBe(3);
+  });
+
+  it("a DQ counts on its own stage, but the shooter's later stages leave the total", async () => {
+    // 64 shooters x 6 stages = 384. One shooter is DQ'd on stage 1: that one result stays in the total
+    // and in scored, and their other 5 stages are no longer expected -> 63 x 6 + 1 = 379.
+    const catalog = buildMockCatalog();
+    const shooterId = catalog.squads.find((s) => s.matchId === "autumn-2026")!.shooterIds[0];
+    const dq: StageScore = { ...base, id: scoreId("autumn-2026-st1", shooterId), stageId: "autumn-2026-st1", shooterId, status: "dq" };
+    expect(await autumn([dq])).toMatchObject({ shooters: 64, scored: 1, totalScores: 379 });
+  });
+
+  it("keeps a DQ'd shooter's earlier results in both numbers", async () => {
+    const catalog = buildMockCatalog();
+    const shooterId = catalog.squads.find((s) => s.matchId === "autumn-2026")!.shooterIds[0];
+    const result = (stage: number, status: StageScore["status"]): StageScore => ({
+      ...base, id: scoreId(`autumn-2026-st${stage}`, shooterId), stageId: `autumn-2026-st${stage}`, shooterId, status,
+    });
+    // scored on stage 1, DQ on stage 2 -> 2 results kept, 4 later stages dropped: 63 x 6 + 2 = 380
+    expect(await autumn([result(1, "scored"), result(2, "dq")])).toMatchObject({ scored: 2, totalScores: 380 });
   });
 });
 

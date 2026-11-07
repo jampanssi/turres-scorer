@@ -155,12 +155,16 @@ Header: `Squad 2`, subtitle `8 shooters`. Section header **SELECT STAGE** with c
 Stage cards: number tile, stage name, status (Done / In progress / Not started), then three lines: the targets `6 paper · 3 steel · 2 no-shoots` (dot-separated, like the header subtitle), the shots `Minimum rounds: 15` (Finnish `Minimilaukausmäärä: 15`), and `3 / 8 scored`; chevron. Tap → Shooters. Stages are listed in number order. Status is per squad: Done = every shooter has a saved result (scored, DNF or DQ), In progress = some do (blue border and filled tile), Not started = none. Target counts of 0 are left out (`4 paper`), and the singular is used for 1.
 
 ### 5 · Shooters
-Header: `Squad 2 · Stage 3`, subtitle `Min. 15 rounds · 6 paper, 3 steel, 2 No-shoot`. Section header **SHOOTING ORDER** with count `3 / 8 scored`.
+Header: `Squad 2 · Stage 3`, subtitle with the stage's targets, dot-separated (`6 paper · 3 steel · 2 no-shoots`). The minimum rounds are left out of the subtitle because it does not fit next to the header controls; they are on the stage card. Section header **SHOOTING ORDER** with count `3 / 8 scored`.
 Rows: order number, name, `#23` (competitor number; no division/gun type). Right side status:
 - scored → HF value (e.g. `6.4213`) with caption "HF" in `success-text`
 - **Shooting** (current) → `primary`, row highlighted (`primary-tint` bg, 2 px `primary` border)
 - **On deck** (next) → `text-secondary`
-- waiting → `—`
+- waiting → `—` (the word "Waiting" is added for screen readers)
+- **DNF** → `text-secondary`. The shooter keeps their place in the order and the row stays selectable (so a mistaken DNF can be corrected). A DNF is a result: it counts as scored and the shooter never becomes "Shooting".
+- **DQ** → `danger-fg`. A DQ removes the shooter from the **rest of the match**, so they are shown on every stage of the match: **last in the list, without an order number, dimmed and not selectable** (a plain row, not a link). Counting follows time: on the stage where the DQ happens it **counts as scored**, and so do stages where the shooter already had a result; on the stages after the DQ the shooter is not expected, so they are left out of the "scored" counts and do not hold up stage, squad or match progress.
+
+"Shooting" is the first shooter in the order without a result and "On deck" the next one, so a skipped shooter stays "Shooting" until scored.
 Tap → Scoring.
 
 ### 6 · Scoring
