@@ -30,9 +30,24 @@ function makeScore(stageId: string, shooterId: string, overrides: Partial<StageS
 describe("mock catalog", () => {
   const catalog = buildMockCatalog();
 
-  it("has the sample matches with 64 shooters in the live match", () => {
-    expect(catalog.matches.map((m) => m.status)).toEqual(["live", "open", "finished"]);
-    expect(catalog.shooters.filter((s) => s.id.startsWith(MATCH))).toHaveLength(64);
+  it("has the sample matches with the counts shown in the design", () => {
+    const counts = (id: string) => ({
+      status: catalog.matches.find((m) => m.id === id)!.status,
+      stages: catalog.stages.filter((s) => s.matchId === id).length,
+      squads: catalog.squads.filter((s) => s.matchId === id).length,
+      shooters: catalog.shooters.filter((s) => s.id.startsWith(`${id}-sh`)).length,
+    });
+    expect(counts("autumn-2026")).toEqual({ status: "live", stages: 6, squads: 8, shooters: 64 });
+    expect(counts("club-night-11")).toEqual({ status: "open", stages: 4, squads: 3, shooters: 22 });
+    expect(counts("winter-cup-1")).toEqual({ status: "open", stages: 5, squads: 5, shooters: 37 });
+    expect(counts("summer-2026")).toEqual({ status: "finished", stages: 6, squads: 7, shooters: 52 });
+  });
+
+  it("splits shooters evenly across squads (sizes differ by at most one)", () => {
+    for (const match of catalog.matches) {
+      const sizes = catalog.squads.filter((s) => s.matchId === match.id).map((s) => s.shooterIds.length);
+      expect(Math.max(...sizes) - Math.min(...sizes)).toBeLessThanOrEqual(1);
+    }
   });
 
   it("references only existing stages and shooters", () => {

@@ -140,7 +140,7 @@ Full blue background. Upper area centred: club logo (104 px, `public/logo.png`),
 ### 2 · Matches
 Header: title **MATCHES**, account avatar. Segmented control **Open | Results** inside the header.
 - *Open*: live and upcoming matches. *Results*: finished matches.
-- Match card: name (Barlow 22), `7.11 · [Range name]` (Finnish date format, `7.11.2026` where the year is needed), three stat tiles (Stages, Squads, Shooters). A live match also shows "Scored 223 / 384" with a progress bar. No status badge.
+- Match card: name (Barlow 22), the date with year, `7.11.2026` (Finnish format; no range name), three stat tiles (Stages, Squads, Shooters). A live match also shows "Scored 223 / 384" with a progress bar. No status badge: a 6 px strip on the card's left edge shows the status (blue = live, green = finished, none = upcoming), and the status word is added for screen readers. Strip colours are the theme-aware tokens `primary-text` and `success-accent`.
 - Tap card → Squads.
 
 ### 3 · Squads

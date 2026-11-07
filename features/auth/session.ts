@@ -1,7 +1,8 @@
 /**
  * Mock session until the auth provider is decided (see docs/PLAN.md open questions).
- * Any non-empty email and password signs in; the session lives in localStorage.
- * Replace `signIn` / `signOut` / `readSession` when real auth exists; callers stay the same.
+ * Any valid-looking email and any password signs in; the session lives in localStorage
+ * (with an in-memory fallback if storage is blocked).
+ * Replace `signIn` / `signOut` / `readSessionRaw` when real auth exists; callers stay the same.
  */
 
 export interface Session {
@@ -11,6 +12,9 @@ export interface Session {
 }
 
 const KEY = "turres-scorer.session";
+export const SESSION_CHANGE_EVENT = "turres-scorer:session";
+
+let memoryRaw: string | null = null;
 
 export function initialsOf(email: string): string {
   const local = email.split("@")[0] ?? "";
@@ -28,27 +32,52 @@ export async function signIn(email: string, password: string): Promise<SignInRes
   if (!/^\S+@\S+\.\S+$/.test(trimmed)) return { ok: false, error: "invalidEmail" };
   if (password.length === 0) return { ok: false, error: "missingPassword" };
   const session: Session = { email: trimmed, initials: initialsOf(trimmed) };
+  memoryRaw = JSON.stringify(session);
   try {
-    localStorage.setItem(KEY, JSON.stringify(session));
+    localStorage.setItem(KEY, memoryRaw);
   } catch {
-    // Storage can be blocked (private mode); the app still works for this page load.
+    // Storage can be blocked (private mode); the in-memory copy keeps this page load signed in.
   }
+  window.dispatchEvent(new Event(SESSION_CHANGE_EVENT));
   return { ok: true, session };
 }
 
-export function readSession(): Session | null {
+/** The stored session as a raw string (a stable primitive, safe for useSyncExternalStore), or null. */
+export function readSessionRaw(): string | null {
   try {
-    const raw = localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as Session) : null;
+    return localStorage.getItem(KEY) ?? memoryRaw;
+  } catch {
+    return memoryRaw;
+  }
+}
+
+export function parseSession(raw: string | null): Session | null {
+  if (!raw) return null;
+  try {
+    const value = JSON.parse(raw) as Partial<Session>;
+    return typeof value.email === "string" && typeof value.initials === "string"
+      ? { email: value.email, initials: value.initials }
+      : null;
   } catch {
     return null;
   }
 }
 
+export function subscribeSession(onChange: () => void): () => void {
+  window.addEventListener(SESSION_CHANGE_EVENT, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(SESSION_CHANGE_EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+
 export function signOut(): void {
+  memoryRaw = null;
   try {
     localStorage.removeItem(KEY);
   } catch {
     // ignore
   }
+  window.dispatchEvent(new Event(SESSION_CHANGE_EVENT));
 }

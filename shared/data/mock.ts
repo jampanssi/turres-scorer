@@ -27,7 +27,6 @@ const STAGE_DEFS: StageDef[] = [
 
 const FIRST_NAMES = ["Mikko", "Jari", "Timo", "Juha", "Pekka", "Ville", "Sami", "Kalle"];
 const LAST_NAMES = ["Mäkelä", "Virtanen", "Korhonen", "Nieminen", "Heikkinen", "Laine", "Koskinen", "Järvinen"];
-const SHOOTERS_PER_SQUAD = 8;
 
 interface MatchConfig {
   id: string;
@@ -36,12 +35,18 @@ interface MatchConfig {
   status: Match["status"];
   stageCount: number;
   squadCount: number;
+  /** Total shooters, split as evenly as possible across the squads. */
+  shooterCount: number;
 }
 
+// Counts follow docs/design/2 · Matches.png (open tab) and Events.dc.html (results tab).
 const MATCHES: MatchConfig[] = [
-  { id: "autumn-2026", name: "Autumn Match 2026", date: "2026-11-07", status: "live", stageCount: 6, squadCount: 8 },
-  { id: "club-night-11", name: "Club Night Match #11", date: "2026-11-21", status: "open", stageCount: 4, squadCount: 3 },
-  { id: "winter-cup-1", name: "Winter Cup · Round 1", date: "2026-02-14", status: "finished", stageCount: 5, squadCount: 4 },
+  { id: "autumn-2026", name: "Autumn Match 2026", date: "2026-11-07", status: "live", stageCount: 6, squadCount: 8, shooterCount: 64 },
+  { id: "club-night-11", name: "Club Night Match #11", date: "2026-11-12", status: "open", stageCount: 4, squadCount: 3, shooterCount: 22 },
+  { id: "winter-cup-1", name: "Winter Cup · Round 1", date: "2026-12-05", status: "open", stageCount: 5, squadCount: 5, shooterCount: 37 },
+  { id: "club-night-10", name: "Club Night Match #10", date: "2026-10-29", status: "finished", stageCount: 4, squadCount: 3, shooterCount: 24 },
+  { id: "autumn-stage-2026", name: "Autumn Stage Match 2026", date: "2026-10-03", status: "finished", stageCount: 5, squadCount: 6, shooterCount: 45 },
+  { id: "summer-2026", name: "Summer Match 2026", date: "2026-08-15", status: "finished", stageCount: 6, squadCount: 7, shooterCount: 52 },
 ];
 
 function shooterName(n: number): string {
@@ -66,10 +71,14 @@ export function buildMockCatalog(): Catalog {
 
     const shooters: Shooter[] = [];
     const squads: Squad[] = [];
+    const baseSize = Math.floor(config.shooterCount / config.squadCount);
+    const largerSquads = config.shooterCount % config.squadCount; // the first squads get one extra shooter
+    let n = 0;
     for (let s = 0; s < config.squadCount; s++) {
       const squadShooters: Shooter[] = [];
-      for (let k = 0; k < SHOOTERS_PER_SQUAD; k++) {
-        const n = s * SHOOTERS_PER_SQUAD + k + 1;
+      const size = baseSize + (s < largerSquads ? 1 : 0);
+      for (let k = 0; k < size; k++) {
+        n += 1;
         squadShooters.push({ id: `${config.id}-sh${n}`, name: shooterName(n), competitorNumber: n });
       }
       shooters.push(...squadShooters);

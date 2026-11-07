@@ -32,9 +32,9 @@ export function AppHeader({ title, subtitle, back, right, children }: AppHeaderP
           <h1 className="truncate font-display text-[26px] font-bold uppercase leading-none">{title}</h1>
           {subtitle && <p className="mt-1 truncate text-[13px] text-on-primary-muted">{subtitle}</p>}
         </div>
-        {right}
         <LanguageToggle />
         <ThemeToggle />
+        {right}
       </div>
       {children && <div className="mt-3">{children}</div>}
     </header>

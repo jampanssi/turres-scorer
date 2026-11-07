@@ -32,6 +32,7 @@
   --success: #237a34;
   --success-text: #2f4a22;
   --success-tint: #e3eedc;
+  --success-accent: #237a34; /* green used as a strip or border on surfaces */
 
   --danger: #b42318;
   --danger-fg: #b42318; /* danger used as text/border on surfaces */
@@ -67,6 +68,7 @@
 
   --success-text: #a9d99a;
   --success-tint: #1c3a22;
+  --success-accent: #4cc063; /* green strips/borders on dark surfaces */
 
   --danger-fg: #f28b82;
   --danger-tint: #3e1814;
@@ -107,6 +109,7 @@
   --color-success: var(--success);
   --color-success-text: var(--success-text);
   --color-success-tint: var(--success-tint);
+  --color-success-accent: var(--success-accent);
 
   --color-danger: var(--danger);
   --color-danger-fg: var(--danger-fg);
