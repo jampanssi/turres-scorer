@@ -1,26 +1,139 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens from docs/DESIGN.md §2–4, with a dark palette.
+ * Components use the Tailwind utilities generated from @theme below (bg-surface, text-primary-text, ...);
+ * only :root and the dark media query hold raw values.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --primary: #005185;
+  --primary-text: #005185; /* primary used as text/border on surfaces */
+  --primary-dark: #00406a;
+  --primary-hover: #003a60;
+  --primary-tint: #e6f0f8;
+  --primary-tint-2: #e0edf6;
+  --on-primary-muted: #c9d6e5;
+  --on-primary-accent: #9ccbea;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --bg: #eef2f6;
+  --surface: #ffffff;
+  --surface-muted: #f3f6f9;
+  --surface-tile: #e6ecf2;
+  --border: #c5cfda;
+  --border-light: #d5dde6;
+  --divider: #e1e7ee;
+
+  --text: #10202f;
+  --text-secondary: #4a5b6c;
+  --text-label: #3b4b5c;
+  --disabled: #a9b6c3;
+  --chevron: #7a8a9a;
+
+  --success: #237a34;
+  --success-text: #2f4a22;
+  --success-tint: #e3eedc;
+
+  --danger: #b42318;
+  --danger-fg: #b42318; /* danger used as text/border on surfaces */
+  --danger-tint: #fbe4e2;
+  --danger-text: #8a1c12;
+
+  --scrim: rgb(16 32 47 / 0.55);
+  --elev-card: 0 1px 2px rgb(14 42 71 / 0.08);
+  --elev-bar: 0 -2px 8px rgb(14 42 71 / 0.06);
+  --elev-sheet: 0 -8px 24px rgb(16 32 47 / 0.18);
+
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Blue stays as the fill colour (white text on it); text uses a lighter blue. */
+    --primary-text: #7db9e6;
+    --primary-tint: #12304a;
+    --primary-tint-2: #163a57;
+
+    --bg: #0b141d;
+    --surface: #14212e;
+    --surface-muted: #1b2a39;
+    --surface-tile: #223446;
+    --border: #3a4d61;
+    --border-light: #2a3b4d;
+    --divider: #243445;
+
+    --text: #e8eef4;
+    --text-secondary: #a3b3c3;
+    --text-label: #b8c6d4;
+    --disabled: #5a6b7c;
+
+    --success-text: #a9d99a;
+    --success-tint: #1c3a22;
+
+    --danger-fg: #f28b82;
+    --danger-tint: #3e1814;
+    --danger-text: #f4a8a0;
+
+    --scrim: rgb(0 0 0 / 0.65);
+    --elev-card: 0 1px 2px rgb(0 0 0 / 0.4);
+    --elev-bar: 0 -2px 8px rgb(0 0 0 / 0.35);
+    --elev-sheet: 0 -8px 24px rgb(0 0 0 / 0.5);
+
+    color-scheme: dark;
   }
 }
 
+@theme inline {
+  --color-primary: var(--primary);
+  --color-primary-text: var(--primary-text);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-tint: var(--primary-tint);
+  --color-primary-tint-2: var(--primary-tint-2);
+  --color-on-primary-muted: var(--on-primary-muted);
+  --color-on-primary-accent: var(--on-primary-accent);
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-tile: var(--surface-tile);
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+  --color-divider: var(--divider);
+
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-label: var(--text-label);
+  --color-disabled: var(--disabled);
+  --color-chevron: var(--chevron);
+
+  --color-success: var(--success);
+  --color-success-text: var(--success-text);
+  --color-success-tint: var(--success-tint);
+
+  --color-danger: var(--danger);
+  --color-danger-fg: var(--danger-fg);
+  --color-danger-tint: var(--danger-tint);
+  --color-danger-text: var(--danger-text);
+
+  --color-scrim: var(--scrim);
+
+  --font-display: var(--font-barlow-condensed), sans-serif;
+  --font-sans: var(--font-inter), sans-serif;
+
+  --radius-cell: 8px;
+  --radius-input: 10px;
+  --radius-button: 12px;
+  --radius-card: 14px;
+  --radius-event: 16px;
+  --radius-sheet: 20px;
+
+  --shadow-card: var(--elev-card);
+  --shadow-bar: var(--elev-bar);
+  --shadow-sheet: var(--elev-sheet);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
 }

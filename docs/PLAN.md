@@ -19,9 +19,9 @@ Planned decisions, not yet implemented. Update or delete items as they are decid
 
 ## Planned stack
 
-Backend/API is **undecided**: build against a small data-access interface so it can be swapped.
+The data source is **ShootNScoreIt (SSI)**, integrated **last**. Build the app first on its own domain types and a repository interface (mock + IndexedDB); SSI later maps onto those types via `integrations/ssi/` and Route Handlers in `app/api/` (BFF holding credentials, browser never calls SSI directly).
 
-- Next.js App Router + TypeScript as a **client-only static export** (`output: 'export'`): no server rendering in any phase. All screens are Client Components; scoring module framework-free.
+- Next.js App Router + TypeScript, client-rendered pages (no server-rendered data), no `output: 'export'`. All screens are Client Components; scoring module framework-free.
 - Installable **PWA** (manifest + service worker).
 - Tailwind with DESIGN.md tokens in the theme / CSS variables. No component library.
 - Fonts via `next/font/google`: `Barlow_Condensed` (600, 700) and `Inter` (400–700).
@@ -32,24 +32,40 @@ Backend/API is **undecided**: build against a small data-access interface so it 
 
 ## Suggested structure
 
-Caveat: the nested dynamic routes below don't work in a static export without `generateStaticParams()`, because IDs aren't known at build time. Pick one: query params on a few static routes (e.g. `/squad?match=…&squad=…`), or one client-side shell that does its own routing. Decide before building screens.
+Feature-based, so new features (e.g. match registration) are new folders. Dependencies point one way: `features/*` → `shared/*`; `integrations/ssi` → `shared/domain`; features never import `integrations/`.
 
 ```
 app/
-  sign-in/page.tsx
-  matches/page.tsx                                            (Open | Results)
-  matches/[matchId]/page.tsx                                  squads
-  matches/[matchId]/squads/[squadId]/page.tsx                 stage selection
-  matches/[matchId]/squads/[squadId]/stages/[stageId]/page.tsx              shooters
-  matches/[matchId]/squads/[squadId]/stages/[stageId]/score/[shooterId]/page.tsx  scoring + sheets
-components/   AppHeader, SectionHeader, ListCard, ProgressBar, Button, Segmented, BottomSheet,
-              ScoreMatrix, MatrixRow, MatrixCell, RowLabelTile, UndoButton, Stepper,
-              ReviewSheet, ConfirmDQSheet, ConfirmDNFSheet
-lib/
-  scoring/    rules.ts (points, HF, limits), entry.ts (FIFO add, undo), *.test.ts
-  data/       repository interface, local (IndexedDB) impl, sync
-  i18n/en.ts
+  layout.tsx, globals.css          tokens, fonts, manifest link
+  page.tsx                         sign in
+  matches/page.tsx                 (Open | Results)
+  matches/[matchId]/...            squads, stages, shooters, score (+ sheets)
+  api/                             SSI phase only
+features/
+  scoring/    ScoreMatrix, MatrixRow, ScoreBar, ReviewSheet, ConfirmDQ/DNFSheet, rules.ts, entry.ts, tests
+  matches/    MatchCard, SquadList, StageList, ShooterList
+  auth/       sign-in form, session hook
+  (registration/ later)
+shared/
+  domain/     types.ts
+  data/       repository.ts, mock.ts, local.ts (IndexedDB), sync.ts
+  ui/         Button, Segmented, ProgressBar, BottomSheet, Stepper, AppHeader, SectionHeader, ListCard
+  i18n/       en.ts, format.ts
+integrations/
+  ssi/        last: client.ts, dto.ts, mappers.ts, tests
 ```
+
+## Implementation order
+
+1. [x] Foundation: config, design tokens, fonts, format helpers (Vitest config added, package still to install)
+2. [x] Domain types and scoring rules with tests (`shared/domain/types.ts`, `features/scoring/`)
+3. [ ] Data layer on mock + IndexedDB
+4. [ ] UI primitives
+5. [ ] Scoring screen with Review/DQ/DNF sheets
+6. [ ] Navigation screens: Shooters → Stages → Squads → Matches → Sign in
+7. [ ] Offline fallback and PWA
+8. [ ] Playwright E2E, including an offline case
+9. [ ] SSI: get API facts (docs, auth, write-back, mapping), then `integrations/ssi/`, `app/api/*`, API-backed repository
 
 ## Definition of done (MVP)
 
@@ -62,9 +78,8 @@ lib/
 
 ## Open questions
 
-- Remove `cacheComponents` and `partialPrefetching` from `next.config.ts` and add `output: 'export'`?
-- Does "no server rendering" also rule out build-time prerendering of the static HTML shell, or only runtime SSR?
-- How are IDs carried between screens (see Suggested structure)?
+- SSI: API access and docs, auth method, whether scores can be written back, and how SSI divisions, power factor and stage config map to this sport.
+- If a pure static export is ever required, the API must become a separate service.
 - PWA service worker: Next.js has no built-in one, so it's hand-written or a library. It must cache the app shell for offline use.
 
 - Backend / auth provider and how ROs are provisioned.
