@@ -132,7 +132,7 @@ function RowLabel({ number, remaining }: { number: number; remaining: number }) 
       )}
     >
       <span className="font-display text-xl font-bold">{number}</span>
-      {!complete && <span className="mt-0.5 text-[10px] font-bold">{t("score.left", { count: remaining })}</span>}
+      {!complete && <span className="mt-0.5 whitespace-nowrap text-[10px] font-bold tracking-tight">{t("score.left", { count: remaining })}</span>}
     </div>
   );
 }

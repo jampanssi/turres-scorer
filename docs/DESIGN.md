@@ -119,7 +119,7 @@ Track `divider`, fill `primary`, height 6–8 px, fully rounded.
 White card, radius 14, padding 10 × 8, row gap 9.
 Grid columns: `38px | 1fr | 1fr | 1fr | 1fr | 44px` (label · A · C · D · M · undo).
 - **Section label + column heads** ("PAPER" A C D M; "STEEL" A · · M). A/C/D heads in `primary`, M in `danger`.
-- **RowLabelTile** (38 × 44, radius 8): row number (Barlow 20). Complete → `success` bg, white. Incomplete → `danger-tint` bg, `danger-text`, with micro label `N left` under the number.
+- **RowLabelTile** (38 × 44, radius 8): row number (Barlow 20). Complete → `success` bg, white. Incomplete → `danger-tint` bg, `danger-text`, with micro label `N left` under the number. The label cannot wrap and must fit the 38 px tile, so its translation is kept to 8 characters at most (English `2 left`, Finnish `2 vielä`; a test guards this).
 - **MatrixCell** (button, 44 px tall, radius 8): empty → `surface-muted` bg, 1.5 px `border-light`, no text. Filled → `primary` bg (A/C/D) or `danger` bg (M), white count text.
 - **Steel rows**: A cell, a 2-column placeholder tile reading "A or M" (`surface-muted`, 12 px `text-secondary`), M cell.
 - **UndoButton** (44 × 44, radius 8, white, 1.5 px `border`): undo-arrow icon, `primary` when active, `disabled` colour + `disabled` attribute when the row is empty.
