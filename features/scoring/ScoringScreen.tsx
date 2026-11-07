@@ -30,7 +30,7 @@ export function ScoringScreen() {
       header={(data) => ({
         title: data?.shooter.name ?? "",
         subtitle: data
-          ? `#${data.shooter.competitorNumber} · ${t("shooters.stage", { number: data.stage.number })} · ${t("squads.squad", { number: data.squad.number })}`
+          ? `#${data.shooter.competitorNumber} · ${t("common.stage", { number: data.stage.number })} · ${t("common.squad", { number: data.squad.number })}`
           : undefined,
       })}
       back={{ href: backHref, label: t("score.back") }}

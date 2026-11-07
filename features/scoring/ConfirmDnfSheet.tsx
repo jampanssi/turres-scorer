@@ -25,7 +25,7 @@ export function ConfirmDnfSheet({
   saving,
   saveFailed,
 }: ConfirmDnfSheetProps) {
-  const { t } = useT();
+  const { t, tEnum } = useT();
   return (
     <ConfirmOutcomeSheet<DnfReason>
       tone="primary"
@@ -33,9 +33,9 @@ export function ConfirmDnfSheet({
       title={t("dnf.title")}
       subtitle={subtitle}
       info={t("dnf.info", { stage: stageLabel })}
-      reasonLabel={t("dnf.reason")}
+      reasonLabel={t("common.reason")}
       reasons={DNF_REASONS}
-      reasonText={(reason) => t(`reason.dnf.${reason}` as const)}
+      reasonText={(reason) => tEnum("reason.dnf", reason)}
       confirmLabel={t("dnf.confirm")}
       onCancel={onCancel}
       onConfirm={(reason) => onConfirm(reason)}

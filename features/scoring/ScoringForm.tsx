@@ -58,7 +58,7 @@ export function ScoringForm({ data, matchId, roId, backHref }: ScoringFormProps)
   const confirmDnf = (reason: DnfReason) => persist((now) => buildDnfScore({ ...who, reason, now }));
   const confirmDq = (reason: DqReason, note: string) => persist((now) => buildDqScore({ ...who, reason, note, now }));
 
-  const stageLabel = t("shooters.stage", { number: stage.number });
+  const stageLabel = t("common.stage", { number: stage.number });
   const shooterLine = `${shooter.name} · #${shooter.competitorNumber}`;
 
   return (
@@ -95,7 +95,7 @@ export function ScoringForm({ data, matchId, roId, backHref }: ScoringFormProps)
 
       {sheet === "review" && (
         <ReviewSheet
-          subtitle={`${shooterLine} · ${stageLabel} · ${t("squads.squad", { number: squad.number })}`}
+          subtitle={`${shooterLine} · ${stageLabel} · ${t("common.squad", { number: squad.number })}`}
           draft={draft}
           hitsPerPaperTarget={stage.hitsPerPaperTarget}
           summary={summary}

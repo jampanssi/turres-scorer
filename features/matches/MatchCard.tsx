@@ -24,7 +24,7 @@ function Stat({ label, value }: { label: string; value: number }) {
 }
 
 export function MatchCard({ summary }: { summary: MatchSummary }) {
-  const { t } = useT();
+  const { t, tEnum } = useT();
   const { match } = summary;
   return (
     <Link
@@ -39,7 +39,7 @@ export function MatchCard({ summary }: { summary: MatchSummary }) {
         <h2 className="font-display text-[22px] font-bold leading-[1.1]">
           {match.name}
           {/* The strip is colour only, so the status is also available as text for screen readers. */}
-          <span className="sr-only"> — {t(`matches.status.${match.status}` as const)}</span>
+          <span className="sr-only"> — {tEnum("matches.status", match.status)}</span>
         </h2>
         <p className="mt-1 text-sm text-text-secondary">{formatDate(match.date)}</p>
       </div>

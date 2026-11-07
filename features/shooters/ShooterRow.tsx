@@ -37,10 +37,8 @@ export function ShooterRow({ row, href }: { row: ShooterRowData; href: string })
         {row.state === "onDeck" && (
           <span className="text-lg font-bold text-text-secondary">{t("shooters.status.onDeck")}</span>
         )}
-        {row.state === "dnf" && (
-          <span className="text-lg font-bold text-text-secondary">{t("shooters.status.dnf")}</span>
-        )}
-        {row.state === "dq" && <span className="text-lg font-bold text-danger-fg">{t("shooters.status.dq")}</span>}
+        {row.state === "dnf" && <span className="text-lg font-bold text-text-secondary">{t("common.dnf")}</span>}
+        {row.state === "dq" && <span className="text-lg font-bold text-danger-fg">{t("common.dq")}</span>}
         {row.state === "waiting" && (
           <>
             <span aria-hidden="true" className="text-lg font-bold text-text-secondary">

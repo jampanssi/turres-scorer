@@ -51,3 +51,27 @@ export function translateKey(locale: Locale, key: string, params?: Params, catal
 
 /** The `t` function returned by useT(), for helpers that format text. */
 export type TFn = (key: MessageKey | PluralKey, params?: Params) => string;
+
+/**
+ * The values `V` for which `${Prefix}.${V}` is a message: `EnumValues<"reason.dq">` is the union of the
+ * DQ reason codes that have a message. Used to look up a message by a code, with type checking.
+ */
+export type EnumValues<Prefix extends string, K = MessageKey> = K extends `${Prefix}.${infer Value}` ? Value : never;
+
+/**
+ * Look up a message chosen by a code: `translateEnum(locale, "reason.dq", "other")` is the message
+ * `reason.dq.other`. The value's type must be covered by messages (a missing message, or a prefix
+ * typo, is a type error), which replaces building the key as a template string with a cast.
+ */
+export function translateEnum<Prefix extends string>(
+  locale: Locale,
+  prefix: Prefix,
+  value: EnumValues<Prefix>,
+  params?: Params,
+  catalogs: Catalogs = CATALOGS,
+): string {
+  return translateKey(locale, `${prefix}.${value}`, params, catalogs);
+}
+
+/** The `tEnum` function returned by useT(), for helpers that format text by code. */
+export type TEnumFn = <Prefix extends string>(prefix: Prefix, value: EnumValues<Prefix>, params?: Params) => string;

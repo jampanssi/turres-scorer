@@ -16,7 +16,7 @@ const CARD_STATE: Record<StageStatus, ListCardState> = {
 };
 
 export function StagesScreen() {
-  const { t } = useT();
+  const { t, tEnum } = useT();
   const { matchId, squadId } = useParams<{ matchId: string; squadId: string }>();
   const overview = useRepoQuery(["stages", matchId, squadId], (repo) => loadStagesOverview(repo, matchId, squadId));
 
@@ -24,8 +24,8 @@ export function StagesScreen() {
     <Screen
       state={overview}
       header={(data) => ({
-        title: data ? t("squads.squad", { number: data.squad.number }) : "",
-        subtitle: data ? t("squads.shooterCount", { count: data.squad.shooterIds.length }) : undefined,
+        title: data ? t("common.squad", { number: data.squad.number }) : "",
+        subtitle: data ? t("common.shooterCount", { count: data.squad.shooterIds.length }) : undefined,
       })}
       back={{ href: `/matches/${matchId}`, label: t("stages.back") }}
       notFound={t("stages.notFound")}
@@ -43,7 +43,7 @@ export function StagesScreen() {
                   href={`/matches/${matchId}/squads/${squadId}/stages/${summary.stage.id}`}
                   number={summary.stage.number}
                   title={summary.stage.name}
-                  status={t(`stages.status.${summary.status}` as const)}
+                  status={tEnum("stages.status", summary.status)}
                   state={CARD_STATE[summary.status]}
                   lines={[
                     formatStageTargets(summary.stage, t),

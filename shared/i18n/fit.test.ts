@@ -18,3 +18,29 @@ describe("labels in small boxes", () => {
     }
   });
 });
+
+/**
+ * Labels in boxes that share a row with other content (tabs, stat tiles, the score bar buttons).
+ * The caps come from the real-Chrome overflow audit at 360 px; raise one only after checking the screen.
+ */
+const SHORT_LABELS = {
+  "matches.stages": 10,
+  "matches.squads": 10,
+  "matches.shooters": 10,
+  "matches.tab.open": 12,
+  "matches.tab.results": 12,
+  "score.review": 12,
+  "common.dnf": 4,
+  "common.dq": 4,
+} as const;
+
+describe("short labels", () => {
+  for (const [key, max] of Object.entries(SHORT_LABELS) as [keyof typeof SHORT_LABELS, number][]) {
+    it(`${key} is at most ${max} characters in every language`, () => {
+      for (const locale of LOCALES) {
+        const label = translate(locale, key);
+        expect(label.length, `${locale}: "${label}"`).toBeLessThanOrEqual(max);
+      }
+    });
+  }
+});

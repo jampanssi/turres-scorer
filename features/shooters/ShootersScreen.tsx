@@ -21,7 +21,7 @@ export function ShootersScreen() {
       state={overview}
       header={(data) => ({
         title: data
-          ? `${t("squads.squad", { number: data.squad.number })} · ${t("shooters.stage", { number: data.stage.number })}`
+          ? `${t("common.squad", { number: data.squad.number })} · ${t("common.stage", { number: data.stage.number })}`
           : "",
         subtitle: data ? formatStageTargets(data.stage, t) : undefined,
       })}

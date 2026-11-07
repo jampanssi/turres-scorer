@@ -9,7 +9,7 @@ import { type SignInError, signIn } from "./session";
 
 export function SignInForm() {
   const router = useRouter();
-  const { t } = useT();
+  const { t, tEnum } = useT();
   const errorId = useId();
   // Stored as a code so the message re-translates if the language changes.
   const [error, setError] = useState<SignInError | null>(null);
@@ -59,7 +59,7 @@ export function SignInForm() {
           role="alert"
           className="rounded-input bg-danger-tint px-3 py-2 text-sm font-semibold text-danger-text"
         >
-          {t(`auth.error.${error}` as const)}
+          {tEnum("auth.error", error)}
         </p>
       )}
 

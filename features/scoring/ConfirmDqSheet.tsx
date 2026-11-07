@@ -18,7 +18,7 @@ interface ConfirmDqSheetProps {
 
 /** Confirms a disqualification: pick a reason, add an optional note. A DQ lasts for the rest of the match. */
 export function ConfirmDqSheet({ subtitle, onCancel, onConfirm, saving, saveFailed }: ConfirmDqSheetProps) {
-  const { t } = useT();
+  const { t, tEnum } = useT();
   return (
     <ConfirmOutcomeSheet<DqReason>
       tone="danger"
@@ -26,9 +26,9 @@ export function ConfirmDqSheet({ subtitle, onCancel, onConfirm, saving, saveFail
       title={t("dq.title")}
       subtitle={subtitle}
       info={t("dq.info")}
-      reasonLabel={t("dq.reason")}
+      reasonLabel={t("common.reason")}
       reasons={DQ_REASONS}
-      reasonText={(reason) => t(`reason.dq.${reason}` as const)}
+      reasonText={(reason) => tEnum("reason.dq", reason)}
       note={{ label: t("dq.note"), maxLength: MAX_NOTE_LENGTH }}
       confirmLabel={t("dq.confirm")}
       onCancel={onCancel}

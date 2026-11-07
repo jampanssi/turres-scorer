@@ -16,13 +16,13 @@ const CARD_STATE: Record<SquadStatus, ListCardState> = {
 };
 
 export function SquadsScreen() {
-  const { t } = useT();
+  const { t, tEnum } = useT();
   const { matchId } = useParams<{ matchId: string }>();
   const overview = useRepoQuery(["squads", matchId], (repo) => loadSquadsOverview(repo, matchId));
 
   const line = (summary: SquadSummary) =>
-    t(`squads.line.${summary.status}` as const, {
-      shooters: t("squads.shooterCount", { count: summary.shooters }),
+    tEnum("squads.line", summary.status, {
+      shooters: t("common.shooterCount", { count: summary.shooters }),
       stage: summary.currentStage?.number ?? "",
       done: summary.stagesDone,
       total: summary.stagesTotal,
@@ -35,9 +35,9 @@ export function SquadsScreen() {
         title: data?.match.name ?? "",
         subtitle: data
           ? [
-              t("squads.stageCount", { count: data.stageCount }),
-              t("squads.squadCount", { count: data.squads.length }),
-              t("squads.shooterCount", { count: data.shooterCount }),
+              t("common.stageCount", { count: data.stageCount }),
+              t("common.squadCount", { count: data.squads.length }),
+              t("common.shooterCount", { count: data.shooterCount }),
             ].join(" · ")
           : undefined,
       })}
@@ -53,8 +53,8 @@ export function SquadsScreen() {
                 <ListCard
                   href={`/matches/${matchId}/squads/${summary.squad.id}`}
                   number={summary.squad.number}
-                  title={t("squads.squad", { number: summary.squad.number })}
-                  status={t(`squads.status.${summary.status}` as const)}
+                  title={t("common.squad", { number: summary.squad.number })}
+                  status={tEnum("squads.status", summary.status)}
                   state={CARD_STATE[summary.status]}
                   lines={[line(summary)]}
                   footer={

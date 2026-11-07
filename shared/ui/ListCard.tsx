@@ -74,7 +74,7 @@ export function ListCard({
           )}
         </div>
         {lines?.map((line, i) => (
-          <div key={i} className="truncate text-[13px] text-text-secondary">
+          <div key={i} className="text-[13px] text-text-secondary">
             {line}
           </div>
         ))}

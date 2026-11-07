@@ -47,23 +47,20 @@ export function ScoreReadOnly({ existing, stage, onEdit }: ScoreReadOnlyProps) {
 
 /** A saved DNF (or DQ): the outcome, the reason and the note. These results have no time or hits. */
 function Outcome({ existing }: { existing: DnfStageScore | DqStageScore }) {
-  const { t } = useT();
+  const { t, tEnum } = useT();
   const disqualified = existing.status === "dq";
-  const reason = t(
-    existing.status === "dq"
-      ? (`reason.dq.${existing.dqReason}` as const)
-      : (`reason.dnf.${existing.dnfReason}` as const),
-  );
+  const reason =
+    existing.status === "dq" ? tEnum("reason.dq", existing.dqReason) : tEnum("reason.dnf", existing.dnfReason);
 
   return (
     <>
       <div className="flex flex-col gap-0.5 rounded-card bg-primary px-3.5 py-3 text-white">
         <span className="text-xs text-on-primary-muted">{t("score.result")}</span>
         <span className="font-display text-[28px] font-bold leading-none">
-          {t(disqualified ? "shooters.status.dq" : "shooters.status.dnf")}
+          {t(disqualified ? "common.dq" : "common.dnf")}
         </span>
       </div>
-      <SummaryCard title={t(disqualified ? "dq.reason" : "dnf.reason")}>
+      <SummaryCard title={t(disqualified ? "common.reason" : "common.reason")}>
         <p className="text-base">{reason}</p>
       </SummaryCard>
       {existing.note && (

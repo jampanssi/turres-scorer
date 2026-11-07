@@ -44,10 +44,10 @@ export function ScoreBar(props: ScoreBarProps) {
       </div>
       <div className="flex gap-2">
         <Button variant="dangerOutline" className="px-4" onClick={props.onDq}>
-          {t("score.dq")}
+          {t("common.dq")}
         </Button>
         <Button variant="outline" className="px-4" onClick={props.onDnf}>
-          {t("score.dnf")}
+          {t("common.dnf")}
         </Button>
         <Button
           className="flex-1"
