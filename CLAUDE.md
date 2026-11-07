@@ -15,6 +15,7 @@ Read these before working on the relevant area:
 - [docs/DESIGN.md](docs/DESIGN.md) and `docs/design/` (PNG per screen plus `*.dc.html` mock-ups): read before building any UI. If an image and DESIGN.md disagree, DESIGN.md wins. Rebuild the screens as React and Tailwind; don't copy the mock-up markup or its `{{…}}` template syntax.
 - [docs/SCORING.md](docs/SCORING.md): the scoring rules, matrix entry behaviour and domain model. These are confirmed by the product owner; follow them exactly.
 - [docs/PLAN.md](docs/PLAN.md): planned stack, structure, MVP checklist and open questions. These are plans, not facts about the code. The backend/auth is undecided, so build against a small data-access interface.
+- [docs/adr/](docs/adr/README.md): short records of the architecture decisions (client rendering, repository seam, DQ semantics, hits per paper target, offline fallback). Add one when a decision changes.
 
 ## Commands
 

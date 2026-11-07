@@ -86,8 +86,8 @@ Behaviour-preserving, one commit per phase, all checks green after each:
 - [x] Phase 3: screen structure. `(app)` route group with one `SessionGate`, `features/shell/Screen` for the header and loading/error/not-found, `ScoringScreen` split into `ScoringForm` and `useSaveResult`
 - [x] Phase 4: base UI components. Card, form fields, IconButton, native-dialog sheet (Dialog), Popover, one ConfirmOutcomeSheet for DNF and DQ, `size-touch` and `eyebrow` tokens. Verified in real Chrome: 27 of 28 screenshots pixel-identical to before, the other differs by 1 px
 - [x] Phase 5: i18n hygiene. `common.*` keys, `tEnum` (typed enum lookups, no casts), `usage.test.ts` (no unused or templated keys), width caps in `fit.test.ts`. Real-Chrome Finnish audit at 360 and 390 px: stage detail lines now wrap instead of being cut off
-- [ ] Phase 6: component tests (Testing Library) and `fake-indexeddb`
-- [ ] Phase 7: docs and ADRs
+- [ ] Phase 6: component tests (Testing Library) and `fake-indexeddb`. Skipped for now; the real-browser dialog checks may become Playwright tests
+- [x] Phase 7: docs and ADRs (`docs/adr/`, five short records)
 
 ## Definition of done (MVP)
 
