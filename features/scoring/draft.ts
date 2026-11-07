@@ -103,6 +103,11 @@ export function backspaceTimeDigit(draft: ScoreDraft): ScoreDraft {
   return { ...draft, timeDigits: draft.timeDigits.slice(0, -1) };
 }
 
+/** Remove the whole time (the keypad's clear key). */
+export function clearTimeDigits(draft: ScoreDraft): ScoreDraft {
+  return { ...draft, timeDigits: "" };
+}
+
 /** Seconds from the typed digits ("842" -> 8.42), or null when no time has been entered. */
 export function secondsFromDigits(digits: string): number | null {
   return digits === "" ? null : Number(digits) / 100;
@@ -119,4 +124,17 @@ export function formatTimeDigits(digits: string): string {
   if (digits === "") return "";
   const padded = digits.padStart(3, "0");
   return `${padded.slice(0, -2)}.${padded.slice(-2)}`;
+}
+
+/** True when two drafts hold exactly the same entry (used to tell whether leaving would lose anything). */
+export function isSameDraft(a: ScoreDraft, b: ScoreDraft): boolean {
+  return (
+    a.timeDigits === b.timeDigits &&
+    a.noShoots === b.noShoots &&
+    a.procedurals === b.procedurals &&
+    a.steel.length === b.steel.length &&
+    a.steel.every((hit, i) => hit === b.steel[i]) &&
+    a.paper.length === b.paper.length &&
+    a.paper.every((row, i) => row.length === b.paper[i].length && row.every((hit, j) => hit === b.paper[i][j]))
+  );
 }

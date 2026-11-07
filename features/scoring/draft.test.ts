@@ -4,10 +4,12 @@ import type { ScoredStageScore } from "@/shared/domain/types";
 import {
   appendTimeDigit,
   backspaceTimeDigit,
+  clearTimeDigits,
   digitsFromSeconds,
   draftFromScore,
   emptyDraft,
   formatTimeDigits,
+  isSameDraft,
   secondsFromDigits,
   setNoShoots,
   setProcedurals,
@@ -244,5 +246,33 @@ describe("hits per paper target set by the stage", () => {
       updatedAt: "",
     };
     expect(draftFromScore(saved, oneHit).paper).toEqual([["C"], ["D"]]);
+  });
+});
+
+describe("isSameDraft", () => {
+  const stage = { paperTargets: 2, steelTargets: 1, noShootTargets: 1, hitsPerPaperTarget: 2 } as const;
+
+  it("is true for an untouched copy and false after any change", () => {
+    const start = emptyDraft(stage);
+    expect(isSameDraft(start, emptyDraft(stage))).toBe(true);
+    expect(isSameDraft(start, appendTimeDigit(start, "5"))).toBe(false);
+    expect(isSameDraft(start, tapPaper(start, 0, "A", 2))).toBe(false);
+    expect(isSameDraft(start, tapSteel(start, 0, "A"))).toBe(false);
+    expect(isSameDraft(start, setNoShoots(start, 1, stage))).toBe(false);
+    expect(isSameDraft(start, setProcedurals(start, 1, stage))).toBe(false);
+  });
+
+  it("is true again when a change is undone", () => {
+    const start = emptyDraft(stage);
+    expect(isSameDraft(start, undoPaper(tapPaper(start, 0, "A", 2), 0))).toBe(true);
+  });
+});
+
+describe("clearTimeDigits", () => {
+  it("removes the whole time and nothing else", () => {
+    const draft = setProcedurals(appendTimeDigit(appendTimeDigit(emptyDraft(stage), "8"), "4"), 1, stage);
+    const cleared = clearTimeDigits(draft);
+    expect(cleared.timeDigits).toBe("");
+    expect(cleared.procedurals).toBe(1);
   });
 });

@@ -3,6 +3,7 @@
 import { createContext, type ReactNode, useContext } from "react";
 import type { Session } from "@/features/auth/session";
 import { useRequireSession } from "@/features/auth/useRequireSession";
+import { ToastHost } from "@/shared/ui/ToastHost";
 
 const SessionContext = createContext<Session | null>(null);
 
@@ -15,7 +16,12 @@ const SessionContext = createContext<Session | null>(null);
 export function SessionGate({ children }: { children: ReactNode }) {
   const state = useRequireSession();
   if (state.status !== "signedIn") return <div className="min-h-dvh bg-bg" />;
-  return <SessionContext.Provider value={state.session}>{children}</SessionContext.Provider>;
+  return (
+    <SessionContext.Provider value={state.session}>
+      {children}
+      <ToastHost />
+    </SessionContext.Provider>
+  );
 }
 
 /** The signed-in user. Only available below `SessionGate`. */

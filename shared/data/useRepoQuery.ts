@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { getRepository, type Repository } from "./index";
 
-export type QueryState<T> = { status: "loading" } | { status: "error" } | { status: "ready"; data: T };
+export type QueryState<T> =
+  { status: "loading" } | { status: "error"; retry: () => void } | { status: "ready"; data: T };
 
 const LOADING: QueryState<never> = { status: "loading" };
 
@@ -15,6 +16,7 @@ const LOADING: QueryState<never> = { status: "loading" };
  * - It refetches whenever the repository reports a change (a result was saved, later a sync arrived),
  *   keeping the old data on screen meanwhile (no flash of "loading"); if that refetch fails, the old
  *   data stays.
+ * - On an error the state carries `retry()`, which shows loading again and asks once more.
  * - Only the latest request counts: a slow, older answer cannot overwrite a newer one.
  *
  * `fetcher` may be an inline function: the latest one is used, and changing it does not refetch.
@@ -26,6 +28,7 @@ export function useRepoQuery<T>(
   const keyId = JSON.stringify(key);
   const fetcherRef = useRef(fetcher);
   const [result, setResult] = useState<{ key: string; state: QueryState<T> } | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     fetcherRef.current = fetcher;
@@ -35,6 +38,10 @@ export function useRepoQuery<T>(
     let active = true;
     let latest = 0;
     let unsubscribe: (() => void) | undefined;
+    const retry = () => {
+      setResult(null);
+      setAttempt((n) => n + 1);
+    };
 
     const load = () => {
       const request = ++latest;
@@ -49,7 +56,7 @@ export function useRepoQuery<T>(
             setResult((previous) =>
               previous?.key === keyId && previous.state.status === "ready"
                 ? previous
-                : { key: keyId, state: { status: "error" } },
+                : { key: keyId, state: { status: "error", retry } },
             );
           },
         );
@@ -67,7 +74,7 @@ export function useRepoQuery<T>(
       active = false;
       unsubscribe?.();
     };
-  }, [keyId]);
+  }, [keyId, attempt]);
 
   return result?.key === keyId ? result.state : LOADING;
 }

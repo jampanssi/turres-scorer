@@ -36,6 +36,7 @@ export function StagesScreen() {
             title={t("stages.section")}
             count={{ done: data.stagesDone, total: data.stages.length, label: t("stages.doneLabel") }}
           />
+          {data.stages.length === 0 && <p className="px-4 pt-2 text-text-secondary">{t("stages.empty")}</p>}
           <ul className="flex flex-col gap-2 px-4">
             {data.stages.map((summary) => (
               <li key={summary.stage.id}>

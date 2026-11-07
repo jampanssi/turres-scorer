@@ -60,16 +60,6 @@ export function ReviewSheet({
       }
     >
       <div className="flex flex-col gap-2.5">
-        <ScoreSummary draft={draft} hitsPerPaperTarget={hitsPerPaperTarget} summary={summary} />
-
-        <SummaryCard title={t("review.signOff")}>
-          <Checkbox
-            checked={accepted}
-            onChange={(event) => setAccepted(event.target.checked)}
-            label={t("review.accept")}
-          />
-        </SummaryCard>
-
         {(summary.missingTime || summary.incompleteTargets > 0 || saveFailed) && (
           <div
             role="alert"
@@ -82,6 +72,15 @@ export function ReviewSheet({
             {saveFailed && <p>{t("common.saveError")}</p>}
           </div>
         )}
+        <ScoreSummary draft={draft} hitsPerPaperTarget={hitsPerPaperTarget} summary={summary} />
+
+        <SummaryCard title={t("review.signOff")}>
+          <Checkbox
+            checked={accepted}
+            onChange={(event) => setAccepted(event.target.checked)}
+            label={t("review.accept")}
+          />
+        </SummaryCard>
       </div>
     </BottomSheet>
   );

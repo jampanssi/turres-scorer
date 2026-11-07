@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 import { formatHitFactor } from "@/shared/i18n/format";
 import { useT } from "@/shared/i18n/useT";
 import { cx } from "@/shared/ui/cx";
@@ -10,8 +11,22 @@ import type { ShooterRowData } from "./rows";
  * One shooter in the shooting order. The right side shows HF, a status word, or a dash.
  * Disqualified shooters are shown but cannot be opened: they render as plain, dimmed rows.
  */
-export function ShooterRow({ row, href }: { row: ShooterRowData; href: string }) {
+export function ShooterRow({
+  row,
+  href,
+  justSaved = false,
+}: {
+  row: ShooterRowData;
+  href: string;
+  justSaved?: boolean;
+}) {
   const { t } = useT();
+  const ref = useRef<HTMLAnchorElement>(null);
+
+  // Bring the row just saved into view, so the RO sees its result.
+  useEffect(() => {
+    if (justSaved) ref.current?.scrollIntoView({ block: "nearest" });
+  }, [justSaved]);
   const shooting = row.state === "shooting";
   const disqualified = row.state === "dq";
 
@@ -64,10 +79,15 @@ export function ShooterRow({ row, href }: { row: ShooterRowData; href: string })
 
   return (
     <Link
+      ref={ref}
       href={href}
       className={cx(
         "flex items-center gap-4 rounded-button border-2 p-3 shadow-card",
-        shooting ? "border-primary bg-primary-tint" : "border-transparent bg-surface",
+        justSaved
+          ? "border-success-accent bg-success-tint"
+          : shooting
+            ? "border-primary bg-primary-tint"
+            : "border-transparent bg-surface",
       )}
     >
       {content}

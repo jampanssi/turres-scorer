@@ -140,7 +140,7 @@ Behaviour (a native modal `<dialog>`, see `shared/ui/Dialog.tsx`): the page behi
 ## 6. Screens
 
 ### 1 · Sign in
-Full blue background. Upper area centred: club logo (104 px, `public/logo.png`), app name **TURRES SCORER**, sub-line "Powered by SSI". Bottom white panel (radius 24 top): title "SIGN IN", **Email** input, **Password** input (50 px tall, 1.5 px border, radius 10), right-aligned link "Forgot password?", primary button **Sign in**. No "keep me signed in", no sync message.
+Full blue background. Upper area centred: club logo (104 px, `public/logo.png`), app name **TURRES SCORER**, sub-line "Powered by SSI". Bottom white panel (radius 24 top): title "SIGN IN", **Email** input, **Password** input (50 px tall, 1.5 px border, radius 10), primary button **Sign in** (it reads "Signing in…" while busy). The mock-up's "Forgot password?" link is left out until an auth provider exists: an inert link looks broken. No "keep me signed in", no sync message.
 
 ### 2 · Matches
 Header: title **MATCHES**, the user menu (avatar). Segmented control **Open | Results** inside the header.
@@ -177,10 +177,10 @@ Scrollable content:
 Sticky bottom bar: **No-shoot** stepper (`Max = 2 × no-shoot targets`), **Procedural** stepper (`Max = ceil(maxPoints / 10)`), then **DQ · DNF · Review**. **Review is disabled** (disabled colour) until the score is complete: a time entered and every paper and steel target has all its hits. The red `N left` row tiles show which targets are missing, and an empty time shows `0.00` in the disabled colour.
 No running points/HF summary on this screen — totals are shown in Review.
 
-**Read-only mode.** When the shooter already has a saved result for this stage, the screen opens read only instead of the entry form: the same summary as the Review sheet (blue Time / Points / HF card, hit totals, hits per target), with no sign-off box, and a full-width **Edit** button (secondary = outline style) in a sticky bar at the bottom. There are no DQ, DNF or Review buttons in this mode. Tapping **Edit** switches to the entry form, filled from the saved score (a saved DNF starts empty); saving from there replaces the result. For a saved **DNF** the summary is replaced by a blue "Result: DNF" card with the reason (and note, if any). There is no way back from edit mode to read-only without saving: use the back arrow to leave. A shooter without a saved result opens straight in the entry form.
+**Read-only mode.** When the shooter already has a saved result for this stage, the screen opens read only instead of the entry form: the same summary as the Review sheet (blue Time / Points / HF card, hit totals, hits per target), with no sign-off box, and a full-width **Edit** button (secondary = outline style) in a sticky bar at the bottom. There are no DQ, DNF or Review buttons in this mode. Tapping **Edit** switches to the entry form, filled from the saved score (a saved DNF starts empty); saving from there replaces the result. For a saved **DNF** the summary is replaced by a blue "Result: DNF" card with the reason (and note, if any). In edit mode a blue strip above the time card says "Editing the saved score" with a **Cancel edit** link that returns to read-only. **Leaving with unsaved changes asks first**: the back arrow, Cancel edit and closing the tab show a "Discard changes?" sheet (**Keep editing** / **Discard**) whenever the entry differs from where it started (a saved score, or empty for a new one). Nothing is asked when nothing changed. A shooter without a saved result opens straight in the entry form.
 
 ### Time keypad (bottom sheet over Scoring)
-Opens when the time field is tapped. Title **TIME (S)**, a white card with the typed time large (Barlow 48, `0.00` in the disabled colour while empty) and the hint "The last two digits are decimals: 842 = 8.42". Below, a 3 × 4 grid of 64 px keys (Barlow 32): **1–9**, an empty cell, **0**, and **backspace** (icon, aria-label "Delete last digit"). There is no decimal key: digits shift in from the right, so 8, 4, 2 gives 8.42; leading zeros are ignored and at most 5 digits are taken. The action row has one **Done** button; Escape, Enter and a tap on the scrim also close it. On a physical keyboard, digits and Backspace work too.
+Opens when the time field is tapped. Title **TIME (S)**, a white card with the typed time large (Barlow 48, `0.00` in the disabled colour while empty) and the hint "The last two digits are decimals: 842 = 8.42". Below, a 3 × 4 grid of 64 px keys (Barlow 32): **1–9**, **C** (clear: removes the whole time, aria-label "Clear time"), **0**, and **backspace** (icon, aria-label "Delete last digit"). There is no decimal key: digits shift in from the right, so 8, 4, 2 gives 8.42; leading zeros are ignored and at most 5 digits are taken. The action row has one **Done** button; Escape, Enter and a tap on the scrim also close it. On a physical keyboard, digits and Backspace work too.
 
 ### 6a · Confirm DQ (bottom sheet over Scoring)
 White sheet (`surface`). The header row has a 44 px circle in `danger-tint` holding a `danger-fg` warning-triangle icon, and to its right the title **DISQUALIFY SHOOTER?** and the shooter line `Antti Mäkelä · #23 · Stage 3` (no squad).
@@ -202,11 +202,17 @@ Sheet background `bg`. Title **REVIEW SCORE**, shooter line.
 4. **Shooter sign-off**: checkbox "Shooter has reviewed and accepts the score" (no signature pad).
 Actions: **Edit** (outline primary) → back to Scoring · **Accept & save** (primary) → saves the score, then Shooters. Accept & save is disabled until the checkbox is ticked **and the score is complete** (a time entered and every paper and steel target has all its hits). An addition to the mock-up: otherwise an unfinished score would be saved with an HF of 0. Because Review is disabled until the score is complete, the sheet is only reachable with a complete score. The red box ("Enter the time before saving.", "N targets are not complete.") and the red `—` tiles are a safety net that also keeps Accept & save disabled. Tapping Edit goes back to fix it. While saving, both buttons are disabled; if saving fails, the sheet stays open with "Could not save the score. Try again." The checkbox starts unticked each time the sheet opens. Hit total tiles show the points per code (`55p`, `-10p`); NS and PE are not translated.
 
+### Toast (confirmation after saving)
+After a result is saved (scored, DNF or DQ) the app returns to Shooters and shows a toast at the bottom: a white card with a 4 px `success-accent` left edge, a check icon, one message, and a 44 px close button. Messages: `Antti Mäkelä: 8.42 s · HF 4.2310 saved`, `…: marked DNF`, `…: disqualified`. When someone in the squad still has no result on this stage it also shows a full-width **Next shooter** button (outline primary, opens that shooter) under the message. `role="status"`, so screen readers announce it without taking focus; it closes by itself after 6 s or with the close button. The shooter's row on Shooters is scrolled into view and highlighted green (`success-tint` fill, `success-accent` border) while the toast shows, and the list gets extra bottom padding so the toast never hides the last row. After saving the app uses `replace`, so Back does not reopen the score page.
+
+### Load errors
+When a screen cannot load its data it shows the message and a **Try again** button (outline) instead of needing a page reload.
+
 ---
 
 ## 7. Iconography
 
-Inline stroke SVG icons, 2–2.6 px stroke, `currentColor`, round caps: chevron-left (back), chevron-right (list), stopwatch, undo-arrow, minus, plus, warning triangle (DQ), circle-x (DNF). Decorative icons have `aria-hidden="true"`; icon-only buttons have `aria-label`. No emoji.
+Inline stroke SVG icons, 2–2.6 px stroke, `currentColor`, round caps: chevron-left (back), chevron-right (list), stopwatch, undo-arrow, minus, plus, warning triangle (DQ), circle-x (DNF), check and close (toast). Decorative icons have `aria-hidden="true"`; icon-only buttons have `aria-label`. No emoji.
 
 ---
 

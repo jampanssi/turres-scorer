@@ -12,13 +12,14 @@ interface TimeCardProps {
   digits: string;
   onDigit: (digit: string) => void;
   onBackspace: () => void;
+  onClear: () => void;
 }
 
 /**
  * The time field. It is a button that opens the number pad instead of the phone's keyboard,
  * so the keyboard never covers the matrix.
  */
-export function TimeCard({ digits, onDigit, onBackspace }: TimeCardProps) {
+export function TimeCard({ digits, onDigit, onBackspace, onClear }: TimeCardProps) {
   const { t } = useT();
   const labelId = useId();
   const [open, setOpen] = useState(false);
@@ -48,6 +49,7 @@ export function TimeCard({ digits, onDigit, onBackspace }: TimeCardProps) {
         digits={digits}
         onDigit={onDigit}
         onBackspace={onBackspace}
+        onClear={onClear}
       />
     </>
   );

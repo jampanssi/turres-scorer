@@ -160,7 +160,7 @@ function Cell({ code, count, label, onClick }: { code: HitCode; count: number; l
       aria-label={label}
       onClick={onClick}
       className={cx(
-        "flex h-11 items-center justify-center rounded-cell font-display text-[22px] font-bold",
+        "flex h-11 items-center justify-center rounded-cell font-display text-[22px] font-bold transition-transform active:scale-95",
         filled
           ? cx("text-white", code === "M" ? "bg-danger" : "bg-primary")
           : "border-[1.5px] border-border-light bg-surface-muted",

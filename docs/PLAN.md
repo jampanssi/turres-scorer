@@ -89,6 +89,16 @@ Behaviour-preserving, one commit per phase, all checks green after each:
 - [ ] Phase 6: component tests (Testing Library) and `fake-indexeddb`. Skipped for now; the real-browser dialog checks may become Playwright tests
 - [x] Phase 7: docs and ADRs (`docs/adr/`, five short records)
 
+## UX review (done)
+
+From a UX pass over every screen; details in DESIGN.md (Toast, Load errors, Sticky bottom bar, Scoring, Time keypad).
+
+- [x] Save confirmation toast, saved row highlighted, Next shooter shortcut, `router.replace` after save
+- [x] Try again on load errors; unsaved-changes prompt, Cancel edit
+- [x] Clear key on the time keypad; matrix press feedback (DQ and DNF stay in the score bar)
+- [x] Sign in: no inert link, "Signing in…"; empty states on Squads, Stages, Shooters
+- [ ] Not done: reserved slot for an unsynced mark (do it with the offline step), dark palette contrast pass, Finnish copy review
+
 ## Definition of done (MVP)
 
 - [ ] All screens in DESIGN.md at 390×844, usable down to 360 px wide.

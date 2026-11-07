@@ -101,3 +101,13 @@ export const BackspaceIcon = (p: SVGProps<SVGSVGElement>) => (
     <path d="M17 9.5l-5 5M12 9.5l5 5" />
   </Icon>
 );
+export const CloseIcon = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <path d="M6 6l12 12M18 6L6 18" />
+  </Icon>
+);
+export const CheckIcon = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <path d="M5 12.5l4.5 4.5L19 7.5" />
+  </Icon>
+);

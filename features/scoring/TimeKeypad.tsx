@@ -5,6 +5,7 @@ import { useT } from "@/shared/i18n/useT";
 import { BottomSheet } from "@/shared/ui/BottomSheet";
 import { Button } from "@/shared/ui/Button";
 import { Card } from "@/shared/ui/Card";
+import { cx } from "@/shared/ui/cx";
 import { BackspaceIcon } from "@/shared/ui/icons";
 import { formatTimeDigits } from "./draft";
 
@@ -15,6 +16,7 @@ interface TimeKeypadProps {
   digits: string;
   onDigit: (digit: string) => void;
   onBackspace: () => void;
+  onClear: () => void;
 }
 
 const KEY =
@@ -25,7 +27,7 @@ const KEY =
  * the last two digits are the decimals, so 8, 4, 2 gives 8.42. On a keyboard, digits, Backspace and
  * Enter work too. (Escape and a tap outside also close the sheet.)
  */
-export function TimeKeypad({ open, onClose, digits, onDigit, onBackspace }: TimeKeypadProps) {
+export function TimeKeypad({ open, onClose, digits, onDigit, onBackspace, onClear }: TimeKeypadProps) {
   const { t } = useT();
 
   useEffect(() => {
@@ -70,7 +72,14 @@ export function TimeKeypad({ open, onClose, digits, onDigit, onBackspace }: Time
             {digit}
           </button>
         ))}
-        <span aria-hidden="true" />
+        <button
+          type="button"
+          aria-label={t("keypad.clear")}
+          className={cx(KEY, "text-text-secondary")}
+          onClick={onClear}
+        >
+          C
+        </button>
         <button type="button" className={KEY} onClick={() => onDigit("0")}>
           0
         </button>

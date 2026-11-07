@@ -47,6 +47,7 @@ export function SquadsScreen() {
       {(data) => (
         <main className="flex flex-1 flex-col pb-4">
           <SectionHeader title={t("squads.section")} />
+          {data.squads.length === 0 && <p className="px-4 pt-2 text-text-secondary">{t("squads.empty")}</p>}
           <ul className="flex flex-col gap-2 px-4">
             {data.squads.map((summary) => (
               <li key={summary.squad.id}>

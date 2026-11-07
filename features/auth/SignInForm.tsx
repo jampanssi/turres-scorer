@@ -46,13 +46,6 @@ export function SignInForm() {
         {(control) => <TextInput {...control} name="password" type="password" autoComplete="current-password" />}
       </Field>
 
-      <div className="flex justify-end">
-        {/* Inert until an auth provider exists (see docs/PLAN.md open questions). */}
-        <button type="button" className="min-h-touch px-1 text-[15px] font-bold text-primary-text underline">
-          {t("auth.forgot")}
-        </button>
-      </div>
-
       {error && (
         <p
           id={errorId}
@@ -64,7 +57,7 @@ export function SignInForm() {
       )}
 
       <Button type="submit" disabled={busy} className="w-full min-h-[54px] text-[22px]">
-        {t("auth.submit")}
+        {busy ? t("auth.busy") : t("auth.submit")}
       </Button>
     </form>
   );

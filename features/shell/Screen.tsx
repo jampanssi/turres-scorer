@@ -1,10 +1,11 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { UserMenu } from "@/features/auth/UserMenu";
 import type { QueryState } from "@/shared/data/useRepoQuery";
 import { useT } from "@/shared/i18n/useT";
 import { AppHeader } from "@/shared/ui/AppHeader";
+import { Button } from "@/shared/ui/Button";
 
 interface ScreenProps<T> {
   /**
@@ -15,7 +16,7 @@ interface ScreenProps<T> {
   /** The header text. `data` is null until the query is ready; return an empty title meanwhile. */
   header: (data: T | null) => { title: string; subtitle?: string };
   /** Back arrow in the header; omit on the first screen. */
-  back?: { href: string; label: string };
+  back?: ComponentProps<typeof AppHeader>["back"];
   /** Content under the title row in the header, such as the Open | Results tabs. */
   headerExtra?: ReactNode;
   /** Message for a `null` result. */
@@ -41,9 +42,12 @@ export function Screen<T>({ state, header, back, headerExtra, notFound, children
 
       {state.status === "loading" && <p className="px-4 pt-4 text-text-secondary">{t("common.loading")}</p>}
       {state.status === "error" && (
-        <p role="alert" className="px-4 pt-4 text-danger-fg">
-          {t("common.error")}
-        </p>
+        <div role="alert" className="flex flex-col items-start gap-3 px-4 pt-4">
+          <p className="text-danger-fg">{t("common.error")}</p>
+          <Button variant="outline" onClick={state.retry}>
+            {t("status.retry")}
+          </Button>
+        </div>
       )}
       {state.status === "ready" && data === null && notFound && (
         <p className="px-4 pt-4 text-text-secondary">{notFound}</p>

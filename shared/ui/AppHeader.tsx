@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useSyncExternalStore } from "react";
+import { type MouseEventHandler, type ReactNode, useSyncExternalStore } from "react";
 import { IconLink } from "./IconButton";
 import { ChevronLeftIcon } from "./icons";
 import { cx } from "./cx";
@@ -9,7 +9,7 @@ interface AppHeaderProps {
   title: string;
   subtitle?: string;
   /** Back link; omit on the root screen (Matches). */
-  back?: { href: string; label: string };
+  back?: { href: string; label: string; onClick?: MouseEventHandler<HTMLAnchorElement> };
   /** Right-side slot: pass `<UserMenu />` (features/auth) on signed-in screens. */
   right?: ReactNode;
   /** Content under the title row, e.g. the Open | Results segmented control. */
@@ -48,7 +48,7 @@ export function AppHeader({ title, subtitle, back, right, children }: AppHeaderP
     >
       <div className="flex items-center gap-1">
         {back && (
-          <IconLink href={back.href} label={back.label}>
+          <IconLink href={back.href} label={back.label} onClick={back.onClick}>
             <ChevronLeftIcon />
           </IconLink>
         )}

@@ -3,15 +3,30 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { getRepository } from "@/shared/data";
-import type { StageScore } from "@/shared/domain/types";
+import { hitFactor, pointsOf, totalsOf } from "@/shared/domain/scoring";
+import type { Shooter, StageScore } from "@/shared/domain/types";
+import { formatHitFactor, formatTime } from "@/shared/i18n/format";
+import type { TFn } from "@/shared/i18n/translate";
+import { useT } from "@/shared/i18n/useT";
+import { showToast } from "@/shared/ui/toast";
+
+interface SaveTarget {
+  /** The shooter list: where to go after saving. */
+  backHref: string;
+  shooter: Pick<Shooter, "id" | "name">;
+  /** The score page of the next shooter to shoot, offered in the toast; null when everyone has a result. */
+  nextHref: string | null;
+}
 
 /**
- * Saving a result from the scoring screen: build it with the repository's clock, store it, then go
- * back to the shooter list. `saving` stays true until the page has changed, so a result cannot be
- * saved twice; if storing fails, `saveFailed` is set and the sheet stays open to try again.
+ * Saving a result from the scoring screen: build it with the repository's clock, store it, show a
+ * confirmation toast, then go back to the shooter list. `saving` stays true until the page has
+ * changed, so a result cannot be saved twice; if storing fails, `saveFailed` is set and the sheet
+ * stays open to try again.
  */
-export function useSaveResult(backHref: string) {
+export function useSaveResult({ backHref, shooter, nextHref }: SaveTarget) {
   const router = useRouter();
+  const { t } = useT();
   const [saving, setSaving] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
 
@@ -21,8 +36,15 @@ export function useSaveResult(backHref: string) {
     setSaveFailed(false);
     try {
       const repo = await getRepository();
-      await repo.saveScore(build(repo.now()));
-      router.push(backHref);
+      const score = build(repo.now());
+      await repo.saveScore(score);
+      showToast({
+        message: confirmation(score, shooter.name, t),
+        shooterId: shooter.id,
+        action: nextHref ? { label: t("toast.next"), href: nextHref } : undefined,
+      });
+      // replace, not push: Back from the shooter list must not reopen the score page just saved.
+      router.replace(backHref);
     } catch {
       setSaving(false);
       setSaveFailed(true);
@@ -30,4 +52,19 @@ export function useSaveResult(backHref: string) {
   }
 
   return { saving, saveFailed, persist, clearFailure: () => setSaveFailed(false) };
+}
+
+function confirmation(score: StageScore, name: string, t: TFn): string {
+  switch (score.status) {
+    case "scored":
+      return t("toast.saved", {
+        name,
+        time: formatTime(score.timeSec),
+        hf: formatHitFactor(hitFactor(pointsOf(totalsOf(score)), score.timeSec)),
+      });
+    case "dnf":
+      return t("toast.dnf", { name });
+    case "dq":
+      return t("toast.dq", { name });
+  }
 }

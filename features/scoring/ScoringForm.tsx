@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { maxNoShoots, maxProcedurals } from "@/shared/domain/scoring";
 import type { DnfReason, DqReason } from "@/shared/domain/types";
 import { useT } from "@/shared/i18n/useT";
@@ -10,7 +10,9 @@ import type { ScoringContext } from "./context";
 import {
   appendTimeDigit,
   backspaceTimeDigit,
+  clearTimeDigits,
   draftFromScore,
+  isSameDraft,
   setNoShoots,
   setProcedurals,
   tapPaper,
@@ -34,18 +36,33 @@ export interface ScoringFormProps {
   roId: string;
   /** The shooter list: where to go after saving. */
   backHref: string;
+  /** Told whenever the entry differs from where it started (a saved score, or empty), so leaving can ask first. */
+  onDirtyChange: (dirty: boolean) => void;
+  /** Set when correcting a saved score: go back to the read-only view. */
+  onCancelEdit?: () => void;
 }
 
 /**
  * The entry form: time keypad, target matrix, penalty steppers and the Review, DNF and DQ sheets.
  * Mounted only once the data is loaded, so the draft starts from the saved score (if any).
  */
-export function ScoringForm({ data, matchId, roId, backHref }: ScoringFormProps) {
+export function ScoringForm({ data, matchId, roId, backHref, onDirtyChange, onCancelEdit }: ScoringFormProps) {
   const { t } = useT();
   const { stage, shooter, squad } = data;
-  const [draft, setDraft] = useState<ScoreDraft>(() => draftFromScore(data.existing, stage));
+  const [initial] = useState<ScoreDraft>(() => draftFromScore(data.existing, stage));
+  const [draft, setDraft] = useState<ScoreDraft>(initial);
   const [sheet, setSheet] = useState<"review" | "dnf" | "dq" | null>(null);
-  const { saving, saveFailed, persist, clearFailure } = useSaveResult(backHref);
+  const dirty = !isSameDraft(draft, initial);
+
+  useEffect(() => {
+    onDirtyChange(dirty);
+    return () => onDirtyChange(false);
+  }, [dirty, onDirtyChange]);
+  const { saving, saveFailed, persist, clearFailure } = useSaveResult({
+    backHref,
+    shooter,
+    nextHref: data.nextShooterId ? `${backHref}/score/${data.nextShooterId}` : null,
+  });
   const summary = useMemo(() => summarizeDraft(draft, stage), [draft, stage]);
 
   const closeSheet = () => {
@@ -64,10 +81,23 @@ export function ScoringForm({ data, matchId, roId, backHref }: ScoringFormProps)
   return (
     <>
       <main className="flex flex-1 flex-col gap-3 p-4">
+        {onCancelEdit && (
+          <div className="flex items-center justify-between gap-3 rounded-input bg-primary-tint px-3 py-1 text-primary-text">
+            <span className="text-sm font-semibold">{t("score.editing")}</span>
+            <button
+              type="button"
+              onClick={onCancelEdit}
+              className="min-h-touch shrink-0 px-1 text-sm font-bold underline"
+            >
+              {t("score.cancelEdit")}
+            </button>
+          </div>
+        )}
         <TimeCard
           digits={draft.timeDigits}
           onDigit={(digit) => setDraft((d) => appendTimeDigit(d, digit))}
           onBackspace={() => setDraft((d) => backspaceTimeDigit(d))}
+          onClear={() => setDraft((d) => clearTimeDigits(d))}
         />
         <ScoreMatrix
           paper={draft.paper}
