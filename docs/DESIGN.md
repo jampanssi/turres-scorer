@@ -87,7 +87,7 @@ Fonts: Google Fonts `Barlow Condensed:wght@600;700` and `Inter:wght@400;500;600;
 ## 5. Components
 
 ### AppHeader
-Plain header on the page background (`bg`), `text` colour, no bar or border. Left: 44 px back button (chevron-left icon, `aria-label` "Back to …"). Then title (Barlow 24–26, uppercase, `primary-text` blue: club blue in light mode, lighter blue in dark) and one-line subtitle (`text-secondary`, 13 px). The right slot holds the **UserMenu** on signed-in screens (see below). Matches has no back button.
+Plain header on the page background (`bg`), `text` colour, no bar or border. Left: 44 px back button (chevron-left icon, `aria-label` "Back to …"). Then title (Barlow 24–26, uppercase) and one-line subtitle (`text-secondary`, 13 px). The title block has a fixed height (title 26 px + subtitle line 18 px) even when there is no subtitle, so the title stays at the same position on every screen. The right slot holds the **UserMenu** on signed-in screens (see below). Matches has no back button.
 
 ### UserMenu
 Avatar button in the header's right slot (44 px circle, initials, `primary` fill, white text; `aria-label` "User menu (email)"). Tapping it opens a popover under the avatar (white `surface`, 1 px `border-light`, radius 14, 288 px wide, sheet shadow). Content, top to bottom: a **user card** (initials circle, "Signed in as", email), a **theme row**, a **language row**, a divider, and **Sign out**. Rows are plain: a 22 px icon on the left and a label, min. 48 px tall, with **nothing on the right** (no switches, shortcuts or chevrons). The theme row names the mode you will switch **to** (light is on -> moon icon and "Dark mode"; dark is on -> sun icon and "Light mode"), and the language row names the language you will switch to (English is on -> globe and "Suomi"). Tapping either switches immediately and keeps the menu open. The menu closes on Escape, on a tap outside, and after signing out (which returns to Sign in). The theme row sets light or dark explicitly; "system" is only the default until the first choice. Sign in has no user menu and is always light; it keeps only a language button top right (globe icon and the name of the language you switch to, e.g. "Suomi" while English is on; the same rule as the menu's language row).
@@ -147,7 +147,7 @@ Header: title **MATCHES**, the user menu (avatar). Segmented control **Open | Re
 - Tap card → Squads.
 
 ### 3 · Squads
-Header: match name, subtitle `6 stages · 64 shooters`. Section header **SQUADS**.
+Header: match name, subtitle `6 stages · 8 squads · 64 shooters`. Section header **SQUADS**.
 List of squads (ListCard): `Squad N`, `8 shooters · Stage 3 · 2/6 done`, status (Done / On range / Not started), progress bar of stages done. Several squads can be **On range** at once. Tap → Stage selection.
 
 ### 4 · Stage selection

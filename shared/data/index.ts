@@ -1,6 +1,7 @@
 import { createIndexedDbScoreStore } from "./local";
 import { buildMockCatalog } from "./mock";
 import { createCatalogRepository } from "./mock-repository";
+import { buildMockScores } from "./mock-scores";
 import type { Repository } from "./repository";
 import { createMemoryScoreStore } from "./score-store";
 
@@ -16,7 +17,8 @@ let instance: Repository | null = null;
 export function getRepository(): Repository {
   if (!instance) {
     const scores = typeof indexedDB === "undefined" ? createMemoryScoreStore() : createIndexedDbScoreStore();
-    instance = createCatalogRepository(buildMockCatalog(), scores);
+    const catalog = buildMockCatalog();
+    instance = createCatalogRepository(catalog, scores, buildMockScores(catalog));
   }
   return instance;
 }

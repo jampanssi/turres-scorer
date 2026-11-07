@@ -64,7 +64,7 @@ integrations/
 5. [ ] Screens in design order, each one built and checked before the next (SSI-free, mock data):
    1. [x] Sign in (mock session, `features/auth/`)
    2. [x] Matches (`features/matches/`, route `/matches`)
-   3. [ ] Squads
+   3. [x] Squads (`features/squads/`, route `/matches/[matchId]`)
    4. [ ] Stage selection
    5. [ ] Shooters
    6. [ ] Scoring (matrix, steppers, sticky bar)

@@ -1,12 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { useSession } from "@/features/auth/useSession";
+import { useMemo, useState } from "react";
+import { UserMenu } from "@/features/auth/UserMenu";
 import { getRepository } from "@/shared/data";
 import { useLoad } from "@/shared/data/useLoad";
 import { useT } from "@/shared/i18n/useT";
-import { UserMenu } from "@/features/auth/UserMenu";
+import { useRequireSession } from "@/features/auth/useRequireSession";
 import { AppHeader } from "@/shared/ui/AppHeader";
 import { Segmented } from "@/shared/ui/Segmented";
 import { MatchCard } from "./MatchCard";
@@ -15,15 +14,10 @@ import { loadMatchSummaries, type MatchTab, summariesForTab } from "./summary";
 const loadSummaries = () => loadMatchSummaries(getRepository());
 
 export function MatchesScreen() {
-  const router = useRouter();
   const { t } = useT();
-  const sessionState = useSession();
+  const sessionState = useRequireSession();
   const [tab, setTab] = useState<MatchTab>("open");
   const summaries = useLoad(loadSummaries);
-
-  useEffect(() => {
-    if (sessionState.status === "signedOut") router.replace("/");
-  }, [sessionState.status, router]);
 
   const visible = useMemo(
     () => (summaries.status === "ready" ? summariesForTab(summaries.data, tab) : []),

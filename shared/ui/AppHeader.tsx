@@ -28,8 +28,12 @@ export function AppHeader({ title, subtitle, back, right, children }: AppHeaderP
           </Link>
         )}
         <div className={back ? "min-w-0 flex-1" : "min-w-0 flex-1 pl-1"}>
-          <h1 className="truncate font-display text-[26px] font-bold uppercase leading-none text-primary-text">{title}</h1>
-          {subtitle && <p className="mt-1 truncate text-[13px] text-text-secondary">{subtitle}</p>}
+          {/* Fixed heights (even with no subtitle or while loading) keep the title at the same
+              position on every screen, so it doesn't jump when navigating. */}
+          <h1 className="min-h-[26px] truncate font-display text-[26px] font-bold uppercase leading-none">
+            {title}
+          </h1>
+          <p className="mt-1 h-[18px] truncate text-[13px] leading-[18px] text-text-secondary">{subtitle}</p>
         </div>
         {right}
       </div>

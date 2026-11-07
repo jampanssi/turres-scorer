@@ -1,11 +1,20 @@
+import type { StageScore } from "@/shared/domain/types";
 import type { Repository } from "./repository";
 import type { Catalog } from "./mock";
 import type { ScoreStore } from "./score-store";
 
-/** Repository over an in-memory catalog (matches, stages, squads, shooters) and a ScoreStore for scores. */
-export function createCatalogRepository(catalog: Catalog, scores: ScoreStore): Repository {
+/**
+ * Repository over an in-memory catalog (matches, stages, squads, shooters) and a ScoreStore for
+ * scores. `seedScores` are read-only sample results; a saved score with the same id overrides one.
+ */
+export function createCatalogRepository(
+  catalog: Catalog,
+  scores: ScoreStore,
+  seedScores: StageScore[] = [],
+): Repository {
   const byId = <T extends { id: string }>(items: T[], id: string): T | null =>
     items.find((item) => item.id === id) ?? null;
+  const seeds = new Map(seedScores.map((s) => [s.id, s]));
 
   return {
     async listMatches() {
@@ -39,11 +48,15 @@ export function createCatalogRepository(catalog: Catalog, scores: ScoreStore): R
     },
 
     async listScores(matchId, filter) {
-      const all = await scores.listByMatch(matchId);
+      const merged = new Map<string, StageScore>();
+      for (const seed of seeds.values()) if (seed.matchId === matchId) merged.set(seed.id, seed);
+      for (const saved of await scores.listByMatch(matchId)) merged.set(saved.id, saved);
+      const all = [...merged.values()];
       return filter?.stageId ? all.filter((s) => s.stageId === filter.stageId) : all;
     },
     async getScore(stageId, shooterId) {
-      return scores.get(`${stageId}:${shooterId}`);
+      const id = `${stageId}:${shooterId}`;
+      return (await scores.get(id)) ?? seeds.get(id) ?? null;
     },
     async saveScore(score) {
       await scores.put(score);
