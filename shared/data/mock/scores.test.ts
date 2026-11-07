@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { buildMockCatalog } from "./mock";
-import { createCatalogRepository } from "./mock-repository";
-import { buildMockScores } from "./mock-scores";
-import { createMemoryScoreStore } from "./score-store";
+import { buildMockCatalog } from "./catalog";
+import { createCatalogRepository } from "./repository";
+import { buildMockScores } from "./scores";
+import { createMemoryScoreStore } from "../score-store";
 import type { ScoredStageScore } from "@/shared/domain/types";
 
 const catalog = buildMockCatalog();

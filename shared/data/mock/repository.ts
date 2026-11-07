@@ -1,8 +1,13 @@
 import { scoreId } from "@/shared/domain/ids";
 import type { StageScore } from "@/shared/domain/types";
-import type { Repository } from "./repository";
-import type { Catalog } from "./mock";
-import type { ScoreStore } from "./score-store";
+import type { Repository } from "../repository";
+import type { Catalog } from "./catalog";
+import type { ScoreStore } from "../score-store";
+
+interface CatalogRepositoryOptions {
+  /** The clock; defaults to the system time. Tests pass a fixed one. */
+  now?: () => string;
+}
 
 /**
  * Repository over an in-memory catalog (matches, stages, squads, shooters) and a ScoreStore for
@@ -12,7 +17,9 @@ export function createCatalogRepository(
   catalog: Catalog,
   scores: ScoreStore,
   seedScores: StageScore[] = [],
+  { now = () => new Date().toISOString() }: CatalogRepositoryOptions = {},
 ): Repository {
+  const listeners = new Set<() => void>();
   const byId = <T extends { id: string }>(items: T[], id: string): T | null =>
     items.find((item) => item.id === id) ?? null;
   const seeds = new Map(seedScores.map((s) => [s.id, s]));
@@ -61,6 +68,14 @@ export function createCatalogRepository(
     },
     async saveScore(score) {
       await scores.put(score);
+      listeners.forEach((listener) => listener());
     },
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    now,
   };
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { buildMockCatalog } from "@/shared/data/mock";
-import { createCatalogRepository } from "@/shared/data/mock-repository";
+import { buildMockCatalog } from "@/shared/data/mock/catalog";
+import { createCatalogRepository } from "@/shared/data/mock/repository";
 import { createMemoryScoreStore } from "@/shared/data/score-store";
 import { dnfResult, dqResult, scoredResult } from "@/shared/domain/test-fixtures";
 import type { StageScore } from "@/shared/domain/types";

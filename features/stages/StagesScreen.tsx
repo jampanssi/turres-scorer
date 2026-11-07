@@ -1,11 +1,9 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useCallback } from "react";
 import { UserMenu } from "@/features/auth/UserMenu";
 import { useRequireSession } from "@/features/auth/useRequireSession";
-import { getRepository } from "@/shared/data";
-import { useLoad } from "@/shared/data/useLoad";
+import { useRepoQuery } from "@/shared/data/useRepoQuery";
 import { formatStageTargets } from "@/shared/i18n/format-stage";
 import { useT } from "@/shared/i18n/useT";
 import { AppHeader } from "@/shared/ui/AppHeader";
@@ -23,8 +21,7 @@ export function StagesScreen() {
   const { t } = useT();
   const { matchId, squadId } = useParams<{ matchId: string; squadId: string }>();
   const session = useRequireSession();
-  const load = useCallback(() => loadStagesOverview(getRepository(), matchId, squadId), [matchId, squadId]);
-  const overview = useLoad(load);
+  const overview = useRepoQuery(["stages", matchId, squadId], (repo) => loadStagesOverview(repo, matchId, squadId));
 
   if (session.status !== "signedIn") return <div className="min-h-dvh bg-bg" />;
 

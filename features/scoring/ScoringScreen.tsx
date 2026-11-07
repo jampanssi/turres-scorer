@@ -1,11 +1,11 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { UserMenu } from "@/features/auth/UserMenu";
 import { useRequireSession } from "@/features/auth/useRequireSession";
 import { getRepository } from "@/shared/data";
-import { useLoad } from "@/shared/data/useLoad";
+import { useRepoQuery } from "@/shared/data/useRepoQuery";
 import type { DnfReason, DqReason, StageScore } from "@/shared/domain/types";
 import { useT } from "@/shared/i18n/useT";
 import { AppHeader } from "@/shared/ui/AppHeader";
@@ -42,11 +42,9 @@ export function ScoringScreen() {
     shooterId: string;
   }>();
   const session = useRequireSession();
-  const load = useCallback(
-    () => loadScoringContext(getRepository(), matchId, squadId, stageId, shooterId),
-    [matchId, squadId, stageId, shooterId],
+  const context = useRepoQuery(["scoring", matchId, squadId, stageId, shooterId], (repo) =>
+    loadScoringContext(repo, matchId, squadId, stageId, shooterId),
   );
-  const context = useLoad(load);
 
   if (session.status !== "signedIn") return <div className="min-h-dvh bg-bg" />;
 
@@ -75,7 +73,13 @@ export function ScoringScreen() {
       {context.status === "ready" && !data && <p className="px-4 pt-4 text-text-secondary">{t("score.notFound")}</p>}
       {data?.disqualified && <p className="px-4 pt-4 text-text-secondary">{t("score.disqualified")}</p>}
       {data && !data.disqualified && (
-        <ScoringBody data={data} matchId={matchId} roId={session.session.email} backHref={backHref} />
+        <ScoringBody
+          key={`${stageId}:${shooterId}`}
+          data={data}
+          matchId={matchId}
+          roId={session.session.userId}
+          backHref={backHref}
+        />
       )}
     </div>
   );
@@ -119,12 +123,16 @@ function ScoringForm({ data, matchId, roId, backHref }: ScoringFormProps) {
     setSaveFailed(false);
   };
 
-  /** Save a result, then go back to the shooter list. */
-  async function persist(score: StageScore) {
+  /**
+   * Build a result with the repository's clock, save it, then go back to the shooter list.
+   * `build` receives the current time (the repository is the source of time, not the component).
+   */
+  async function persist(build: (now: string) => StageScore) {
     setSaving(true);
     setSaveFailed(false);
     try {
-      await getRepository().saveScore(score);
+      const repo = await getRepository();
+      await repo.saveScore(build(repo.now()));
       router.push(backHref); // stay in the "saving" state until the page changes: no double saves
     } catch {
       setSaving(false);
@@ -132,45 +140,10 @@ function ScoringForm({ data, matchId, roId, backHref }: ScoringFormProps) {
     }
   }
 
-  const now = () => new Date().toISOString();
-  const saveScore = () =>
-    persist(
-      buildStageScore({
-        draft,
-        matchId,
-        stageId: stage.id,
-        shooterId: shooter.id,
-        roId,
-        now: now(),
-        existing: data.existing,
-      }),
-    );
-  const confirmDnf = (reason: DnfReason) =>
-    persist(
-      buildDnfScore({
-        matchId,
-        stageId: stage.id,
-        shooterId: shooter.id,
-        roId,
-        reason,
-        now: now(),
-        existing: data.existing,
-      }),
-    );
-
-  const confirmDq = (reason: DqReason, note: string) =>
-    persist(
-      buildDqScore({
-        matchId,
-        stageId: stage.id,
-        shooterId: shooter.id,
-        roId,
-        reason,
-        note,
-        now: now(),
-        existing: data.existing,
-      }),
-    );
+  const who = { matchId, stageId: stage.id, shooterId: shooter.id, roId, existing: data.existing };
+  const saveScore = () => persist((now) => buildStageScore({ ...who, draft, now }));
+  const confirmDnf = (reason: DnfReason) => persist((now) => buildDnfScore({ ...who, reason, now }));
+  const confirmDq = (reason: DqReason, note: string) => persist((now) => buildDqScore({ ...who, reason, note, now }));
 
   const stageLabel = t("shooters.stage", { number: stage.number });
   const shooterLine = `${shooter.name} · #${shooter.competitorNumber}`;

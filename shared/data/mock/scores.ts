@@ -1,4 +1,4 @@
-import type { Catalog } from "./mock";
+import type { Catalog } from "./catalog";
 import { scoreId } from "@/shared/domain/ids";
 import type { HitCode, Squad, Stage, StageScore, SteelHit } from "@/shared/domain/types";
 

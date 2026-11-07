@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { scoredResult } from "@/shared/domain/test-fixtures";
 import type { ScoredStageScore, StageScore } from "@/shared/domain/types";
-import { buildMockCatalog } from "./mock";
-import { createCatalogRepository } from "./mock-repository";
-import { type Repository } from "./repository";
-import { createMemoryScoreStore } from "./score-store";
+import { buildMockCatalog } from "./catalog";
+import { createCatalogRepository } from "./repository";
+import { type Repository } from "../repository";
+import { createMemoryScoreStore } from "../score-store";
 
 const MATCH = "autumn-2026";
 
@@ -124,5 +124,60 @@ describe("hits per paper target in the mock stages", () => {
     expect(stage(3).minRounds).toBe(15); // 6 x 2 + 3, the mock-up stage
     expect(stage(5).minRounds).toBe(6); // 4 x 1 + 2
     expect(stage(6).minRounds).toBe(20); // 6 x 3 + 2
+  });
+});
+
+describe("change notifications and the clock", () => {
+  const stageId = `${MATCH}-st3`;
+  const shooterId = `${MATCH}-sh23`;
+  const repoWith = (now?: () => string) =>
+    createCatalogRepository(buildMockCatalog(), createMemoryScoreStore(), [], now ? { now } : undefined);
+
+  it("tells subscribers after a result is saved, once per save", async () => {
+    const repo = repoWith();
+    let calls = 0;
+    repo.subscribe(() => calls++);
+    await repo.saveScore(makeScore(stageId, shooterId));
+    await repo.saveScore(makeScore(stageId, shooterId, { timeSec: 7.9 }));
+    expect(calls).toBe(2);
+  });
+
+  it("tells subscribers only after the result is stored", async () => {
+    const repo = repoWith();
+    const seen: Array<Promise<StageScore | null>> = [];
+    repo.subscribe(() => seen.push(repo.getScore(stageId, shooterId)));
+    await repo.saveScore(makeScore(stageId, shooterId));
+    expect(await seen[0]).not.toBeNull();
+  });
+
+  it("stops telling a subscriber that unsubscribed, and keeps telling the others", async () => {
+    const repo = repoWith();
+    let first = 0;
+    let second = 0;
+    const unsubscribe = repo.subscribe(() => first++);
+    repo.subscribe(() => second++);
+    unsubscribe();
+    await repo.saveScore(makeScore(stageId, shooterId));
+    expect([first, second]).toEqual([0, 1]);
+  });
+
+  it("does not tell subscribers about reads", async () => {
+    const repo = repoWith();
+    let calls = 0;
+    repo.subscribe(() => calls++);
+    await repo.listMatches();
+    await repo.listScores(MATCH);
+    expect(calls).toBe(0);
+  });
+
+  it("now() uses the injected clock", () => {
+    expect(repoWith(() => "2026-11-07T12:00:00.000Z").now()).toBe("2026-11-07T12:00:00.000Z");
+  });
+
+  it("now() defaults to the system time as an ISO timestamp", () => {
+    const before = Date.now();
+    const stamp = repoWith().now();
+    expect(stamp).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+    expect(Date.parse(stamp)).toBeGreaterThanOrEqual(before);
   });
 });

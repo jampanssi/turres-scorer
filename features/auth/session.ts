@@ -9,6 +9,8 @@ import { STORAGE } from "@/shared/lib/storage-keys";
  */
 
 export interface Session {
+  /** Stable id of the signed-in user, recorded as `roId` on saved results. The mock uses the email. */
+  userId: string;
   email: string;
   /** Initials for the header avatar. */
   initials: string;
@@ -31,7 +33,7 @@ export async function signIn(email: string, password: string): Promise<SignInRes
   const trimmed = email.trim();
   if (!/^\S+@\S+\.\S+$/.test(trimmed)) return { ok: false, error: "invalidEmail" };
   if (password.length === 0) return { ok: false, error: "missingPassword" };
-  const session: Session = { email: trimmed, initials: initialsOf(trimmed) };
+  const session: Session = { userId: trimmed.toLowerCase(), email: trimmed, initials: initialsOf(trimmed) };
   store.write(JSON.stringify(session));
   return { ok: true, session };
 }
@@ -45,8 +47,13 @@ export function parseSession(raw: string | null): Session | null {
   if (!raw) return null;
   try {
     const value = JSON.parse(raw) as Partial<Session>;
+    // A session stored before userId existed has none: the email was its id.
     return typeof value.email === "string" && typeof value.initials === "string"
-      ? { email: value.email, initials: value.initials }
+      ? {
+          userId: typeof value.userId === "string" ? value.userId : value.email.toLowerCase(),
+          email: value.email,
+          initials: value.initials,
+        }
       : null;
   } catch {
     return null;

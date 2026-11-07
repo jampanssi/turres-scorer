@@ -2,8 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { UserMenu } from "@/features/auth/UserMenu";
-import { getRepository } from "@/shared/data";
-import { useLoad } from "@/shared/data/useLoad";
+import { useRepoQuery } from "@/shared/data/useRepoQuery";
 import { useT } from "@/shared/i18n/useT";
 import { useRequireSession } from "@/features/auth/useRequireSession";
 import { AppHeader } from "@/shared/ui/AppHeader";
@@ -11,13 +10,11 @@ import { Segmented } from "@/shared/ui/Segmented";
 import { MatchCard } from "./MatchCard";
 import { loadMatchSummaries, type MatchTab, summariesForTab } from "./summary";
 
-const loadSummaries = () => loadMatchSummaries(getRepository());
-
 export function MatchesScreen() {
   const { t } = useT();
   const sessionState = useRequireSession();
   const [tab, setTab] = useState<MatchTab>("open");
-  const summaries = useLoad(loadSummaries);
+  const summaries = useRepoQuery(["matches"], loadMatchSummaries);
 
   const visible = useMemo(
     () => (summaries.status === "ready" ? summariesForTab(summaries.data, tab) : []),

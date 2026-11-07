@@ -3,7 +3,9 @@
  * Used for the theme, language and session. Browser only: call `read` / `write` / `subscribe`
  * from effects, event handlers or `useSyncExternalStore`, never while rendering on the server.
  *
- * - If storage is blocked (private mode), the value is kept in memory for this page load.
+ * - If storage does not work (blocked, private mode), the value is kept in memory for this page load.
+ *   Memory is used ONLY then: while storage works it is the single source of truth, so a value removed
+ *   by another tab (a sign-out) is gone here too.
  * - `write` and `remove` notify subscribers in this tab; the `storage` event covers other tabs.
  */
 export interface PersistedStore {
@@ -25,6 +27,7 @@ interface PersistedStoreOptions {
 
 export function createPersistedStore({ key, event, onWrite }: PersistedStoreOptions): PersistedStore {
   let memory: string | null = null;
+  let storageFailed = false; // once storage threw, this page keeps the value in memory instead
 
   const notify = (value: string | null) => {
     onWrite?.(value);
@@ -33,18 +36,21 @@ export function createPersistedStore({ key, event, onWrite }: PersistedStoreOpti
 
   return {
     read() {
-      try {
-        return localStorage.getItem(key) ?? memory;
-      } catch {
-        return memory;
+      if (!storageFailed) {
+        try {
+          return localStorage.getItem(key);
+        } catch {
+          storageFailed = true;
+        }
       }
+      return memory;
     },
     write(value) {
       memory = value;
       try {
         localStorage.setItem(key, value);
       } catch {
-        // Storage can be blocked; the value still holds for this page load.
+        storageFailed = true; // the value still holds for this page load, in memory
       }
       notify(value);
     },
@@ -53,7 +59,7 @@ export function createPersistedStore({ key, event, onWrite }: PersistedStoreOpti
       try {
         localStorage.removeItem(key);
       } catch {
-        // ignore
+        storageFailed = true;
       }
       notify(null);
     },

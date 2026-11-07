@@ -102,3 +102,28 @@ describe("createPersistedStore", () => {
     expect(store.read()).toBeNull();
   });
 });
+
+describe("a value removed elsewhere", () => {
+  it("is gone here too: memory is not a second copy while storage works (sign-out in another tab)", () => {
+    const { target, data } = stubBrowser();
+    const store = createPersistedStore(options);
+    const onChange = vi.fn();
+    store.subscribe(onChange);
+
+    store.write("signed-in");
+    data.delete("test.key"); // another tab signed out
+    target.dispatchEvent(new Event("storage"));
+
+    expect(onChange).toHaveBeenCalled();
+    expect(store.read()).toBeNull();
+  });
+
+  it("is picked up when another tab writes a different value", () => {
+    const { target, data } = stubBrowser();
+    const store = createPersistedStore(options);
+    store.write("one");
+    data.set("test.key", "two");
+    target.dispatchEvent(new Event("storage"));
+    expect(store.read()).toBe("two");
+  });
+});

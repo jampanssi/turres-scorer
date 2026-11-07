@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { buildMockCatalog } from "@/shared/data/mock";
-import { createCatalogRepository } from "@/shared/data/mock-repository";
-import { buildMockScores } from "@/shared/data/mock-scores";
+import { buildMockCatalog } from "@/shared/data/mock/catalog";
+import { createCatalogRepository } from "@/shared/data/mock/repository";
+import { buildMockScores } from "@/shared/data/mock/scores";
 import { createMemoryScoreStore } from "@/shared/data/score-store";
 import { createResultIndex } from "@/shared/domain/progress";
 import { loadStagesOverview, summarizeStage } from "./summary";

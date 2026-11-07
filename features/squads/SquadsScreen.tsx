@@ -1,11 +1,9 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useCallback } from "react";
 import { UserMenu } from "@/features/auth/UserMenu";
 import { useRequireSession } from "@/features/auth/useRequireSession";
-import { getRepository } from "@/shared/data";
-import { useLoad } from "@/shared/data/useLoad";
+import { useRepoQuery } from "@/shared/data/useRepoQuery";
 import { useT } from "@/shared/i18n/useT";
 import { AppHeader } from "@/shared/ui/AppHeader";
 import { ListCard, type ListCardState } from "@/shared/ui/ListCard";
@@ -23,8 +21,7 @@ export function SquadsScreen() {
   const { t } = useT();
   const { matchId } = useParams<{ matchId: string }>();
   const session = useRequireSession();
-  const load = useCallback(() => loadSquadsOverview(getRepository(), matchId), [matchId]);
-  const overview = useLoad(load);
+  const overview = useRepoQuery(["squads", matchId], (repo) => loadSquadsOverview(repo, matchId));
 
   if (session.status !== "signedIn") return <div className="min-h-dvh bg-bg" />;
 

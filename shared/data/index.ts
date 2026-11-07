@@ -1,23 +1,31 @@
-import { createIndexedDbScoreStore } from "./local";
-import { buildMockCatalog } from "./mock";
-import { createCatalogRepository } from "./mock-repository";
-import { buildMockScores } from "./mock-scores";
 import type { Repository } from "./repository";
-import { createMemoryScoreStore } from "./score-store";
 
 export type { Repository } from "./repository";
 
-let instance: Repository | null = null;
+let instance: Promise<Repository> | null = null;
 
 /**
- * The app-wide repository. Uses IndexedDB when available (browser), memory otherwise.
- * Swap this one function to move to an API-backed repository when SSI is added.
+ * Create the repository for the configured data source (`NEXT_PUBLIC_DATA_SOURCE`, default `mock`).
+ * The condition reads `process.env` directly so the build can remove the branches it does not use:
+ * with another data source configured, the sample data is not part of the client bundle.
+ * An `api` source (SSI behind our Route Handlers) is added here later; nothing else changes.
  */
-export function getRepository(): Repository {
-  if (!instance) {
-    const scores = typeof indexedDB === "undefined" ? createMemoryScoreStore() : createIndexedDbScoreStore();
-    const catalog = buildMockCatalog();
-    instance = createCatalogRepository(catalog, scores, buildMockScores(catalog));
+async function createRepository(): Promise<Repository> {
+  if ((process.env.NEXT_PUBLIC_DATA_SOURCE ?? "mock") === "mock") {
+    const { createMockRepository } = await import("./mock");
+    return createMockRepository();
   }
+  throw new Error(`Unsupported NEXT_PUBLIC_DATA_SOURCE "${process.env.NEXT_PUBLIC_DATA_SOURCE}"`);
+}
+
+/**
+ * The app-wide repository, created once on first use. It is async because the data source is loaded
+ * on demand. Call it from effects, event handlers or `useRepoQuery`, never while rendering.
+ */
+export function getRepository(): Promise<Repository> {
+  instance ??= createRepository().catch((error) => {
+    instance = null; // do not keep a failed attempt: the next call tries again
+    throw error;
+  });
   return instance;
 }

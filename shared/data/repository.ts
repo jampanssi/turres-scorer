@@ -21,6 +21,18 @@ export interface Repository {
   /** All saved scores of a match, optionally limited to one stage. */
   listScores(matchId: string, filter?: { stageId?: string }): Promise<StageScore[]>;
   getScore(stageId: string, shooterId: string): Promise<StageScore | null>;
-  /** Insert or replace the score of one shooter on one stage. */
+  /** Insert or replace the score of one shooter on one stage. Notifies subscribers once it is stored. */
   saveScore(score: StageScore): Promise<void>;
+
+  /**
+   * Call `listener` after the data changed (a result was saved here, or later a sync brought new data),
+   * so queries can refresh. Returns the unsubscribe function.
+   */
+  subscribe(listener: () => void): () => void;
+
+  /**
+   * The current time as an ISO timestamp, for createdAt/updatedAt. It comes from the repository so it
+   * can be the server's clock later, and so tests can fix it.
+   */
+  now(): string;
 }

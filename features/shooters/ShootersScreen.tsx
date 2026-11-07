@@ -1,11 +1,9 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useCallback } from "react";
 import { UserMenu } from "@/features/auth/UserMenu";
 import { useRequireSession } from "@/features/auth/useRequireSession";
-import { getRepository } from "@/shared/data";
-import { useLoad } from "@/shared/data/useLoad";
+import { useRepoQuery } from "@/shared/data/useRepoQuery";
 import { formatStageTargets } from "@/shared/i18n/format-stage";
 import { useT } from "@/shared/i18n/useT";
 import { AppHeader } from "@/shared/ui/AppHeader";
@@ -17,11 +15,9 @@ export function ShootersScreen() {
   const { t } = useT();
   const { matchId, squadId, stageId } = useParams<{ matchId: string; squadId: string; stageId: string }>();
   const session = useRequireSession();
-  const load = useCallback(
-    () => loadShootersOverview(getRepository(), matchId, squadId, stageId),
-    [matchId, squadId, stageId],
+  const overview = useRepoQuery(["shooters", matchId, squadId, stageId], (repo) =>
+    loadShootersOverview(repo, matchId, squadId, stageId),
   );
-  const overview = useLoad(load);
 
   if (session.status !== "signedIn") return <div className="min-h-dvh bg-bg" />;
 
