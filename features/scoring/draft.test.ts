@@ -93,9 +93,23 @@ describe("penalties", () => {
 
 describe("draftFromScore", () => {
   const saved: StageScore = {
-    id: "st:sh", matchId: "m", stageId: "st", shooterId: "sh", roId: "ro", status: "scored", timeSec: 8.42,
-    paper: [["A", "A"], ["A", "C"]], steel: ["A"], noShoots: 1, procedurals: 2, shooterAccepted: true,
-    createdAt: "", updatedAt: "",
+    id: "st:sh",
+    matchId: "m",
+    stageId: "st",
+    shooterId: "sh",
+    roId: "ro",
+    status: "scored",
+    timeSec: 8.42,
+    paper: [
+      ["A", "A"],
+      ["A", "C"],
+    ],
+    steel: ["A"],
+    noShoots: 1,
+    procedurals: 2,
+    shooterAccepted: true,
+    createdAt: "",
+    updatedAt: "",
   };
 
   it("loads a saved score for correction, padding to the stage's target counts", () => {
@@ -118,7 +132,6 @@ describe("draftFromScore", () => {
     expect(draftFromScore({ ...saved, timeSec: null }, stage).timeDigits).toBe("");
   });
 });
-
 
 describe("time keypad", () => {
   const type = (digits: string) => [...digits].reduce(appendTimeDigit, emptyDraft(stage));
@@ -207,9 +220,23 @@ describe("hits per paper target set by the stage", () => {
   it("a saved score with more hits than the stage asks for is trimmed to the most recent ones", () => {
     const oneHit = { paperTargets: 2, hitsPerPaperTarget: 1 as const, steelTargets: 0, noShootTargets: 0 };
     const saved: StageScore = {
-      id: "st:sh", matchId: "m", stageId: "st", shooterId: "sh", roId: "ro", status: "scored", timeSec: 5,
-      paper: [["A", "C"], ["M", "D"]], steel: [], noShoots: 0, procedurals: 0, shooterAccepted: true,
-      createdAt: "", updatedAt: "",
+      id: "st:sh",
+      matchId: "m",
+      stageId: "st",
+      shooterId: "sh",
+      roId: "ro",
+      status: "scored",
+      timeSec: 5,
+      paper: [
+        ["A", "C"],
+        ["M", "D"],
+      ],
+      steel: [],
+      noShoots: 0,
+      procedurals: 0,
+      shooterAccepted: true,
+      createdAt: "",
+      updatedAt: "",
     };
     expect(draftFromScore(saved, oneHit).paper).toEqual([["C"], ["D"]]);
   });

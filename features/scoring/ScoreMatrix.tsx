@@ -21,7 +21,15 @@ interface ScoreMatrixProps {
 }
 
 /** The target matrix: paper rows (A C D M), then steel rows (A or M), each with a per-row undo. */
-export function ScoreMatrix({ paper, hitsPerPaperTarget, steel, onPaperTap, onPaperUndo, onSteelTap, onSteelUndo }: ScoreMatrixProps) {
+export function ScoreMatrix({
+  paper,
+  hitsPerPaperTarget,
+  steel,
+  onPaperTap,
+  onPaperUndo,
+  onSteelTap,
+  onSteelUndo,
+}: ScoreMatrixProps) {
   const { t } = useT();
 
   return (
@@ -132,23 +140,17 @@ function RowLabel({ number, remaining }: { number: number; remaining: number }) 
       )}
     >
       <span className="font-display text-xl font-bold">{number}</span>
-      {!complete && <span className="mt-0.5 whitespace-nowrap text-[10px] font-bold tracking-tight">{t("score.left", { count: remaining })}</span>}
+      {!complete && (
+        <span className="mt-0.5 whitespace-nowrap text-[10px] font-bold tracking-tight">
+          {t("score.left", { count: remaining })}
+        </span>
+      )}
     </div>
   );
 }
 
 /** One tap target. Empty: grey with no text. Filled: blue (A/C/D) or red (M) with the hit count. */
-function Cell({
-  code,
-  count,
-  label,
-  onClick,
-}: {
-  code: HitCode;
-  count: number;
-  label: string;
-  onClick: () => void;
-}) {
+function Cell({ code, count, label, onClick }: { code: HitCode; count: number; label: string; onClick: () => void }) {
   const filled = count > 0;
   return (
     <button

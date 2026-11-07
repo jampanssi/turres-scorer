@@ -56,7 +56,15 @@ interface BuildScoreInput {
 }
 
 /** The result to save when the shooter has accepted the reviewed score. */
-export function buildStageScore({ draft, matchId, stageId, shooterId, roId, now, existing }: BuildScoreInput): StageScore {
+export function buildStageScore({
+  draft,
+  matchId,
+  stageId,
+  shooterId,
+  roId,
+  now,
+  existing,
+}: BuildScoreInput): StageScore {
   return {
     id: scoreId(stageId, shooterId),
     matchId,

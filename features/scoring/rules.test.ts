@@ -3,7 +3,15 @@ import { codePoints, hitFactor, maxNoShoots, maxProcedurals, pointsOf, totalsOf 
 
 describe("points", () => {
   it("scores A=5, C=3, D=1", () => {
-    const t = totalsOf({ paper: [["A", "C"], ["D", "D"]], steel: ["A"], noShoots: 0, procedurals: 0 });
+    const t = totalsOf({
+      paper: [
+        ["A", "C"],
+        ["D", "D"],
+      ],
+      steel: ["A"],
+      noShoots: 0,
+      procedurals: 0,
+    });
     expect(t).toEqual({ A: 2, C: 1, D: 2, M: 0, NS: 0, PE: 0 });
     expect(pointsOf(t)).toBe(15);
   });
@@ -36,7 +44,14 @@ describe("penalty limits", () => {
 
 describe("codePoints", () => {
   it("gives points per code: A, C, D add and M, NS, PE subtract", () => {
-    expect(codePoints({ A: 11, C: 3, D: 2, M: 1, NS: 1, PE: 2 })).toEqual({ A: 55, C: 9, D: 2, M: -10, NS: -10, PE: -20 });
+    expect(codePoints({ A: 11, C: 3, D: 2, M: 1, NS: 1, PE: 2 })).toEqual({
+      A: 55,
+      C: 9,
+      D: 2,
+      M: -10,
+      NS: -10,
+      PE: -20,
+    });
   });
   it("adds up to the stage points before the zero floor", () => {
     expect(pointsOf({ A: 11, C: 3, D: 0, M: 1, NS: 0, PE: 0 })).toBe(54);

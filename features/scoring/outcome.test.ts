@@ -12,9 +12,18 @@ describe("buildDnfScore", () => {
   it("is a result with no time and no hits, and the chosen reason", () => {
     const score = buildDnfScore({ ...base, reason: "injury", existing: null });
     expect(score).toMatchObject({
-      id: "st:sh", status: "dnf", dnfReason: "injury", timeSec: null, paper: [], steel: [],
-      noShoots: 0, procedurals: 0, roId: "ro@example.fi", shooterAccepted: false,
-      createdAt: base.now, updatedAt: base.now,
+      id: "st:sh",
+      status: "dnf",
+      dnfReason: "injury",
+      timeSec: null,
+      paper: [],
+      steel: [],
+      noShoots: 0,
+      procedurals: 0,
+      roId: "ro@example.fi",
+      shooterAccepted: false,
+      createdAt: base.now,
+      updatedAt: base.now,
     });
     expect(score.dqReason).toBeUndefined();
   });
@@ -37,9 +46,14 @@ describe("buildDnfScore", () => {
     const shooterId = "autumn-2026-sh10";
     await repo.saveScore({
       ...buildDnfScore({ ...base, matchId: "autumn-2026", stageId, shooterId, reason: "injury", existing: null }),
-      status: "scored", timeSec: 8.42, paper: [["A", "A"]], dnfReason: undefined,
+      status: "scored",
+      timeSec: 8.42,
+      paper: [["A", "A"]],
+      dnfReason: undefined,
     });
-    await repo.saveScore(buildDnfScore({ ...base, matchId: "autumn-2026", stageId, shooterId, reason: "injury", existing: null }));
+    await repo.saveScore(
+      buildDnfScore({ ...base, matchId: "autumn-2026", stageId, shooterId, reason: "injury", existing: null }),
+    );
     const saved = (await repo.getScore(stageId, shooterId))!;
     expect(saved).toMatchObject({ status: "dnf", timeSec: null, paper: [] });
   });
@@ -49,9 +63,18 @@ describe("buildDqScore", () => {
   it("is a result with no time and no hits, and the chosen reason", () => {
     const score = buildDqScore({ ...base, reason: "unsafe_handling", existing: null });
     expect(score).toMatchObject({
-      id: "st:sh", status: "dq", dqReason: "unsafe_handling", timeSec: null, paper: [], steel: [],
-      noShoots: 0, procedurals: 0, roId: "ro@example.fi", shooterAccepted: false,
-      createdAt: base.now, updatedAt: base.now,
+      id: "st:sh",
+      status: "dq",
+      dqReason: "unsafe_handling",
+      timeSec: null,
+      paper: [],
+      steel: [],
+      noShoots: 0,
+      procedurals: 0,
+      roId: "ro@example.fi",
+      shooterAccepted: false,
+      createdAt: base.now,
+      updatedAt: base.now,
     });
     expect(score.dnfReason).toBeUndefined();
   });

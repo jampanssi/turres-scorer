@@ -15,9 +15,7 @@ export function SignInScreen() {
       </div>
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-10 text-center text-white">
         <Image src="/logo.png" alt="Turun Reserviläiset ry" width={104} height={104} priority />
-        <h1 className="mt-6 font-display text-[40px] font-bold uppercase leading-none tracking-[1px]">
-          TurRes Scorer
-        </h1>
+        <h1 className="mt-6 font-display text-[40px] font-bold uppercase leading-none tracking-[1px]">TurRes Scorer</h1>
         <p className="mt-2 text-base text-on-primary-muted">{t("auth.poweredBy")}</p>
       </div>
 

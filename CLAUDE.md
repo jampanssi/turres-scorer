@@ -22,7 +22,8 @@ Read these before working on the relevant area:
 npm run dev      # dev server at http://localhost:3000 (Turbopack)
 npm run build    # production build; also the main type-check gate
 npm run lint     # ESLint 9 flat config (eslint-config-next core-web-vitals + typescript)
-npx tsc --noEmit # type-check without building
+npm run typecheck # tsc --noEmit, type-check without building
+npm run format   # Prettier (code only: not docs/*.md); `format:check` is what CI runs
 ```
 
 ```bash
@@ -50,7 +51,7 @@ Feature-based, so new features (e.g. match registration) are new folders:
 - `shared/`: `domain/` (types), `data/` (repository, mock, IndexedDB, sync), `ui/` (primitives), `i18n/`.
 - `integrations/ssi/`: added last.
 
-Dependencies point one way: `features/*` → `shared/*`, and `integrations/ssi` → `shared/domain`. The one allowed feature-to-feature import is the pure rules in `features/scoring` (used by Shooters for hit factor).
+Dependencies point one way: `features/*` → `shared/*`, and `integrations/ssi` → `shared/domain`. The one allowed feature-to-feature import is the pure rules in `features/scoring` (used by Shooters for hit factor). **These boundaries are enforced by ESLint** (`eslint.config.mjs`, `no-restricted-imports`): `shared` must not import `features`, `integrations` or `app`; a feature must not import another feature (temporary exceptions are listed in that file and shrink as the refactoring in docs/PLAN.md lands). CI (`.github/workflows/ci.yml`) runs format check, lint, typecheck, tests and build on every push and pull request. `app/error.tsx` and `app/not-found.tsx` are the global fallbacks (`shared/ui/StatusPage.tsx`); each page exports its own `metadata.title`.
 
 ## Stack notes
 

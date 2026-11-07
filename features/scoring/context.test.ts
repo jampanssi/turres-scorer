@@ -14,14 +14,26 @@ const squad3 = catalog.squads.find((s) => s.matchId === MATCH && s.number === 3)
 describe("loadScoringContext", () => {
   it("loads a shooter with no result yet", async () => {
     // Squad 2's 8th shooter on the squad's last stage: nothing saved there.
-    const context = (await loadScoringContext(repo(), MATCH, squad2.id, squad2.stageRotation[5], squad2.shooterIds[7]))!;
+    const context = (await loadScoringContext(
+      repo(),
+      MATCH,
+      squad2.id,
+      squad2.stageRotation[5],
+      squad2.shooterIds[7],
+    ))!;
     expect(context.existing).toBeNull();
     expect(context.disqualified).toBe(false);
     expect(context.shooter.id).toBe(squad2.shooterIds[7]);
   });
 
   it("loads the saved result so it can be corrected", async () => {
-    const context = (await loadScoringContext(repo(), MATCH, squad2.id, squad2.stageRotation[0], squad2.shooterIds[0]))!;
+    const context = (await loadScoringContext(
+      repo(),
+      MATCH,
+      squad2.id,
+      squad2.stageRotation[0],
+      squad2.shooterIds[0],
+    ))!;
     expect(context.existing?.status).toBe("scored");
   });
 

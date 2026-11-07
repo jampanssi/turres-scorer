@@ -73,6 +73,19 @@ integrations/
 7. [ ] Playwright E2E, including an offline case
 8. [ ] SSI: get API facts (docs, auth, write-back, mapping), then `integrations/ssi/`, `app/api/*`, API-backed repository
 
+## Refactoring before offline (from the architecture review)
+
+Behaviour-preserving, one commit per phase, all checks green after each:
+
+- [x] Phase 0: safety net. Prettier, CI, ESLint import boundaries, `app/error.tsx`, `app/not-found.tsx`, page titles
+- [ ] Phase 1: domain consolidation. Scoring rules to `shared/domain`, one `progress` module for the scored/DQ rules, `StageResult` union, one persisted-store helper
+- [ ] Phase 2: data access. `useRepoQuery` with invalidation, repository factory (mock only when configured), injected clock
+- [ ] Phase 3: screen structure. `(app)` route group with one session gate, `features/shell/Screen`, split `ScoringScreen`
+- [ ] Phase 4: base UI components. Card, form fields, IconButton, native-dialog sheet, Popover, one Confirm sheet for DNF and DQ, tokens
+- [ ] Phase 5: i18n hygiene. `common.*` keys, typed enum helper, key usage test
+- [ ] Phase 6: component tests (Testing Library) and `fake-indexeddb`
+- [ ] Phase 7: docs and ADRs
+
 ## Definition of done (MVP)
 
 - [ ] All screens in DESIGN.md at 390×844, usable down to 360 px wide.

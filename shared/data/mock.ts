@@ -43,12 +43,60 @@ interface MatchConfig {
 
 // Counts follow docs/design/2 · Matches.png (open tab) and Events.dc.html (results tab).
 const MATCHES: MatchConfig[] = [
-  { id: "autumn-2026", name: "Autumn Match 2026", date: "2026-11-07", status: "live", stageCount: 6, squadCount: 8, shooterCount: 64 },
-  { id: "club-night-11", name: "Club Night Match #11", date: "2026-11-12", status: "open", stageCount: 4, squadCount: 3, shooterCount: 22 },
-  { id: "winter-cup-1", name: "Winter Cup · Round 1", date: "2026-12-05", status: "open", stageCount: 5, squadCount: 5, shooterCount: 37 },
-  { id: "club-night-10", name: "Club Night Match #10", date: "2026-10-29", status: "finished", stageCount: 4, squadCount: 3, shooterCount: 24 },
-  { id: "autumn-stage-2026", name: "Autumn Stage Match 2026", date: "2026-10-03", status: "finished", stageCount: 5, squadCount: 6, shooterCount: 45 },
-  { id: "summer-2026", name: "Summer Match 2026", date: "2026-08-15", status: "finished", stageCount: 6, squadCount: 7, shooterCount: 52 },
+  {
+    id: "autumn-2026",
+    name: "Autumn Match 2026",
+    date: "2026-11-07",
+    status: "live",
+    stageCount: 6,
+    squadCount: 8,
+    shooterCount: 64,
+  },
+  {
+    id: "club-night-11",
+    name: "Club Night Match #11",
+    date: "2026-11-12",
+    status: "open",
+    stageCount: 4,
+    squadCount: 3,
+    shooterCount: 22,
+  },
+  {
+    id: "winter-cup-1",
+    name: "Winter Cup · Round 1",
+    date: "2026-12-05",
+    status: "open",
+    stageCount: 5,
+    squadCount: 5,
+    shooterCount: 37,
+  },
+  {
+    id: "club-night-10",
+    name: "Club Night Match #10",
+    date: "2026-10-29",
+    status: "finished",
+    stageCount: 4,
+    squadCount: 3,
+    shooterCount: 24,
+  },
+  {
+    id: "autumn-stage-2026",
+    name: "Autumn Stage Match 2026",
+    date: "2026-10-03",
+    status: "finished",
+    stageCount: 5,
+    squadCount: 6,
+    shooterCount: 45,
+  },
+  {
+    id: "summer-2026",
+    name: "Summer Match 2026",
+    date: "2026-08-15",
+    status: "finished",
+    stageCount: 6,
+    squadCount: 7,
+    shooterCount: 52,
+  },
 ];
 
 function shooterName(n: number): string {

@@ -71,7 +71,11 @@ export function SignInForm() {
       </div>
 
       {error && (
-        <p id={errorId} role="alert" className="rounded-input bg-danger-tint px-3 py-2 text-sm font-semibold text-danger-text">
+        <p
+          id={errorId}
+          role="alert"
+          className="rounded-input bg-danger-tint px-3 py-2 text-sm font-semibold text-danger-text"
+        >
           {t(`auth.error.${error}` as const)}
         </p>
       )}

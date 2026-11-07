@@ -17,7 +17,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "TurRes Scorer",
+  title: { default: "TurRes Scorer", template: "%s · TurRes Scorer" },
   description: "Scoring app for applied reservist shooting matches",
 };
 

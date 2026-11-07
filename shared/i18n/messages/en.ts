@@ -40,6 +40,12 @@ export const en = {
   "common.loading": "Loading…",
   "common.error": "Could not load the data.",
   "common.cancel": "Cancel",
+  "status.errorTitle": "Something went wrong",
+  "status.errorMessage": "An unexpected error occurred. You can try again or go back to the matches.",
+  "status.retry": "Try again",
+  "status.home": "Back to matches",
+  "status.notFoundTitle": "Page not found",
+  "status.notFoundMessage": "This page does not exist.",
   "common.saving": "Saving…",
   "common.saveError": "Could not save. Try again.",
 

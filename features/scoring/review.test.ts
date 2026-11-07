@@ -8,7 +8,14 @@ const stage = { hitsPerPaperTarget: 2 as const };
 /** The score from the mock-up: 8.42 s, 11 A, 3 C, 1 M -> 54 points, HF 6.4133. */
 const mockUp: ScoreDraft = {
   timeDigits: "842",
-  paper: [["A", "A"], ["A", "C"], ["A", "A"], ["A", "C"], ["A", "M"], ["A", "C"]],
+  paper: [
+    ["A", "A"],
+    ["A", "C"],
+    ["A", "A"],
+    ["A", "C"],
+    ["A", "M"],
+    ["A", "C"],
+  ],
   steel: ["A", "A", "A"],
   noShoots: 0,
   procedurals: 0,
@@ -65,9 +72,18 @@ describe("buildStageScore", () => {
   it("builds the result to save, accepted by the shooter", () => {
     const score = buildStageScore({ ...base, now: "2026-11-07T10:00:00.000Z", existing: null });
     expect(score).toMatchObject({
-      id: "st:sh", matchId: "m", stageId: "st", shooterId: "sh", roId: "ro@example.fi",
-      status: "scored", timeSec: 8.42, noShoots: 0, procedurals: 0, shooterAccepted: true,
-      createdAt: "2026-11-07T10:00:00.000Z", updatedAt: "2026-11-07T10:00:00.000Z",
+      id: "st:sh",
+      matchId: "m",
+      stageId: "st",
+      shooterId: "sh",
+      roId: "ro@example.fi",
+      status: "scored",
+      timeSec: 8.42,
+      noShoots: 0,
+      procedurals: 0,
+      shooterAccepted: true,
+      createdAt: "2026-11-07T10:00:00.000Z",
+      updatedAt: "2026-11-07T10:00:00.000Z",
     });
     expect(score.paper).toEqual(mockUp.paper);
     expect(score.steel).toEqual(["A", "A", "A"]);
@@ -92,7 +108,13 @@ describe("a saved score read back (the read-only view)", () => {
 
   it("shows the same summary as the draft it was saved from", () => {
     const saved = buildStageScore({
-      draft: mockUp, matchId: "m", stageId: "st", shooterId: "sh", roId: "ro", now: "t", existing: null,
+      draft: mockUp,
+      matchId: "m",
+      stageId: "st",
+      shooterId: "sh",
+      roId: "ro",
+      now: "t",
+      existing: null,
     });
     expect(summarizeDraft(draftFromScore(saved, targets), stage)).toEqual(summarizeDraft(mockUp, stage));
   });
@@ -100,7 +122,13 @@ describe("a saved score read back (the read-only view)", () => {
   it("keeps penalties and the exact time", () => {
     const draft: ScoreDraft = { ...mockUp, timeDigits: "2307", noShoots: 2, procedurals: 1 };
     const saved = buildStageScore({
-      draft, matchId: "m", stageId: "st", shooterId: "sh", roId: "ro", now: "t", existing: null,
+      draft,
+      matchId: "m",
+      stageId: "st",
+      shooterId: "sh",
+      roId: "ro",
+      now: "t",
+      existing: null,
     });
     const read = summarizeDraft(draftFromScore(saved, targets), stage);
     expect(read.seconds).toBe(23.07);

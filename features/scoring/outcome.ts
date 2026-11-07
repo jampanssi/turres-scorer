@@ -58,7 +58,16 @@ interface BuildDqInput {
  * and has no shooter sign-off. A DQ removes the shooter from the rest of the match: see
  * `disqualifiedShooterIds` (shared/domain), which the lists use to show them last and unselectable.
  */
-export function buildDqScore({ matchId, stageId, shooterId, roId, reason, note, now, existing }: BuildDqInput): StageScore {
+export function buildDqScore({
+  matchId,
+  stageId,
+  shooterId,
+  roId,
+  reason,
+  note,
+  now,
+  existing,
+}: BuildDqInput): StageScore {
   const trimmed = note?.trim();
   return {
     id: scoreId(stageId, shooterId),

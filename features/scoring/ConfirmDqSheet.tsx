@@ -46,7 +46,12 @@ export function ConfirmDqSheet({ subtitle, onCancel, onConfirm, saving, saveFail
           <Button variant="outline" className="flex-1" disabled={saving} onClick={onCancel}>
             {t("common.cancel")}
           </Button>
-          <Button variant="dangerSolid" className="flex-[1.4]" disabled={saving} onClick={() => onConfirm(reason, note)}>
+          <Button
+            variant="dangerSolid"
+            className="flex-[1.4]"
+            disabled={saving}
+            onClick={() => onConfirm(reason, note)}
+          >
             {saving ? t("common.saving") : t("dq.confirm")}
           </Button>
         </>

@@ -3,8 +3,20 @@ import { disqualifiedShooterIds } from "./disqualified";
 import type { StageScore } from "./types";
 
 const score = (shooterId: string, stageId: string, status: StageScore["status"]): StageScore => ({
-  id: `${stageId}:${shooterId}`, matchId: "m", stageId, shooterId, roId: "ro", status, timeSec: null, paper: [], steel: [],
-  noShoots: 0, procedurals: 0, shooterAccepted: false, createdAt: "", updatedAt: "",
+  id: `${stageId}:${shooterId}`,
+  matchId: "m",
+  stageId,
+  shooterId,
+  roId: "ro",
+  status,
+  timeSec: null,
+  paper: [],
+  steel: [],
+  noShoots: 0,
+  procedurals: 0,
+  shooterAccepted: false,
+  createdAt: "",
+  updatedAt: "",
 });
 
 describe("disqualifiedShooterIds", () => {

@@ -10,8 +10,20 @@ const shooters: Shooter[] = [1, 2, 3, 4, 5].map((n) => ({ id: `s${n}`, name: `Sh
 
 function result(shooterId: string, overrides: Partial<StageScore> = {}): StageScore {
   return {
-    id: `st:${shooterId}`, matchId: "m", stageId: "st", shooterId, roId: "ro", status: "scored", timeSec: 10,
-    paper: [["A", "A"]], steel: ["A"], noShoots: 0, procedurals: 0, shooterAccepted: true, createdAt: "", updatedAt: "",
+    id: `st:${shooterId}`,
+    matchId: "m",
+    stageId: "st",
+    shooterId,
+    roId: "ro",
+    status: "scored",
+    timeSec: 10,
+    paper: [["A", "A"]],
+    steel: ["A"],
+    noShoots: 0,
+    procedurals: 0,
+    shooterAccepted: true,
+    createdAt: "",
+    updatedAt: "",
     ...overrides,
   };
 }
@@ -21,7 +33,11 @@ const states = (rows: ReturnType<typeof buildShooterRows>) => rows.map((r) => r.
 describe("buildShooterRows", () => {
   it("marks the first unscored shooter as shooting, the next on deck, the rest waiting", () => {
     expect(states(buildShooterRows(shooters, [result("s1"), result("s2")]))).toEqual([
-      "scored", "scored", "shooting", "onDeck", "waiting",
+      "scored",
+      "scored",
+      "shooting",
+      "onDeck",
+      "waiting",
     ]);
   });
 
@@ -30,12 +46,23 @@ describe("buildShooterRows", () => {
   });
 
   it("has nobody shooting when everyone has a result", () => {
-    expect(states(buildShooterRows(shooters, shooters.map((s) => result(s.id))))).toEqual(Array(5).fill("scored"));
+    expect(
+      states(
+        buildShooterRows(
+          shooters,
+          shooters.map((s) => result(s.id)),
+        ),
+      ),
+    ).toEqual(Array(5).fill("scored"));
   });
 
   it("uses the first gap in the order, even if a later shooter is already scored", () => {
     expect(states(buildShooterRows(shooters, [result("s1"), result("s3")]))).toEqual([
-      "scored", "shooting", "scored", "onDeck", "waiting",
+      "scored",
+      "shooting",
+      "scored",
+      "onDeck",
+      "waiting",
     ]);
   });
 
@@ -88,7 +115,14 @@ describe("loadShootersOverview with the sample scores", () => {
     const overview = (await loadShootersOverview(repo(), MATCH, squad2.id, stageId))!;
     expect(overview.scoredCount).toBe(3);
     expect(states(overview.rows)).toEqual([
-      "scored", "scored", "scored", "shooting", "onDeck", "waiting", "waiting", "waiting",
+      "scored",
+      "scored",
+      "scored",
+      "shooting",
+      "onDeck",
+      "waiting",
+      "waiting",
+      "waiting",
     ]);
     expect(overview.rows[0].hitFactor).toBeGreaterThan(0);
   });
@@ -127,7 +161,14 @@ describe("DQ counts on the shooters screen (sample squad 3)", () => {
     const partial = await overview(3); // 5 of the 7 remaining shooters scored
     expect(partial).toMatchObject({ scoredCount: 5, totalCount: 7 });
     expect(states(partial.rows)).toEqual([
-      "scored", "scored", "scored", "scored", "scored", "shooting", "onDeck", "dq",
+      "scored",
+      "scored",
+      "scored",
+      "scored",
+      "scored",
+      "shooting",
+      "onDeck",
+      "dq",
     ]);
   });
 });

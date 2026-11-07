@@ -68,7 +68,13 @@ describe("mock catalog", () => {
 
   it("matches the mock-up stage 3: 6 paper, 3 steel, 2 no-shoots, min. 15 rounds", () => {
     const stage = catalog.stages.find((s) => s.id === `${MATCH}-st3`)!;
-    expect(stage).toMatchObject({ name: "Rapid Entry", paperTargets: 6, steelTargets: 3, noShootTargets: 2, minRounds: 15 });
+    expect(stage).toMatchObject({
+      name: "Rapid Entry",
+      paperTargets: 6,
+      steelTargets: 3,
+      noShootTargets: 2,
+      minRounds: 15,
+    });
   });
 });
 

@@ -40,6 +40,12 @@ export const fi: Record<MessageKey, string> = {
   "common.loading": "Ladataan…",
   "common.error": "Tietojen lataus epäonnistui.",
   "common.cancel": "Peruuta",
+  "status.errorTitle": "Jokin meni pieleen",
+  "status.errorMessage": "Tapahtui odottamaton virhe. Voit yrittää uudelleen tai palata otteluihin.",
+  "status.retry": "Yritä uudelleen",
+  "status.home": "Takaisin otteluihin",
+  "status.notFoundTitle": "Sivua ei löytynyt",
+  "status.notFoundMessage": "Tätä sivua ei ole olemassa.",
   "common.saving": "Tallennetaan…",
   "common.saveError": "Tallennus epäonnistui. Yritä uudelleen.",
 
@@ -109,7 +115,8 @@ export const fi: Record<MessageKey, string> = {
   "score.result": "Tulos",
   "score.reviewBlocked": "Syötä aika ja täytä kaikki maalit ennen tuloksen tarkistamista.",
   "dq.title": "Suljetaanko ampuja ottelusta?",
-  "dq.info": "Ampuja poistetaan ottelun jäljellä olevilta radoilta. Sulkemisen peruminen vaatii Range Masterin hyväksynnän.",
+  "dq.info":
+    "Ampuja poistetaan ottelun jäljellä olevilta radoilta. Sulkemisen peruminen vaatii Range Masterin hyväksynnän.",
   "dq.reason": "Syy",
   "dq.note": "Muistiinpano (valinnainen)",
   "dq.confirm": "Vahvista DQ",

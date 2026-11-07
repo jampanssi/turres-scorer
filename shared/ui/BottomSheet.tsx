@@ -18,7 +18,16 @@ interface BottomSheetProps {
 }
 
 /** Modal sheet anchored to the bottom over a scrim. Closes on Escape and on scrim tap. */
-export function BottomSheet({ open, onClose, title, subtitle, icon, tone = "bg", children, actions }: BottomSheetProps) {
+export function BottomSheet({
+  open,
+  onClose,
+  title,
+  subtitle,
+  icon,
+  tone = "bg",
+  children,
+  actions,
+}: BottomSheetProps) {
   const titleId = useId();
 
   useEffect(() => {

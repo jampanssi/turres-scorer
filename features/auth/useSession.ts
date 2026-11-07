@@ -11,7 +11,11 @@ export type SessionState =
 const SERVER_SNAPSHOT = "\u0000server";
 
 export function useSession(): SessionState {
-  const raw = useSyncExternalStore(subscribeSession, () => readSessionRaw() ?? "", () => SERVER_SNAPSHOT);
+  const raw = useSyncExternalStore(
+    subscribeSession,
+    () => readSessionRaw() ?? "",
+    () => SERVER_SNAPSHOT,
+  );
   return useMemo<SessionState>(() => {
     if (raw === SERVER_SNAPSHOT) return { status: "loading" };
     const session = parseSession(raw);

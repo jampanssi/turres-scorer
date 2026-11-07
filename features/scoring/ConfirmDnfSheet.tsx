@@ -22,7 +22,14 @@ interface ConfirmDnfSheetProps {
  * Asks for a reason and confirms a DNF (did not finish) for this stage. Render it only while open:
  * the reason starts on the first choice each time.
  */
-export function ConfirmDnfSheet({ subtitle, stageLabel, onCancel, onConfirm, saving, saveFailed }: ConfirmDnfSheetProps) {
+export function ConfirmDnfSheet({
+  subtitle,
+  stageLabel,
+  onCancel,
+  onConfirm,
+  saving,
+  saveFailed,
+}: ConfirmDnfSheetProps) {
   const { t } = useT();
   const selectId = useId();
   const [reason, setReason] = useState<DnfReason>(DNF_REASONS[0]);

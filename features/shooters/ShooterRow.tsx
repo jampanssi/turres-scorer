@@ -17,9 +17,7 @@ export function ShooterRow({ row, href }: { row: ShooterRowData; href: string })
 
   const content = (
     <>
-      <span className="w-6 shrink-0 text-center font-display text-2xl font-bold text-text-secondary">
-        {row.order}
-      </span>
+      <span className="w-6 shrink-0 text-center font-display text-2xl font-bold text-text-secondary">{row.order}</span>
       <div className="min-w-0 flex-1">
         <div className="truncate text-base font-bold">{row.shooter.name}</div>
         <div className="text-[13px] text-text-secondary">#{row.shooter.competitorNumber}</div>
@@ -39,7 +37,9 @@ export function ShooterRow({ row, href }: { row: ShooterRowData; href: string })
         {row.state === "onDeck" && (
           <span className="text-lg font-bold text-text-secondary">{t("shooters.status.onDeck")}</span>
         )}
-        {row.state === "dnf" && <span className="text-lg font-bold text-text-secondary">{t("shooters.status.dnf")}</span>}
+        {row.state === "dnf" && (
+          <span className="text-lg font-bold text-text-secondary">{t("shooters.status.dnf")}</span>
+        )}
         {row.state === "dq" && <span className="text-lg font-bold text-danger-fg">{t("shooters.status.dq")}</span>}
         {row.state === "waiting" && (
           <>

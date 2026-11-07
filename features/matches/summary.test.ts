@@ -21,8 +21,16 @@ describe("loadMatchSummaries", () => {
   });
 
   const base = {
-    matchId: "autumn-2026", roId: "ro-1", timeSec: null, paper: [], steel: [], noShoots: 0, procedurals: 0,
-    shooterAccepted: false, createdAt: "", updatedAt: "",
+    matchId: "autumn-2026",
+    roId: "ro-1",
+    timeSec: null,
+    paper: [],
+    steel: [],
+    noShoots: 0,
+    procedurals: 0,
+    shooterAccepted: false,
+    createdAt: "",
+    updatedAt: "",
   };
   const autumn = async (scores: StageScore[]) => (await load(scores)).find((s) => s.match.id === "autumn-2026")!;
 
@@ -48,7 +56,13 @@ describe("loadMatchSummaries", () => {
     // and in scored, and their other 5 stages are no longer expected -> 63 x 6 + 1 = 379.
     const catalog = buildMockCatalog();
     const shooterId = catalog.squads.find((s) => s.matchId === "autumn-2026")!.shooterIds[0];
-    const dq: StageScore = { ...base, id: scoreId("autumn-2026-st1", shooterId), stageId: "autumn-2026-st1", shooterId, status: "dq" };
+    const dq: StageScore = {
+      ...base,
+      id: scoreId("autumn-2026-st1", shooterId),
+      stageId: "autumn-2026-st1",
+      shooterId,
+      status: "dq",
+    };
     expect(await autumn([dq])).toMatchObject({ shooters: 64, scored: 1, totalScores: 379 });
   });
 
@@ -56,7 +70,11 @@ describe("loadMatchSummaries", () => {
     const catalog = buildMockCatalog();
     const shooterId = catalog.squads.find((s) => s.matchId === "autumn-2026")!.shooterIds[0];
     const result = (stage: number, status: StageScore["status"]): StageScore => ({
-      ...base, id: scoreId(`autumn-2026-st${stage}`, shooterId), stageId: `autumn-2026-st${stage}`, shooterId, status,
+      ...base,
+      id: scoreId(`autumn-2026-st${stage}`, shooterId),
+      stageId: `autumn-2026-st${stage}`,
+      shooterId,
+      status,
     });
     // scored on stage 1, DQ on stage 2 -> 2 results kept, 4 later stages dropped: 63 x 6 + 2 = 380
     expect(await autumn([result(1, "scored"), result(2, "dq")])).toMatchObject({ scored: 2, totalScores: 380 });

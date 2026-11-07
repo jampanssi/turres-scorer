@@ -72,9 +72,7 @@ export function ScoringScreen() {
           {t("common.error")}
         </p>
       )}
-      {context.status === "ready" && !data && (
-        <p className="px-4 pt-4 text-text-secondary">{t("score.notFound")}</p>
-      )}
+      {context.status === "ready" && !data && <p className="px-4 pt-4 text-text-secondary">{t("score.notFound")}</p>}
       {data?.disqualified && <p className="px-4 pt-4 text-text-secondary">{t("score.disqualified")}</p>}
       {data && !data.disqualified && (
         <ScoringBody data={data} matchId={matchId} roId={session.session.email} backHref={backHref} />

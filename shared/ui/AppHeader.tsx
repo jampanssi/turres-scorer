@@ -23,7 +23,11 @@ function subscribeToScroll(onChange: () => void): () => void {
 
 /** True once the page has scrolled, i.e. content can be sliding under the sticky header. */
 function useScrolled(): boolean {
-  return useSyncExternalStore(subscribeToScroll, () => window.scrollY > 0, () => false);
+  return useSyncExternalStore(
+    subscribeToScroll,
+    () => window.scrollY > 0,
+    () => false,
+  );
 }
 
 /**
@@ -55,9 +59,7 @@ export function AppHeader({ title, subtitle, back, right, children }: AppHeaderP
         <div className={back ? "min-w-0 flex-1" : "min-w-0 flex-1 pl-1"}>
           {/* Fixed heights (even with no subtitle or while loading) keep the title at the same
               position on every screen, so it doesn't jump when navigating. */}
-          <h1 className="min-h-[26px] truncate font-display text-[26px] font-bold uppercase leading-none">
-            {title}
-          </h1>
+          <h1 className="min-h-[26px] truncate font-display text-[26px] font-bold uppercase leading-none">{title}</h1>
           <p className="mt-1 h-[18px] truncate text-[13px] leading-[18px] text-text-secondary">{subtitle}</p>
         </div>
         {right}

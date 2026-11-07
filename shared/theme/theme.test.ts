@@ -29,7 +29,15 @@ describe("init script", () => {
     expect(html.dataset.theme).toBe("dark");
     run({ getItem: () => "light" }, win, { documentElement: html });
     expect(html.dataset.theme).toBe("light");
-    run({ getItem: () => { throw new Error("blocked"); } }, win, { documentElement: html });
+    run(
+      {
+        getItem: () => {
+          throw new Error("blocked");
+        },
+      },
+      win,
+      { documentElement: html },
+    );
     expect(html.dataset.theme).toBe("light");
   });
 });

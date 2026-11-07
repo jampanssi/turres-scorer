@@ -57,9 +57,12 @@ export function buildShooterRows(
     return { ...base, state, hitFactor: null };
   });
 
-  const removedRows = removed.map(
-    (shooter): ShooterRowData => ({ order: null, shooter, state: "dq", hitFactor: null }),
-  );
+  const removedRows = removed.map((shooter): ShooterRowData => ({
+    order: null,
+    shooter,
+    state: "dq",
+    hitFactor: null,
+  }));
   return [...activeRows, ...removedRows];
 }
 

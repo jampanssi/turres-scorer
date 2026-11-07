@@ -1,0 +1,11 @@
+.next
+node_modules
+out
+build
+coverage
+package-lock.json
+next-env.d.ts
+# Documentation and design sources are written by hand; Prettier only formats code.
+docs
+*.md
+public

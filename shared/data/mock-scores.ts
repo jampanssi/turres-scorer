@@ -118,7 +118,8 @@ export function buildMockScores(catalog: Catalog): StageScore[] {
             matchId === spot.matchId && squad.number === spot.squad && shooterIndex === spot.shooterIndex;
 
           if (at(DQ) && stageIndex > DQ.stageIndex) return; // disqualified earlier: out of the match
-          const kind = at(DNF) && stageIndex === DNF.stageIndex ? "dnf" : at(DQ) && stageIndex === DQ.stageIndex ? "dq" : "scored";
+          const kind =
+            at(DNF) && stageIndex === DNF.stageIndex ? "dnf" : at(DQ) && stageIndex === DQ.stageIndex ? "dq" : "scored";
           scores.push(makeScore(matchId, stage, shooterId, kind));
         });
       });

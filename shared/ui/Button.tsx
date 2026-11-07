@@ -10,7 +10,8 @@ const BASE =
 const VARIANTS: Record<ButtonVariant, string> = {
   primary: "bg-primary text-white hover:bg-primary-hover disabled:bg-disabled",
   outline: "border-2 border-border bg-surface text-text-label disabled:text-disabled",
-  outlinePrimary: "border-2 border-primary bg-surface text-primary-text disabled:border-disabled disabled:text-disabled",
+  outlinePrimary:
+    "border-2 border-primary bg-surface text-primary-text disabled:border-disabled disabled:text-disabled",
   dangerOutline: "border-2 border-danger-fg bg-surface text-danger-fg disabled:border-disabled disabled:text-disabled",
   dangerSolid: "bg-danger text-white disabled:bg-disabled",
 };
