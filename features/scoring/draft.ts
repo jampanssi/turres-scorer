@@ -7,8 +7,11 @@ import { maxNoShoots, maxProcedurals } from "./rules";
  * Pure functions, no React: every update returns a new draft.
  */
 export interface ScoreDraft {
-  /** The time exactly as typed (may use `,`); parse with parseTime() when needed. */
-  timeText: string;
+  /**
+   * The time as the digits typed on the keypad. The last two digits are the decimals: "842" is 8.42 s.
+   * No leading zeros; "" means no time yet. At most 5 digits (999.99 s).
+   */
+  timeDigits: string;
   /** One row per paper target, up to two hits each (tap order). */
   paper: HitCode[][];
   /** One entry per steel target. */
@@ -22,7 +25,7 @@ type PenaltyLimits = Pick<Stage, "paperTargets" | "steelTargets" | "noShootTarge
 
 export function emptyDraft(stage: TargetCounts): ScoreDraft {
   return {
-    timeText: "",
+    timeDigits: "",
     paper: Array.from({ length: stage.paperTargets }, () => []),
     steel: Array.from({ length: stage.steelTargets }, () => null),
     noShoots: 0,
@@ -35,7 +38,7 @@ export function draftFromScore(score: StageScore | null, stage: PenaltyLimits): 
   if (!score || score.status !== "scored") return emptyDraft(stage);
   const draft = emptyDraft(stage);
   return {
-    timeText: score.timeSec === null ? "" : String(score.timeSec),
+    timeDigits: digitsFromSeconds(score.timeSec),
     paper: draft.paper.map((_, i) => [...(score.paper[i] ?? [])]),
     steel: draft.steel.map((_, i) => score.steel[i] ?? null),
     noShoots: Math.min(score.noShoots, maxNoShoots(stage.noShootTargets)),
@@ -75,16 +78,37 @@ export function setProcedurals(draft: ScoreDraft, value: number, stage: PenaltyL
   return { ...draft, procedurals: clamp(value, maxProcedurals(stage.paperTargets, stage.steelTargets)) };
 }
 
-/**
- * Keep only what a time can contain: digits and one separator (`.` or `,`) with at most two
- * decimals and three integer digits.
- */
-export function sanitizeTimeInput(text: string): string {
-  const cleaned = text.replace(/[^0-9.,]/g, "");
-  const separatorAt = cleaned.search(/[.,]/);
-  if (separatorAt === -1) return cleaned.slice(0, 3);
+// --- Time entry: digits typed on the keypad, two implied decimals -------------------------------
 
-  const integerPart = cleaned.slice(0, separatorAt).slice(0, 3);
-  const decimals = cleaned.slice(separatorAt + 1).replace(/[.,]/g, "").slice(0, 2);
-  return `${integerPart}${cleaned[separatorAt]}${decimals}`;
+export const MAX_TIME_DIGITS = 5;
+
+const stripLeadingZeros = (digits: string) => digits.replace(/^0+/, "");
+
+/** Add a digit (0-9) on the right. Ignored when it is not a digit or the time is already 5 digits long. */
+export function appendTimeDigit(draft: ScoreDraft, digit: string): ScoreDraft {
+  if (!/^[0-9]$/.test(digit) || draft.timeDigits.length >= MAX_TIME_DIGITS) return draft;
+  return { ...draft, timeDigits: stripLeadingZeros(draft.timeDigits + digit) };
+}
+
+/** Remove the last digit. */
+export function backspaceTimeDigit(draft: ScoreDraft): ScoreDraft {
+  return { ...draft, timeDigits: draft.timeDigits.slice(0, -1) };
+}
+
+/** Seconds from the typed digits ("842" -> 8.42), or null when no time has been entered. */
+export function secondsFromDigits(digits: string): number | null {
+  return digits === "" ? null : Number(digits) / 100;
+}
+
+/** The digits for a saved time (8.42 -> "842"); null gives "". */
+export function digitsFromSeconds(seconds: number | null): string {
+  if (seconds === null) return "";
+  return stripLeadingZeros(String(Math.min(Math.round(seconds * 100), 10 ** MAX_TIME_DIGITS - 1)));
+}
+
+/** Display text with two decimals: "842" -> "8.42", "5" -> "0.05", "" -> "" (nothing entered). */
+export function formatTimeDigits(digits: string): string {
+  if (digits === "") return "";
+  const padded = digits.padStart(3, "0");
+  return `${padded.slice(0, -2)}.${padded.slice(-2)}`;
 }

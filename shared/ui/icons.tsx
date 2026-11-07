@@ -61,3 +61,6 @@ export const GlobeIcon = (p: SVGProps<SVGSVGElement>) => (
 export const LogoutIcon = (p: SVGProps<SVGSVGElement>) => (
   <Icon {...p}><path d="M9 4H5a1 1 0 00-1 1v14a1 1 0 001 1h4" /><path d="M16 8l4 4-4 4M20 12H9" /></Icon>
 );
+export const BackspaceIcon = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}><path d="M21 5H9l-6 7 6 7h12a1 1 0 001-1V6a1 1 0 00-1-1z" /><path d="M17 9.5l-5 5M12 9.5l5 5" /></Icon>
+);

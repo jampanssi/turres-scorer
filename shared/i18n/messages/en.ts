@@ -102,6 +102,9 @@ export const en = {
   "score.dq": "DQ",
   "score.dnf": "DNF",
   "score.review": "Review",
+  "keypad.done": "Done",
+  "keypad.backspace": "Delete last digit",
+  "keypad.hint": "The last two digits are decimals: 842 = 8.42",
   "score.disqualified": "This shooter is disqualified from the match.",
   "score.notFound": "Shooter not found.",
 

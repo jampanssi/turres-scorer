@@ -8,14 +8,6 @@ export function formatTime(sec: number): string {
   return `${sec.toFixed(2)} s`;
 }
 
-/** Parse time input; accepts `.` or `,` as the decimal separator. Returns null if empty or invalid. */
-export function parseTime(input: string): number | null {
-  const normalized = input.trim().replace(",", ".");
-  if (normalized === "") return null;
-  const value = Number(normalized);
-  return Number.isFinite(value) ? value : null;
-}
-
 /** Short Finnish date without year, e.g. "7.11" (UTC, so the day does not shift by timezone). */
 export function formatMatchDate(iso: string): string {
   const d = new Date(iso);

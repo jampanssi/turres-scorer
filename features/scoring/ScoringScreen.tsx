@@ -10,6 +10,8 @@ import { useT } from "@/shared/i18n/useT";
 import { AppHeader } from "@/shared/ui/AppHeader";
 import { loadScoringContext, type ScoringContext } from "./context";
 import {
+  appendTimeDigit,
+  backspaceTimeDigit,
   draftFromScore,
   setNoShoots,
   setProcedurals,
@@ -80,7 +82,11 @@ function ScoringForm({ data }: { data: ScoringContext }) {
   return (
     <>
       <main className="flex flex-1 flex-col gap-3 p-4">
-        <TimeCard value={draft.timeText} onChange={(timeText) => setDraft((d) => ({ ...d, timeText }))} />
+        <TimeCard
+          digits={draft.timeDigits}
+          onDigit={(digit) => setDraft((d) => appendTimeDigit(d, digit))}
+          onBackspace={() => setDraft((d) => backspaceTimeDigit(d))}
+        />
         <ScoreMatrix
           paper={draft.paper}
           steel={draft.steel}

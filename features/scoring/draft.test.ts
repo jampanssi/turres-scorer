@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import type { StageScore } from "@/shared/domain/types";
 import {
+  appendTimeDigit,
+  backspaceTimeDigit,
+  digitsFromSeconds,
   draftFromScore,
   emptyDraft,
-  sanitizeTimeInput,
+  formatTimeDigits,
+  secondsFromDigits,
   setNoShoots,
   setProcedurals,
   tapPaper,
@@ -20,7 +24,7 @@ describe("emptyDraft", () => {
     const draft = emptyDraft(stage);
     expect(draft.paper).toEqual([[], [], [], [], [], []]);
     expect(draft.steel).toEqual([null, null, null]);
-    expect(draft).toMatchObject({ timeText: "", noShoots: 0, procedurals: 0 });
+    expect(draft).toMatchObject({ timeDigits: "", noShoots: 0, procedurals: 0 });
   });
 });
 
@@ -96,7 +100,7 @@ describe("draftFromScore", () => {
 
   it("loads a saved score for correction, padding to the stage's target counts", () => {
     const draft = draftFromScore(saved, stage);
-    expect(draft.timeText).toBe("8.42");
+    expect(draft.timeDigits).toBe("842");
     expect(draft.paper).toHaveLength(6);
     expect(draft.paper[0]).toEqual(["A", "A"]);
     expect(draft.paper[5]).toEqual([]);
@@ -111,27 +115,68 @@ describe("draftFromScore", () => {
   });
 
   it("keeps an empty time empty", () => {
-    expect(draftFromScore({ ...saved, timeSec: null }, stage).timeText).toBe("");
+    expect(draftFromScore({ ...saved, timeSec: null }, stage).timeDigits).toBe("");
   });
 });
 
-describe("sanitizeTimeInput", () => {
-  it("keeps digits and one separator", () => {
-    expect(sanitizeTimeInput("8.42")).toBe("8.42");
-    expect(sanitizeTimeInput("8,42")).toBe("8,42");
+
+describe("time keypad", () => {
+  const type = (digits: string) => [...digits].reduce(appendTimeDigit, emptyDraft(stage));
+
+  it("shifts digits in from the right, the last two being decimals: 8, 4, 2 -> 8.42", () => {
+    expect(type("8").timeDigits).toBe("8");
+    expect(formatTimeDigits(type("8").timeDigits)).toBe("0.08");
+    expect(formatTimeDigits(type("84").timeDigits)).toBe("0.84");
+    expect(formatTimeDigits(type("842").timeDigits)).toBe("8.42");
+    expect(formatTimeDigits(type("1234").timeDigits)).toBe("12.34");
+    expect(formatTimeDigits(type("12345").timeDigits)).toBe("123.45");
   });
-  it("drops letters and extra separators", () => {
-    expect(sanitizeTimeInput("a8.4b2")).toBe("8.42");
-    expect(sanitizeTimeInput("8.4.2")).toBe("8.42");
-    expect(sanitizeTimeInput("1,2,3")).toBe("1,23");
+
+  it("ignores digits beyond five (999.99 s is the maximum)", () => {
+    expect(type("1234567").timeDigits).toBe("12345");
+    expect(formatTimeDigits(type("99999").timeDigits)).toBe("999.99");
   });
-  it("limits to two decimals and three integer digits", () => {
-    expect(sanitizeTimeInput("8.4256")).toBe("8.42");
-    expect(sanitizeTimeInput("12345")).toBe("123");
-    expect(sanitizeTimeInput("12345.6")).toBe("123.6");
+
+  it("ignores leading zeros, so a typed 0 on an empty time changes nothing", () => {
+    expect(type("0").timeDigits).toBe("");
+    expect(type("007").timeDigits).toBe("7");
+    expect(formatTimeDigits(type("007").timeDigits)).toBe("0.07");
   });
-  it("accepts a lone separator while typing", () => {
-    expect(sanitizeTimeInput("8.")).toBe("8.");
-    expect(sanitizeTimeInput("")).toBe("");
+
+  it("keeps zeros that are not leading", () => {
+    expect(formatTimeDigits(type("1005").timeDigits)).toBe("10.05");
+    expect(formatTimeDigits(type("100").timeDigits)).toBe("1.00");
+  });
+
+  it("only accepts the digits 0-9", () => {
+    const draft = emptyDraft(stage);
+    expect(appendTimeDigit(draft, "a")).toBe(draft);
+    expect(appendTimeDigit(draft, "12")).toBe(draft);
+    expect(appendTimeDigit(draft, ".")).toBe(draft);
+    expect(appendTimeDigit(draft, "")).toBe(draft);
+  });
+
+  it("backspace removes the last digit, down to empty", () => {
+    let draft = type("842");
+    draft = backspaceTimeDigit(draft);
+    expect(formatTimeDigits(draft.timeDigits)).toBe("0.84");
+    draft = backspaceTimeDigit(backspaceTimeDigit(draft));
+    expect(draft.timeDigits).toBe("");
+    expect(backspaceTimeDigit(draft).timeDigits).toBe("");
+  });
+
+  it("converts to seconds and back", () => {
+    expect(secondsFromDigits("842")).toBe(8.42);
+    expect(secondsFromDigits("5")).toBe(0.05);
+    expect(secondsFromDigits("")).toBeNull();
+    expect(digitsFromSeconds(8.42)).toBe("842");
+    expect(digitsFromSeconds(12.3)).toBe("1230");
+    expect(digitsFromSeconds(0.05)).toBe("5");
+    expect(digitsFromSeconds(null)).toBe("");
+    expect(secondsFromDigits(digitsFromSeconds(23.07))).toBe(23.07);
+  });
+
+  it("shows nothing for an empty time", () => {
+    expect(formatTimeDigits("")).toBe("");
   });
 });

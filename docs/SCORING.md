@@ -28,7 +28,7 @@ Several squads can be on the range at the same time, each on a different stage.
 
 - **Stage points** = `max(0, 5·A + 3·C + 1·D − 10·(M + NS + PE))`. Never negative.
 - **Hit factor (HF)** = `points / time` (seconds). Display with **4 decimals** (e.g. `6.4133`). If time ≤ 0 or empty, HF = 0.
-- Time input accepts `.` or `,` as decimal separator; display uses `.` (English UI).
+- Time is entered on a number pad (digits 0-9 and backspace). The last two digits are the decimals, so typing 8, 4, 2 gives 8.42 s; at most 5 digits (999.99 s). Display uses `.` (English UI).
 
 ## Targets
 

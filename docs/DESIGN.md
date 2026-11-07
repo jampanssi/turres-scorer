@@ -170,10 +170,13 @@ Tap → Scoring.
 ### 6 · Scoring
 Header: shooter name, `#23 · Stage 3 · Squad 2`.
 Scrollable content:
-1. **Time card**: stopwatch icon, label "Time (s)", numeric input (120 × 46, 2 px `primary` border, Barlow 28, right-aligned, `inputmode="decimal"`).
+1. **Time card**: stopwatch icon, label "Time (s)", and a button (120 × 46, 2 px `primary` border, Barlow 28, right-aligned, placeholder `0.00`) that opens the **time keypad** instead of the phone keyboard (below).
 2. **ScoreMatrix**: Paper rows 1…N, divider, Steel rows 1…S (see components and SCORING.md for behaviour).
 Sticky bottom bar: **No-shoot** stepper (`Max = 2 × no-shoot targets`), **Procedural** stepper (`Max = ceil(maxPoints / 10)`), then **DQ · DNF · Review**.
 No running points/HF summary on this screen — totals are shown in Review.
+
+### Time keypad (bottom sheet over Scoring)
+Opens when the time field is tapped. Title **TIME (S)**, a white card with the typed time large (Barlow 48, `0.00` in the disabled colour while empty) and the hint "The last two digits are decimals: 842 = 8.42". Below, a 3 × 4 grid of 64 px keys (Barlow 32): **1–9**, an empty cell, **0**, and **backspace** (icon, aria-label "Delete last digit"). There is no decimal key: digits shift in from the right, so 8, 4, 2 gives 8.42; leading zeros are ignored and at most 5 digits are taken. The action row has one **Done** button; Escape, Enter and a tap on the scrim also close it. On a physical keyboard, digits and Backspace work too.
 
 ### 6a · Confirm DQ (bottom sheet over Scoring)
 Red warning icon in a `danger-tint` circle, title **DISQUALIFY SHOOTER?**, `Antti Mäkelä · #23 · Stage 3`.

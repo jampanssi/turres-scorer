@@ -102,6 +102,9 @@ export const fi: Record<MessageKey, string> = {
   "score.dq": "DQ",
   "score.dnf": "DNF",
   "score.review": "Tarkista",
+  "keypad.done": "Valmis",
+  "keypad.backspace": "Poista viimeinen numero",
+  "keypad.hint": "Kaksi viimeistä numeroa ovat desimaaleja: 842 = 8.42",
   "score.disqualified": "Tämä ampuja on suljettu ottelusta.",
   "score.notFound": "Ampujaa ei löytynyt.",
 

@@ -1,30 +1,53 @@
 "use client";
 
-import { useId } from "react";
+import { useId, useState } from "react";
 import { useT } from "@/shared/i18n/useT";
 import { StopwatchIcon } from "@/shared/ui/icons";
-import { sanitizeTimeInput } from "./draft";
+import { formatTimeDigits } from "./draft";
+import { TimeKeypad } from "./TimeKeypad";
 
-/** Time input: decimal keypad, accepts `.` or `,`, at most two decimals. */
-export function TimeCard({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+interface TimeCardProps {
+  /** The typed digits (see ScoreDraft.timeDigits). */
+  digits: string;
+  onDigit: (digit: string) => void;
+  onBackspace: () => void;
+}
+
+/**
+ * The time field. It is a button that opens the number pad instead of the phone's keyboard,
+ * so the keyboard never covers the matrix.
+ */
+export function TimeCard({ digits, onDigit, onBackspace }: TimeCardProps) {
   const { t } = useT();
-  const id = useId();
+  const labelId = useId();
+  const [open, setOpen] = useState(false);
+  const display = formatTimeDigits(digits);
 
   return (
-    <div className="flex items-center gap-3 rounded-card bg-surface p-3 shadow-card">
-      <StopwatchIcon className="shrink-0 text-primary-text" />
-      <label htmlFor={id} className="flex-1 text-base font-bold">
-        {t("score.time")}
-      </label>
-      <input
-        id={id}
-        value={value}
-        onChange={(event) => onChange(sanitizeTimeInput(event.target.value))}
-        inputMode="decimal"
-        autoComplete="off"
-        placeholder="0.00"
-        className="h-[46px] w-[120px] rounded-input border-2 border-primary bg-surface px-3 text-right font-display text-[28px] font-bold text-text placeholder:text-disabled"
+    <>
+      <div className="flex items-center gap-3 rounded-card bg-surface p-3 shadow-card">
+        <StopwatchIcon className="shrink-0 text-primary-text" />
+        <span id={labelId} className="flex-1 text-base font-bold">
+          {t("score.time")}
+        </span>
+        <button
+          type="button"
+          aria-label={`${t("score.time")}: ${display || "0.00"}`}
+          aria-haspopup="dialog"
+          aria-describedby={labelId}
+          onClick={() => setOpen(true)}
+          className="h-[46px] w-[120px] rounded-input border-2 border-primary bg-surface px-3 text-right font-display text-[28px] font-bold text-text"
+        >
+          {display || <span className="text-disabled">0.00</span>}
+        </button>
+      </div>
+      <TimeKeypad
+        open={open}
+        onClose={() => setOpen(false)}
+        digits={digits}
+        onDigit={onDigit}
+        onBackspace={onBackspace}
       />
-    </div>
+    </>
   );
 }
