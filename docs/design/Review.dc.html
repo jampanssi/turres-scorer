@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Review score</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#005185}a:hover{color:#003A60}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #EEF2F6; font-family: Inter, system-ui, sans-serif; color: #10202F">
+  <div aria-hidden="true" style="position: absolute; inset: 0; display: flex; flex-direction: column">
+    <div style="background: #005185; color: #FFFFFF; padding: 10px 12px 12px 60px; display: flex; flex-direction: column; gap: 2px">
+      <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px; text-transform: uppercase; line-height: 1; padding-top: 6px">Antti Mäkelä</div>
+      <div style="font-size: 13px; color: #C9D6E5; padding-bottom: 6px">#23 · Stage 3 · Squad 2</div>
+    </div>
+    <div style="padding: 10px 12px; display: flex; flex-direction: column; gap: 8px">
+      <div style="height: 54px; background: #FFFFFF; border-radius: 14px"></div>
+      <div style="height: 520px; background: #FFFFFF; border-radius: 14px"></div>
+    </div>
+  </div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(16, 32, 47, 0.55)"></div>
+
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; background: #EEF2F6; border-radius: 20px 20px 0 0; padding: 10px 12px 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 -8px 24px rgba(16,32,47,0.18)">
+    <div style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: #C5CFDA"></div>
+    <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px">
+      <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; text-transform: uppercase; line-height: 1">Review score</div>
+      <div style="font-size: 14px; color: #4A5B6C">Antti Mäkelä · #23 · Stage 3 · Squad 2</div>
+    </div>
+
+    <div style="background: #005185; color: #FFFFFF; border-radius: 14px; padding: 12px 14px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <div style="display: flex; flex-direction: column; gap: 2px"><div style="font-size: 12px; color: #C9D6E5">Time</div><div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; line-height: 1">8.42 s</div></div>
+      <div style="display: flex; flex-direction: column; gap: 2px"><div style="font-size: 12px; color: #C9D6E5">Points</div><div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; line-height: 1">54</div></div>
+      <div style="display: flex; flex-direction: column; gap: 2px"><div style="font-size: 12px; color: #C9D6E5">HF</div><div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; line-height: 1; color: #9CCBEA">6.4133</div></div>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #3B4B5C">Hit totals</div>
+      <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; text-align: center">
+        <sc-for list="{{totals}}" as="t" hint-placeholder-count="6">
+          <div style="display: flex; flex-direction: column; gap: 2px; background: #F3F6F9; border-radius: 10px; padding: 5px 2px">
+            <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; color: {{t.fg}}">{{t.label}}</div>
+            <div style="font-weight: 700; font-size: 17px">{{t.n}}</div>
+            <div style="font-size: 11px; color: #4A5B6C">{{t.pts}}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #3B4B5C">Targets</div>
+      <div style="display: flex; align-items: center; gap: 8px">
+        <div style="width: 48px; font-size: 12px; font-weight: 600; color: #4A5B6C">Paper</div>
+        <div style="flex-grow: 1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px">
+          <sc-for list="{{paper}}" as="p" hint-placeholder-count="6">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; border-radius: 8px; padding: 4px 0; background: {{p.bg}}">
+              <div style="font-size: 11px; color: #4A5B6C">{{p.n}}</div>
+              <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: {{p.fg}}">{{p.hits}}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px">
+        <div style="width: 48px; font-size: 12px; font-weight: 600; color: #4A5B6C">Steel</div>
+        <div style="flex-grow: 1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; border-radius: 8px; padding: 4px 0; background: #F3F6F9"><div style="font-size: 11px; color: #4A5B6C">1</div><div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: #005185">A</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; border-radius: 8px; padding: 4px 0; background: #F3F6F9"><div style="font-size: 11px; color: #4A5B6C">2</div><div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: #005185">A</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; border-radius: 8px; padding: 4px 0; background: #F3F6F9"><div style="font-size: 11px; color: #4A5B6C">3</div><div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: #005185">A</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #3B4B5C">Shooter sign-off</div>
+      <label style="display: flex; align-items: center; gap: 10px; font-size: 14px; min-height: 44px"><input type="checkbox" style="width: 22px; height: 22px; accent-color: #005185"> Shooter has reviewed and accepts the score</label>
+    </div>
+
+    <div style="display: flex; gap: 8px; padding-top: 2px">
+      <a href="Scoring.dc.html" style="height: 52px; padding: 0 18px; border-radius: 12px; border: 2px solid #005185; background: #FFFFFF; color: #005185; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; text-decoration: none; box-sizing: border-box">Edit</a>
+      <a href="Shooters.dc.html" style="flex-grow: 1; height: 52px; border-radius: 12px; background: #005185; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 0.5px; text-transform: uppercase; text-decoration: none">Accept &amp; save</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ok = { bg: '#F3F6F9', fg: '#005185' };
+    const miss = { bg: '#FBE4E2', fg: '#8A1C12' };
+    return {
+      totals: [
+        { label: 'A', n: 11, pts: '55p', fg: '#005185' },
+        { label: 'C', n: 3, pts: '9p', fg: '#005185' },
+        { label: 'D', n: 0, pts: '0p', fg: '#005185' },
+        { label: 'M', n: 1, pts: '-10p', fg: '#B42318' },
+        { label: 'NS', n: 0, pts: '0p', fg: '#B42318' },
+        { label: 'PE', n: 0, pts: '0p', fg: '#B42318' }
+      ],
+      paper: [
+        { n: 1, hits: 'AA', ...ok },
+        { n: 2, hits: 'AC', ...ok },
+        { n: 3, hits: 'AA', ...ok },
+        { n: 4, hits: 'AC', ...ok },
+        { n: 5, hits: 'AM', ...miss },
+        { n: 6, hits: 'AC', ...ok }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Score shooter</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#005185}a:hover{color:#003A60}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #EEF2F6; font-family: Inter, system-ui, sans-serif; color: #10202F; display: flex; flex-direction: column; overflow: hidden">
+  <div style="background: #005185; color: #FFFFFF; padding: 10px 12px 12px; display: flex; align-items: center; gap: 4px">
+    <a href="Shooters.dc.html" aria-label="Back to shooters" style="width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #FFFFFF">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+    </a>
+    <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+      <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px; text-transform: uppercase; line-height: 1">Antti Mäkelä</div>
+      <div style="font-size: 13px; color: #C9D6E5">#23 · Stage 3 · Squad 2</div>
+    </div>
+  </div>
+
+  <div style="flex-grow: 1; min-height: 0; overflow-y: auto; padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border-radius: 14px; padding: 4px 6px 4px 14px">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#005185" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6"></path></svg>
+      <label for="t" style="font-weight: 700; font-size: 15px; flex-grow: 1">Time (s)</label>
+      <input id="t" type="text" inputmode="decimal" value="{{time}}" onChange="{{onTime}}" style="width: 120px; height: 46px; box-sizing: border-box; border: 2px solid #005185; border-radius: 10px; text-align: right; padding: 0 12px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; color: #10202F">
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 14px; padding: 10px 8px; display: flex; flex-direction: column; gap: 9px">
+      <div style="display: grid; grid-template-columns: 38px repeat(4, minmax(0, 1fr)) 44px; gap: 4px; align-items: end; padding-bottom: 2px">
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #3B4B5C">Paper</div>
+        <div style="text-align: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: #005185">A</div>
+        <div style="text-align: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: #005185">C</div>
+        <div style="text-align: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: #005185">D</div>
+        <div style="text-align: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: #B42318">M</div>
+        <div></div>
+      </div>
+      <sc-for list="{{paper}}" as="row" hint-placeholder-count="6">
+        <div style="display: grid; grid-template-columns: 38px repeat(4, minmax(0, 1fr)) 44px; gap: 4px; align-items: center">
+          <div style="height: 44px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; background: {{row.labelBg}}; color: {{row.labelFg}}">
+            <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; line-height: 1">{{row.label}}</div>
+            <sc-if value="{{row.missing}}" hint-placeholder-val="{{ false }}">
+              <div style="font-size: 10px; font-weight: 700; line-height: 1; white-space: nowrap">{{row.missingText}}</div>
+            </sc-if>
+          </div>
+          <sc-for list="{{row.cells}}" as="c" hint-placeholder-count="5">
+            <button onClick="{{c.tap}}" aria-label="{{c.aria}}" style="height: 44px; border-radius: 8px; border: {{c.border}}; background: {{c.bg}}; color: {{c.fg}}; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px">{{c.text}}</button>
+          </sc-for>
+          <button onClick="{{row.undo}}" disabled="{{row.undoOff}}" aria-label="{{row.undoAria}}" style="height: 44px; border-radius: 8px; border: 1.5px solid #C5CFDA; background: #FFFFFF; color: {{row.undoFg}}; display: flex; align-items: center; justify-content: center; padding: 0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"></path><path d="M4 9h10a6 6 0 0 1 0 12h-3"></path></svg>
+          </button>
+        </div>
+      </sc-for>
+
+      <div style="height: 1px; background: #E1E7EE; margin: 4px 0"></div>
+
+      <div style="display: grid; grid-template-columns: 38px repeat(4, minmax(0, 1fr)) 44px; gap: 4px; align-items: end; padding-bottom: 2px">
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #3B4B5C">Steel</div>
+        <div style="text-align: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: #005185">A</div>
+        <div></div><div></div>
+        <div style="text-align: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: #B42318">M</div>
+        <div></div>
+      </div>
+      <sc-for list="{{steel}}" as="row" hint-placeholder-count="3">
+        <div style="display: grid; grid-template-columns: 38px repeat(4, minmax(0, 1fr)) 44px; gap: 4px; align-items: center">
+          <div style="height: 44px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; background: {{row.labelBg}}; color: {{row.labelFg}}">
+            <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; line-height: 1">{{row.label}}</div>
+            <sc-if value="{{row.missing}}" hint-placeholder-val="{{ false }}">
+              <div style="font-size: 10px; font-weight: 700; line-height: 1; white-space: nowrap">{{row.missingText}}</div>
+            </sc-if>
+          </div>
+          <button onClick="{{row.a.tap}}" aria-label="{{row.a.aria}}" style="height: 44px; border-radius: 8px; border: {{row.a.border}}; background: {{row.a.bg}}; color: {{row.a.fg}}; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px">{{row.a.text}}</button>
+          <div style="grid-column: span 2; height: 44px; border-radius: 8px; background: #F3F6F9; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #4A5B6C">A or M</div>
+          <button onClick="{{row.m.tap}}" aria-label="{{row.m.aria}}" style="height: 44px; border-radius: 8px; border: {{row.m.border}}; background: {{row.m.bg}}; color: {{row.m.fg}}; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px">{{row.m.text}}</button>
+          <button onClick="{{row.undo}}" disabled="{{row.undoOff}}" aria-label="{{row.undoAria}}" style="height: 44px; border-radius: 8px; border: 1.5px solid #C5CFDA; background: #FFFFFF; color: {{row.undoFg}}; display: flex; align-items: center; justify-content: center; padding: 0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"></path><path d="M4 9h10a6 6 0 0 1 0 12h-3"></path></svg>
+          </button>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="background: #FFFFFF; border-top: 1px solid #D5DDE6; box-shadow: 0 -2px 8px rgba(14,42,71,0.06); padding: 6px 12px 16px; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; flex-direction: column; gap: 9px; padding-left: 4px">
+      <div style="display: flex; align-items: center; gap: 4px">
+        <div style="flex-grow: 1; display: flex; flex-direction: column">
+          <div style="font-weight: 700; font-size: 15px">No-shoot</div>
+          <div style="font-size: 12px; color: #4A5B6C">Max {{nsMax}}</div>        </div>
+        <button onClick="{{decNS}}" aria-label="Remove no-shoot" style="width: 44px; height: 44px; border-radius: 10px; border: 2px solid #C5CFDA; background: #FFFFFF; color: #005185; display: flex; align-items: center; justify-content: center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
+        </button>
+        <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px; min-width: 22px; text-align: center; white-space: nowrap">{{NS}}</div>
+        <button onClick="{{incNS}}" disabled="{{nsFull}}" aria-label="Add no-shoot" style="width: 44px; height: 44px; border-radius: 10px; border: none; background: {{nsIncBg}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+        </button>
+      </div>
+      <div style="display: flex; align-items: center; gap: 4px">
+        <div style="flex-grow: 1; display: flex; flex-direction: column">
+          <div style="font-weight: 700; font-size: 15px">Procedural</div>
+          <div style="font-size: 12px; color: #4A5B6C">Max {{peMax}}</div>        </div>
+        <button onClick="{{decP}}" aria-label="Remove procedural" style="width: 44px; height: 44px; border-radius: 10px; border: 2px solid #C5CFDA; background: #FFFFFF; color: #005185; display: flex; align-items: center; justify-content: center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
+        </button>
+        <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px; min-width: 22px; text-align: center; white-space: nowrap">{{P}}</div>
+        <button onClick="{{incP}}" disabled="{{peFull}}" aria-label="Add procedural" style="width: 44px; height: 44px; border-radius: 10px; border: none; background: {{peIncBg}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+        </button>
+      </div>
+    </div>
+
+  <div style="display: flex; gap: 8px">
+    <a href="ConfirmDQ.dc.html" style="height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 12px; border: 2px solid #B42318; background: #FFFFFF; color: #B42318; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; text-decoration: none">DQ</a>
+    <a href="ConfirmDNF.dc.html" style="height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 12px; border: 2px solid #C5CFDA; background: #FFFFFF; color: #3B4B5C; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; text-decoration: none">DNF</a>
+    <a href="Review.dc.html" style="flex-grow: 1; height: 52px; border-radius: 12px; background: #005185; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 0.5px; text-transform: uppercase; text-decoration: none">Review</a>
+  </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"nsTargets":{"editor":"int","default":2,"min":0,"max":10,"section":"Stage"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      paper: [['A', 'A'], ['A', 'C'], ['A', 'M'], ['A', 'C'], ['A'], []],
+      steel: ['A', '', ''],
+      NS: 0,
+      P: 0,
+      time: '8.42'
+    };
+  }
+  renderVals() {
+    const s = this.state;
+    const keys = ['A', 'C', 'D', 'M'];
+    const cellStyle = (k, n) => {
+      if (!n) return { bg: '#F3F6F9', fg: '#10202F', border: '1.5px solid #D5DDE6', text: '' };
+      const bad = k === 'M';
+      return { bg: bad ? '#B42318' : '#005185', fg: '#FFFFFF', border: '1.5px solid transparent', text: String(n) };
+    };
+    const complete = { labelBg: '#237A34', labelFg: '#FFFFFF' };
+    const open = { labelBg: '#FBE4E2', labelFg: '#8A1C12' };
+    const count = (r, k) => r.filter((x) => x === k).length;
+    // Tap adds a hit; a full row keeps the two latest taps (oldest drops off).
+    const addPaper = (i, k) => () => this.setState((st) => {
+      const list = st.paper.map((r) => r.slice());
+      list[i].push(k);
+      if (list[i].length > 2) list[i].shift();
+      return { paper: list };
+    });
+    const undoPaper = (i) => () => this.setState((st) => {
+      const list = st.paper.map((r) => r.slice());
+      list[i].pop();
+      return { paper: list };
+    });
+    const paper = s.paper.map((r, i) => ({
+      label: String(i + 1),
+      ...(r.length === 2 ? complete : open),
+      missing: r.length < 2,
+      missingText: (2 - r.length) + ' left',
+      undo: undoPaper(i),
+      undoOff: r.length === 0,
+      undoFg: r.length ? '#005185' : '#A9B6C3',
+      undoAria: 'Undo last hit on paper ' + (i + 1),
+      cells: keys.map((k) => ({
+        ...cellStyle(k, count(r, k)),
+        tap: addPaper(i, k),
+        aria: 'Paper ' + (i + 1) + ': add ' + k + ' (now ' + count(r, k) + ')'
+      }))
+    }));
+    const setSteel = (i, v) => () => this.setState((st) => {
+      const list = st.steel.slice();
+      list[i] = v;
+      return { steel: list };
+    });
+    const steel = s.steel.map((v, i) => ({
+      label: String(i + 1),
+      ...(v ? complete : open),
+      missing: !v,
+      missingText: '1 left',
+      undo: setSteel(i, ''),
+      undoOff: !v,
+      undoFg: v ? '#005185' : '#A9B6C3',
+      undoAria: 'Clear steel ' + (i + 1),
+      a: { ...cellStyle('A', v === 'A' ? 1 : 0), tap: setSteel(i, 'A'), aria: 'Steel ' + (i + 1) + ': A' },
+      m: { ...cellStyle('M', v === 'M' ? 1 : 0), tap: setSteel(i, 'M'), aria: 'Steel ' + (i + 1) + ': M' }
+    }));
+    const sum = (k) => s.paper.reduce((t, r) => t + count(r, k), 0) + s.steel.filter((v) => v === k).length;
+    const A = sum('A'), C = sum('C'), D = sum('D'), M = sum('M'), NS = s.NS;
+    const pts = Math.max(0, A * 5 + C * 3 + D - (M + NS + s.P) * 10);
+    const t = parseFloat(String(s.time).replace(',', '.'));
+    const hf = t > 0 ? pts / t : 0;
+    // No-shoot limit: 2 hits per no-shoot target on the stage.
+    const nsTargets = this.props.nsTargets ?? 2;
+    const nsMax = nsTargets * 2;
+    // Procedural limit: stage maximum points / procedural penalty (10p), rounded up.
+    // Max points = paper 2 hits x 5p + steel 1 hit x 5p.
+    const maxPoints = s.paper.length * 2 * 5 + s.steel.length * 5;
+    const peMax = Math.ceil(maxPoints / 10);
+    return {
+      paper,
+      steel,
+      NS: s.NS,
+      nsMax,
+      nsFull: s.NS >= nsMax,
+      nsIncBg: s.NS >= nsMax ? '#A9B6C3' : '#005185',
+      incNS: () => this.setState((st) => ({ NS: Math.min(nsMax, st.NS + 1) })),
+      decNS: () => this.setState((st) => ({ NS: Math.max(0, st.NS - 1) })),
+      P: s.P,
+      peMax,
+      peFull: s.P >= peMax,
+      peIncBg: s.P >= peMax ? '#A9B6C3' : '#005185',
+      incP: () => this.setState((st) => ({ P: Math.min(peMax, st.P + 1) })),
+      decP: () => this.setState((st) => ({ P: Math.max(0, st.P - 1) })),
+      time: s.time,
+      onTime: (e) => this.setState({ time: e.target.value }),
+      points: pts,
+      hf: hf.toFixed(4),
+      totalsLine: 'A ' + A + ' · C ' + C + ' · D ' + D + ' · M ' + M + ' · NS ' + NS + ' · PE ' + s.P
+    };
+  }
+}
+</script>
+</body>
+</html>

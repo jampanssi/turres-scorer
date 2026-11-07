@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Matches</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#005185}a:hover{color:#003A60}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #EEF2F6; font-family: Inter, system-ui, sans-serif; color: #10202F; display: flex; flex-direction: column; overflow: hidden">
+  <div style="background: #005185; color: #FFFFFF; padding: 20px 20px 18px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 32px; text-transform: uppercase; line-height: 1">Matches</div>
+      </div>
+      <button aria-label="Account" style="width: 44px; height: 44px; border-radius: 22px; border: 2px solid #FFFFFF; background: #00406A; color: #FFFFFF; font-family: inherit; font-weight: 700; font-size: 15px">MV</button>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; background: #00406A; border-radius: 12px; padding: 4px">
+      <button onClick="{{showOpen}}" style="height: 40px; border: none; border-radius: 9px; background: {{openBg}}; color: {{openFg}}; font-family: inherit; font-weight: 700; font-size: 14px">Open</button>
+      <button onClick="{{showResults}}" style="height: 40px; border: none; border-radius: 9px; background: {{resBg}}; color: {{resFg}}; font-family: inherit; font-weight: 700; font-size: 14px">Results</button>
+    </div>
+  </div>
+  <div style="flex-grow: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden">
+    <sc-for list="{{events}}" as="ev" hint-placeholder-count="3">
+      <a href="Squads.dc.html" style="display: flex; flex-direction: column; gap: 12px; background: #FFFFFF; border-radius: 16px; padding: 16px; text-decoration: none; color: #10202F; box-shadow: 0 1px 2px rgba(14,42,71,0.08)">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; line-height: 1.1">{{ev.name}}</div>
+            <div style="font-size: 14px; color: #4A5B6C">{{ev.date}} · {{ev.range}}</div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <div style="display: flex; flex-direction: column; gap: 2px; background: #F3F6F9; border-radius: 10px; padding: 8px 10px"><div style="font-size: 12px; color: #4A5B6C">Stages</div><div style="font-weight: 700; font-size: 17px">{{ev.stages}}</div></div>
+          <div style="display: flex; flex-direction: column; gap: 2px; background: #F3F6F9; border-radius: 10px; padding: 8px 10px"><div style="font-size: 12px; color: #4A5B6C">Squads</div><div style="font-weight: 700; font-size: 17px">{{ev.squads}}</div></div>
+          <div style="display: flex; flex-direction: column; gap: 2px; background: #F3F6F9; border-radius: 10px; padding: 8px 10px"><div style="font-size: 12px; color: #4A5B6C">Shooters</div><div style="font-weight: 700; font-size: 17px">{{ev.shooters}}</div></div>
+        </div>
+        <sc-if value="{{ev.live}}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: #4A5B6C"><span>Scored</span><span style="font-weight: 600; color: #10202F">{{ev.progressLabel}}</span></div>
+            <div style="height: 8px; border-radius: 4px; background: #E1E7EE"><div style="height: 8px; border-radius: 4px; background: #005185; width: {{ev.progress}}"></div></div>
+          </div>
+        </sc-if>
+      </a>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const live = { badgeBg: '#E3EEDC', badgeFg: '#2F4A22' };
+    const soon = { badgeBg: '#E0EDF6', badgeFg: '#005185' };
+    const results = (this.state && this.state.tab) === 'results';
+    const past = [
+      { name: 'Club Night Match #10', date: 'Thu 29 Oct', range: '[RANGE NAME]', stages: 4, squads: 3, shooters: 24, live: false },
+      { name: 'Autumn Stage Match 2026', date: 'Sat 3 Oct', range: '[RANGE NAME]', stages: 5, squads: 6, shooters: 45, live: false },
+      { name: 'Summer Match 2026', date: 'Sat 15 Aug', range: '[RANGE NAME]', stages: 6, squads: 7, shooters: 52, live: false }
+    ];
+    const sel = { bg: '#FFFFFF', fg: '#005185' };
+    const off = { bg: 'transparent', fg: '#C9D6E5' };
+    return {
+      showOpen: () => this.setState({ tab: 'open' }),
+      showResults: () => this.setState({ tab: 'results' }),
+      openBg: results ? off.bg : sel.bg,
+      openFg: results ? off.fg : sel.fg,
+      resBg: results ? sel.bg : off.bg,
+      resFg: results ? sel.fg : off.fg,
+      events: results ? past : [
+        { name: 'Autumn Match 2026', date: 'Sat 7 Nov', range: '[RANGE NAME]', status: 'Live', ...live, stages: 6, squads: 8, shooters: 64, live: true, progress: '58%', progressLabel: '223 / 384' },
+        { name: 'Club Night Match #11', date: 'Thu 12 Nov', range: '[RANGE NAME]', status: 'Registration', ...soon, stages: 4, squads: 3, shooters: 22, live: false },
+        { name: 'Winter Cup · Round 1', date: 'Sat 5 Dec', range: '[RANGE NAME]', status: 'Registration', ...soon, stages: 5, squads: 5, shooters: 37, live: false }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

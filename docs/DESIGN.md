@@ -1,0 +1,199 @@
+# DESIGN.md — TurRes Scorer
+
+Visual design and screen specification. Behaviour and scoring rules are in **[SCORING.md](./SCORING.md)**.
+Reference material for every screen is in `docs/design/`:
+- **Images** (PNG/PDF exports of each screen) — the primary visual reference: match layout, hierarchy and look against these.
+- **`*.dc.html` sources** — use for exact values (hex colours, px sizes, radii, copy) when the image is ambiguous. File names: `Main` = Sign in, `Events` = Matches, `Squads`, `Stages`, `Shooters`, `Scoring`, `Review`, `ConfirmDQ`, `ConfirmDNF`.
+
+If an image and this document disagree, this document wins (it reflects the latest decisions).
+Reference device: **390 × 844 px** (phone, portrait). Everything must also work at 360 px wide.
+
+---
+
+## 1. Design principles
+
+- **Built for the range**: big targets (≥ 44 px), high contrast, one primary action per screen.
+- **Mostly blue**: the club blue `#005185` carries headers and primary actions. Green = done/complete, red = misses, penalties, DQ.
+- **Nothing hidden**: every action is a visible button. No long-press or swipe.
+- **Status is always visible**: progress counts sit in section headers; incomplete rows say what is missing.
+
+---
+
+## 2. Colour tokens
+
+| Token | Hex | Use |
+|---|---|---|
+| `primary` | `#005185` | Header bars, primary buttons, filled A/C/D cells, `+` buttons, progress fill, links |
+| `primary-dark` | `#00406A` | Darker panels inside the header (segmented control background) |
+| `primary-hover` | `#003A60` | Link hover / pressed |
+| `primary-tint` | `#E6F0F8` | Active row background (e.g. shooter currently shooting) |
+| `primary-tint-2` | `#E0EDF6` | Light blue badges |
+| `on-primary-muted` | `#C9D6E5` | Secondary text on blue |
+| `on-primary-accent` | `#9CCBEA` | Highlight numbers on blue (HF on blue cards) |
+| `bg` | `#EEF2F6` | App background |
+| `surface` | `#FFFFFF` | Cards, sheets, inputs |
+| `surface-muted` | `#F3F6F9` | Empty matrix cells, stat tiles, placeholders |
+| `surface-tile` | `#E6ECF2` | "Not started" number tiles |
+| `border` | `#C5CFDA` | Inputs, outline buttons, undo buttons, sheet handle |
+| `border-light` | `#D5DDE6` | Empty matrix cell border, bottom bar top border |
+| `divider` | `#E1E7EE` | Dividers, progress track |
+| `text` | `#10202F` | Primary text |
+| `text-secondary` | `#4A5B6C` | Secondary text, captions |
+| `text-label` | `#3B4B5C` | Form labels, section labels |
+| `disabled` | `#A9B6C3` | Disabled icons / disabled `+` button background |
+| `chevron` | `#7A8A9A` | List chevrons |
+| `success` | `#237A34` | Completed row tile (white text) |
+| `success-text` | `#2F4A22` | "Done" status text, HF chip text |
+| `success-tint` | `#E3EEDC` | Done tiles / live badge background |
+| `danger` | `#B42318` | M cells, DQ button, M/NS column headers |
+| `danger-tint` | `#FBE4E2` | Incomplete row tile, DQ warning box, miss highlight |
+| `danger-text` | `#8A1C12` | Text on `danger-tint` |
+| `scrim` | `rgba(16,32,47,0.55)` | Overlay behind bottom sheets |
+
+Contrast: all text pairs above meet WCAG AA (4.5:1) at the sizes used.
+
+---
+
+## 3. Typography
+
+| Role | Font | Weight | Size | Notes |
+|---|---|---|---|---|
+| Screen title (header) | Barlow Condensed | 700 | 24–26 px | UPPERCASE, line-height 1 |
+| Login app name | Barlow Condensed | 700 | 40 px | UPPERCASE, letter-spacing 1 px — "TURRES SCORER" |
+| Section header | Barlow Condensed | 700 | 22 px | UPPERCASE ("SELECT STAGE", "SHOOTING ORDER") |
+| Sheet title | Barlow Condensed | 700 | 26 px | UPPERCASE |
+| Buttons | Barlow Condensed | 700 | 20–22 px | UPPERCASE, letter-spacing 0.5–1 px |
+| Matrix cell / column head | Barlow Condensed | 700 | 22 px / 17 px | |
+| Big numbers (time, points, HF) | Barlow Condensed | 700 | 28–30 px | |
+| Body / list title | Inter | 700 | 15–16 px | |
+| Secondary text | Inter | 400–600 | 12–14 px | |
+| Micro labels | Inter | 700 | 10–11 px | e.g. `1 left`, "PAPER", "HIT TOTALS" (uppercase, +0.5 px tracking) |
+
+Fonts: Google Fonts `Barlow Condensed:wght@600;700` and `Inter:wght@400;500;600;700`.
+
+---
+
+## 4. Shape, spacing, elevation
+
+- Radii: matrix cells 8 · inputs / small tiles 10 · buttons, number tiles 12 · cards 14 · event cards 16 · sheet top corners 20 · login panel top corners 24 · chips 999.
+- Screen side padding 12–16 px; gaps between cards 8–12 px; matrix row gap 9 px, cell gap 4 px.
+- Touch targets: min 44 × 44 px; main action buttons 52–54 px tall.
+- Elevation: cards are flat or `0 1px 2px rgba(14,42,71,.08)`; sticky bottom bar `0 -2px 8px rgba(14,42,71,.06)`; sheets `0 -8px 24px rgba(16,32,47,.18)`.
+
+---
+
+## 5. Components
+
+### AppHeader
+Blue bar (`primary`), white text. Left: 44 px back button (chevron-left icon, `aria-label` "Back to …"). Then title (Barlow 24–26, uppercase) and one-line subtitle (`on-primary-muted`, 13 px). Matches screen has no back button and an account avatar (44 px circle, initials, white 2 px border) on the right.
+
+### SectionHeader
+Row with section title (Barlow 22, uppercase) on the left and an optional **count** on the right: `**2 / 6** stages done`, `**3 / 8** scored` (number bold in `text`, rest `text-secondary`, 13 px).
+
+### Segmented control (Matches: Open | Results)
+Container `primary-dark`, radius 12, 4 px padding. Selected item: white background, `primary` text. Unselected: transparent, `on-primary-muted` text. Height 40.
+
+### ListCard (squad / stage / shooter row)
+White card, radius 14 (shooters 12), padding 12–14. Left: 48 px number tile (radius 12). Middle: title + secondary lines. Right: status text and/or chevron. State styling:
+- **Done**: tile `success-tint` / `success-text`, status "Done" in `success-text`.
+- **Active** (On range / In progress / Shooting): tile `primary` with white number, 2 px `primary` border on the card; shooter row background `primary-tint`.
+- **Not started**: tile `surface-tile` / `primary` text, status in `text-secondary`.
+
+### ProgressBar
+Track `divider`, fill `primary`, height 6–8 px, fully rounded.
+
+### Buttons
+- **Primary**: `primary` bg, white text, radius 12, height 52–54.
+- **Secondary / outline**: white bg, 2 px `border`, `text-label` text.
+- **Edit (outline primary)**: white bg, 2 px `primary` border, `primary` text.
+- **Destructive outline (DQ)**: white bg, 2 px `danger` border, `danger` text.
+- **Destructive solid (Confirm DQ)**: `danger` bg, white text.
+- Links that look like buttons are `<a>` elements styled as above.
+
+### ScoreMatrix
+White card, radius 14, padding 10 × 8, row gap 9.
+Grid columns: `38px | 1fr | 1fr | 1fr | 1fr | 44px` (label · A · C · D · M · undo).
+- **Section label + column heads** ("PAPER" A C D M; "STEEL" A · · M). A/C/D heads in `primary`, M in `danger`.
+- **RowLabelTile** (38 × 44, radius 8): row number (Barlow 20). Complete → `success` bg, white. Incomplete → `danger-tint` bg, `danger-text`, with micro label `N left` under the number.
+- **MatrixCell** (button, 44 px tall, radius 8): empty → `surface-muted` bg, 1.5 px `border-light`, no text. Filled → `primary` bg (A/C/D) or `danger` bg (M), white count text.
+- **Steel rows**: A cell, a 2-column placeholder tile reading "A or M" (`surface-muted`, 12 px `text-secondary`), M cell.
+- **UndoButton** (44 × 44, radius 8, white, 1.5 px `border`): undo-arrow icon, `primary` when active, `disabled` colour + `disabled` attribute when the row is empty.
+
+### Stepper (No-shoot, Procedural)
+Row: label block (name 15 px bold + `Max N` 12 px `text-secondary`) · `−` button (44, outline) · count (Barlow 24) · `+` button (44, `primary`; `disabled` colour when at max). Two steppers stacked with 9 px gap.
+
+### Sticky bottom bar (Scoring)
+White, 1 px `border-light` top border, soft upward shadow. Contains the two steppers, then 16 px gap, then the action row: **DQ** (destructive outline) · **DNF** (outline) · **Review** (primary, fills remaining width). The matrix area above scrolls; the bar never scrolls away.
+
+### BottomSheet
+Full-screen `scrim` over the previous screen, sheet anchored to the bottom: radius 20 top corners, 10 px top padding, 40 × 5 grab handle (`border` colour) centred, content padding 12–20 px, ends with an action row (Cancel/Edit left, confirm right).
+
+---
+
+## 6. Screens
+
+### 1 · Sign in
+Full blue background. Upper area centred: club logo (104 px, `public/logo.png`), app name **TURRES SCORER**, sub-line "Powered by SSI". Bottom white panel (radius 24 top): title "SIGN IN", **Email** input, **Password** input (50 px tall, 1.5 px border, radius 10), right-aligned link "Forgot password?", primary button **Sign in**. No "keep me signed in", no sync message.
+
+### 2 · Matches
+Header: title **MATCHES**, account avatar. Segmented control **Open | Results** inside the header.
+- *Open*: live and upcoming matches. *Results*: finished matches.
+- Match card: name (Barlow 22), `Sat 7 Nov · [Range name]`, three stat tiles (Stages, Squads, Shooters). A live match also shows "Scored 223 / 384" with a progress bar. No status badge.
+- Tap card → Squads.
+
+### 3 · Squads
+Header: match name, subtitle `6 stages · 64 shooters`. Section header **SQUADS**.
+List of squads (ListCard): `Squad N`, `8 shooters · Stage 3 · 2/6 done`, status (Done / On range / Not started), progress bar of stages done. Several squads can be **On range** at once. Tap → Stage selection.
+
+### 4 · Stage selection
+Header: `Squad 2`, subtitle `8 shooters`. Section header **SELECT STAGE** with count `2 / 6 stages done`.
+Stage cards: number tile, stage name, status (Done / In progress / Not started), `min. 15 rounds · 6 paper, 3 steel, 2 no-shoots`, `3 / 8 scored`, chevron. Tap → Shooters.
+
+### 5 · Shooters
+Header: `Squad 2 · Stage 3`, subtitle `Min. 15 rounds · 6 paper, 3 steel, 2 No-shoot`. Section header **SHOOTING ORDER** with count `3 / 8 scored`.
+Rows: order number, name, `#23` (competitor number; no division/gun type). Right side status:
+- scored → HF value (e.g. `6.4213`) with caption "HF" in `success-text`
+- **Shooting** (current) → `primary`, row highlighted (`primary-tint` bg, 2 px `primary` border)
+- **On deck** (next) → `text-secondary`
+- waiting → `—`
+Tap → Scoring.
+
+### 6 · Scoring
+Header: shooter name, `#23 · Stage 3 · Squad 2`.
+Scrollable content:
+1. **Time card**: stopwatch icon, label "Time (s)", numeric input (120 × 46, 2 px `primary` border, Barlow 28, right-aligned, `inputmode="decimal"`).
+2. **ScoreMatrix**: Paper rows 1…N, divider, Steel rows 1…S (see components and SCORING.md for behaviour).
+Sticky bottom bar: **No-shoot** stepper (`Max = 2 × no-shoot targets`), **Procedural** stepper (`Max = ceil(maxPoints / 10)`), then **DQ · DNF · Review**.
+No running points/HF summary on this screen — totals are shown in Review.
+
+### 6a · Confirm DQ (bottom sheet over Scoring)
+Red warning icon in a `danger-tint` circle, title **DISQUALIFY SHOOTER?**, `Antti Mäkelä · #23 · Stage 3`.
+`danger-tint` info box: "The shooter is removed from the rest of the match. This needs the Range Master's approval to reverse."
+**Reason** select (Unsafe gun handling, Accidental discharge, Unsportsmanlike conduct, Other) and optional **Note** textarea.
+Actions: **Cancel** (outline) → Scoring · **Confirm DQ** (`danger` solid) → Shooters.
+
+### 6b · Confirm DNF (bottom sheet over Scoring)
+Blue icon (circle-x) in a `primary-tint` circle, title **MARK AS DNF?**, shooter line.
+Info box (`bg`): "Stage 3 is recorded as Did Not Finish for this shooter. Hits entered on this stage are discarded."
+**Reason** select (Equipment failure, Injury, Shooter withdrew, Other).
+Actions: **Cancel** · **Confirm DNF** (primary).
+
+### 7 · Review score (bottom sheet over Scoring)
+Sheet background `bg`. Title **REVIEW SCORE**, shooter line.
+1. Blue result card: **Time** `8.42 s` · **Points** `54` · **HF** `6.4133` (HF in `on-primary-accent`).
+2. **Hit totals**: six tiles — A, C, D, M, NS, PE — count + points (`55p`, `-10p` …). M/NS/PE labels in `danger`.
+3. **Targets**: Paper row of tiles `1 AA`, `2 AC`, … (a tile containing M uses `danger-tint` / `danger-text`); Steel row `1 A`, `2 A`, `3 A`.
+4. **Shooter sign-off**: checkbox "Shooter has reviewed and accepts the score" (no signature pad).
+Actions: **Edit** (outline primary) → Scoring · **Accept & save** (primary) → Shooters. Accept & save is disabled until the checkbox is ticked.
+
+---
+
+## 7. Iconography
+
+Inline stroke SVG icons, 2–2.6 px stroke, `currentColor`, round caps: chevron-left (back), chevron-right (list), stopwatch, undo-arrow, minus, plus, warning triangle (DQ), circle-x (DNF). Decorative icons have `aria-hidden="true"`; icon-only buttons have `aria-label`. No emoji.
+
+---
+
+## 8. Sample content used in the mock-ups
+
+All names, matches and stages are placeholders: matches "Autumn Match 2026", "Club Night Match #11", "Winter Cup · Round 1"; stages "Vehicle Stop", "Barricade", "Rapid Entry" (6 paper, 3 steel, 2 no-shoots, min. 15 rounds), "Long Corridor", "Strong Hand Only", "Casualty Drag"; range name `[RANGE NAME]`.

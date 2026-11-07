@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Squads</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#005185}a:hover{color:#003A60}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #EEF2F6; font-family: Inter, system-ui, sans-serif; color: #10202F; display: flex; flex-direction: column; overflow: hidden">
+  <div style="background: #005185; color: #FFFFFF; padding: 12px 12px 18px; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; align-items: center; gap: 4px">
+      <a href="Events.dc.html" aria-label="Back to matches" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #FFFFFF">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+      </a>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; text-transform: uppercase; line-height: 1">Autumn Match 2026</div>
+        <div style="font-size: 13px; color: #C9D6E5">6 stages · 64 shooters</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding: 16px 16px 8px; display: flex; align-items: baseline; justify-content: space-between">
+    <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; text-transform: uppercase">Squads</div>
+    
+  </div>
+  <div style="flex-grow: 1; padding: 0 16px 16px; display: flex; flex-direction: column; gap: 10px; overflow: hidden">
+    <sc-for list="{{squads}}" as="q" hint-placeholder-count="6">
+      <a href="Stages.dc.html" style="display: flex; align-items: center; gap: 14px; background: #FFFFFF; border-radius: 14px; padding: 14px; text-decoration: none; color: #10202F; border: {{q.border}}">
+        <div style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 12px; background: {{q.tileBg}}; color: {{q.tileFg}}; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px">{{q.n}}</div>
+        <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+          <div style="display: flex; justify-content: space-between; align-items: baseline">
+            <div style="font-weight: 700; font-size: 16px">Squad {{q.n}}</div>
+            <div style="font-size: 12px; font-weight: 700; color: {{q.stateFg}}">{{q.state}}</div>
+          </div>
+          <div style="font-size: 13px; color: #4A5B6C">{{q.count}} shooters · {{q.where}}</div>
+          <div style="height: 6px; border-radius: 3px; background: #E1E7EE"><div style="height: 6px; border-radius: 3px; background: #005185; width: {{q.progress}}"></div></div>
+        </div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A8A9A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"></path></svg>
+      </a>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const done = { state: 'Done', stateFg: '#2F4A22', tileBg: '#E3EEDC', tileFg: '#2F4A22', border: '2px solid transparent' };
+    const now = { state: 'On range', stateFg: '#005185', tileBg: '#005185', tileFg: '#FFFFFF', border: '2px solid #005185' };
+    const wait = { state: 'Not started', stateFg: '#4A5B6C', tileBg: '#E6ECF2', tileFg: '#005185', border: '2px solid transparent' };
+    const squads = [
+      { n: 1, count: 8, where: '6/6 stages done', progress: '100%', ...done },
+      { n: 2, count: 8, where: 'Stage 3 · 2/6 done', progress: '33%', ...now },
+      { n: 3, count: 8, where: 'Stage 6 · 3/6 done', progress: '50%', ...now },
+      { n: 4, count: 7, where: '6/6 stages done', progress: '100%', ...done },
+      { n: 5, count: 8, where: 'Stage 1 · 1/6 done', progress: '17%', ...now },
+      { n: 6, count: 8, where: '0/6 done', progress: '0%', ...wait }
+    ];
+    return {
+      squads,
+      onRange: squads.filter((q) => q.state === 'On range').length
+    };
+  }
+}
+</script>
+</body>
+</html>
