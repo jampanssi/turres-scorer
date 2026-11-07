@@ -24,7 +24,11 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#005185",
+  // Browser bar colour follows the page background (headers share it). Sign in overrides with blue.
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#EEF2F6" },
+    { media: "(prefers-color-scheme: dark)", color: "#0B141D" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

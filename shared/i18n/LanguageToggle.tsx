@@ -1,23 +1,25 @@
 "use client";
 
-import { LOCALES, type Locale, writeLocale } from "./locale";
+import { GlobeIcon } from "@/shared/ui/icons";
+import { LOCALES, writeLocale } from "./locale";
 import { useT } from "./useT";
 
-const nameOf = (code: Locale) => LOCALES.find((l) => l.code === code)?.name ?? code;
-
-/** Switches between the available languages (EN | FI). Sits top right next to the theme toggle. */
+/**
+ * Language switch for Sign in (signed-in screens use the user menu). Same logic as the menu's
+ * language row: it names the language you will switch TO ("Suomi" while English is on).
+ */
 export function LanguageToggle() {
-  const { t, locale } = useT();
-  const next = LOCALES[(LOCALES.findIndex((l) => l.code === locale) + 1) % LOCALES.length].code;
+  const { locale } = useT();
+  const next = LOCALES[(LOCALES.findIndex((l) => l.code === locale) + 1) % LOCALES.length];
 
   return (
     <button
       type="button"
-      onClick={() => writeLocale(next)}
-      aria-label={t("language.label", { current: nameOf(locale), next: nameOf(next) })}
-      className="flex size-11 shrink-0 items-center justify-center rounded-full font-display text-lg font-bold uppercase text-white"
+      onClick={() => writeLocale(next.code)}
+      className="flex min-h-11 shrink-0 items-center gap-2 rounded-full px-3 text-[15px] font-semibold text-white"
     >
-      {locale}
+      <GlobeIcon strokeWidth={2} width={20} height={20} />
+      <span lang={next.code}>{next.name}</span>
     </button>
   );
 }

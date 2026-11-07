@@ -37,8 +37,6 @@ export const fi: Record<MessageKey, string> = {
   "matches.loading": "Ladataan…",
   "matches.error": "Otteluiden lataus epäonnistui.",
 
-  "language.label": "Kieli: {current}. Vaihda: {next}.",
-
   "stepper.max": "Enintään {max}",
   "stepper.decrease": "Vähennä: {label}",
   "stepper.increase": "Lisää: {label}",

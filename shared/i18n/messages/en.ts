@@ -37,8 +37,6 @@ export const en = {
   "matches.loading": "Loading…",
   "matches.error": "Could not load matches.",
 
-  "language.label": "Language: {current}. Switch to {next}.",
-
   "stepper.max": "Max {max}",
   "stepper.decrease": "Decrease {label}",
   "stepper.increase": "Increase {label}",

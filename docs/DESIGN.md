@@ -13,7 +13,7 @@ Reference device: **390 × 844 px** (phone, portrait). Everything must also work
 ## 1. Design principles
 
 - **Built for the range**: big targets (≥ 44 px), high contrast, one primary action per screen.
-- **Mostly blue**: the club blue `#005185` carries headers and primary actions. Green = done/complete, red = misses, penalties, DQ.
+- **Mostly blue**: the club blue `#005185` carries primary actions and active states; Sign in is the only full-blue screen. Headers have **no coloured bar**: they sit on the page background. Green = done/complete, red = misses, penalties, DQ.
 - **Nothing hidden**: every action is a visible button. No long-press or swipe.
 - **Status is always visible**: progress counts sit in section headers; incomplete rows say what is missing.
 
@@ -23,12 +23,12 @@ Reference device: **390 × 844 px** (phone, portrait). Everything must also work
 
 | Token | Hex | Use |
 |---|---|---|
-| `primary` | `#005185` | Header bars, primary buttons, filled A/C/D cells, `+` buttons, progress fill, links |
-| `primary-dark` | `#00406A` | Darker panels inside the header (segmented control background) |
+| `primary` | `#005185` | Primary buttons, selected segments, the user avatar, filled A/C/D cells, `+` buttons, progress fill, links |
+| `primary-dark` | `#00406A` | Not used by headers any more (kept for dark panels on blue) |
 | `primary-hover` | `#003A60` | Link hover / pressed |
 | `primary-tint` | `#E6F0F8` | Active row background (e.g. shooter currently shooting) |
 | `primary-tint-2` | `#E0EDF6` | Light blue badges |
-| `on-primary-muted` | `#C9D6E5` | Secondary text on blue |
+| `on-primary-muted` | `#C9D6E5` | Secondary text on blue (Sign in) |
 | `on-primary-accent` | `#9CCBEA` | Highlight numbers on blue (HF on blue cards) |
 | `bg` | `#EEF2F6` | App background |
 | `surface` | `#FFFFFF` | Cards, sheets, inputs |
@@ -87,16 +87,16 @@ Fonts: Google Fonts `Barlow Condensed:wght@600;700` and `Inter:wght@400;500;600;
 ## 5. Components
 
 ### AppHeader
-Blue bar (`primary`), white text. Left: 44 px back button (chevron-left icon, `aria-label` "Back to …"). Then title (Barlow 24–26, uppercase) and one-line subtitle (`on-primary-muted`, 13 px). The right slot holds the **UserMenu** on signed-in screens (see below). Matches has no back button.
+Plain header on the page background (`bg`), `text` colour, no bar or border. Left: 44 px back button (chevron-left icon, `aria-label` "Back to …"). Then title (Barlow 24–26, uppercase, `primary-text` blue: club blue in light mode, lighter blue in dark) and one-line subtitle (`text-secondary`, 13 px). The right slot holds the **UserMenu** on signed-in screens (see below). Matches has no back button.
 
 ### UserMenu
-Avatar button in the header's right slot (44 px circle, initials, white 2 px border; `aria-label` "User menu (email)"). Tapping it opens a popover under the avatar (white `surface`, 1 px `border-light`, radius 14, 288 px wide, sheet shadow). Content, top to bottom: a **user card** (initials circle, "Signed in as", email), a **theme row**, a **language row**, a divider, and **Sign out**. Rows are plain: a 22 px icon on the left and a label, min. 48 px tall, with **nothing on the right** (no switches, shortcuts or chevrons). The theme row names the mode you will switch **to** (light is on -> moon icon and "Dark mode"; dark is on -> sun icon and "Light mode"), and the language row names the language you will switch to (English is on -> globe and "Suomi"). Tapping either switches immediately and keeps the menu open. The menu closes on Escape, on a tap outside, and after signing out (which returns to Sign in). The theme row sets light or dark explicitly; "system" is only the default until the first choice. Sign in has no user menu and is always light; it keeps only a small EN/FI language toggle top right.
+Avatar button in the header's right slot (44 px circle, initials, `primary` fill, white text; `aria-label` "User menu (email)"). Tapping it opens a popover under the avatar (white `surface`, 1 px `border-light`, radius 14, 288 px wide, sheet shadow). Content, top to bottom: a **user card** (initials circle, "Signed in as", email), a **theme row**, a **language row**, a divider, and **Sign out**. Rows are plain: a 22 px icon on the left and a label, min. 48 px tall, with **nothing on the right** (no switches, shortcuts or chevrons). The theme row names the mode you will switch **to** (light is on -> moon icon and "Dark mode"; dark is on -> sun icon and "Light mode"), and the language row names the language you will switch to (English is on -> globe and "Suomi"). Tapping either switches immediately and keeps the menu open. The menu closes on Escape, on a tap outside, and after signing out (which returns to Sign in). The theme row sets light or dark explicitly; "system" is only the default until the first choice. Sign in has no user menu and is always light; it keeps only a language button top right (globe icon and the name of the language you switch to, e.g. "Suomi" while English is on; the same rule as the menu's language row).
 
 ### SectionHeader
 Row with section title (Barlow 22, uppercase) on the left and an optional **count** on the right: `**2 / 6** stages done`, `**3 / 8** scored` (number bold in `text`, rest `text-secondary`, 13 px).
 
 ### Segmented control (Matches: Open | Results)
-Container `primary-dark`, radius 12, 4 px padding. Selected item: white background, `primary` text. Unselected: transparent, `on-primary-muted` text. Height 40.
+White `surface` track, radius 12, 4 px padding, card shadow. Selected item: `primary` fill, white text. Unselected: transparent, `text-label` text. Height 40.
 
 ### ListCard (squad / stage / shooter row)
 White card, radius 14 (shooters 12), padding 12–14. Left: 48 px number tile (radius 12). Middle: title + secondary lines. Right: status text and/or chevron. State styling:
@@ -141,7 +141,7 @@ Full-screen `scrim` over the previous screen, sheet anchored to the bottom: radi
 Full blue background. Upper area centred: club logo (104 px, `public/logo.png`), app name **TURRES SCORER**, sub-line "Powered by SSI". Bottom white panel (radius 24 top): title "SIGN IN", **Email** input, **Password** input (50 px tall, 1.5 px border, radius 10), right-aligned link "Forgot password?", primary button **Sign in**. No "keep me signed in", no sync message.
 
 ### 2 · Matches
-Header: title **MATCHES**, account avatar. Segmented control **Open | Results** inside the header.
+Header: title **MATCHES**, the user menu (avatar). Segmented control **Open | Results** inside the header.
 - *Open*: live and upcoming matches. *Results*: finished matches.
 - Match card: name (Barlow 22), the date with year, `7.11.2026` (Finnish format; no range name), three stat tiles (Stages, Squads, Shooters). A live match also shows "Scored 223 / 384" with a progress bar. No status badge: a 6 px strip on the card's left edge shows the status (blue = live, green = finished, none = upcoming), and the status word is added for screen readers. Strip colours are the theme-aware tokens `primary-text` and `success-accent`.
 - Tap card → Squads.

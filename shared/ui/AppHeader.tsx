@@ -13,9 +13,10 @@ interface AppHeaderProps {
   children?: ReactNode;
 }
 
+/** Plain header on the page background (no coloured bar). */
 export function AppHeader({ title, subtitle, back, right, children }: AppHeaderProps) {
   return (
-    <header className="bg-primary px-3 pb-3 pt-3 text-white">
+    <header className="bg-bg px-3 pb-3 pt-3 text-text">
       <div className="flex items-center gap-1">
         {back && (
           <Link
@@ -27,8 +28,8 @@ export function AppHeader({ title, subtitle, back, right, children }: AppHeaderP
           </Link>
         )}
         <div className={back ? "min-w-0 flex-1" : "min-w-0 flex-1 pl-1"}>
-          <h1 className="truncate font-display text-[26px] font-bold uppercase leading-none">{title}</h1>
-          {subtitle && <p className="mt-1 truncate text-[13px] text-on-primary-muted">{subtitle}</p>}
+          <h1 className="truncate font-display text-[26px] font-bold uppercase leading-none text-primary-text">{title}</h1>
+          {subtitle && <p className="mt-1 truncate text-[13px] text-text-secondary">{subtitle}</p>}
         </div>
         {right}
       </div>

@@ -72,7 +72,7 @@ export function UserMenu() {
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-white bg-primary-dark font-display text-lg font-bold text-white"
+        className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary font-display text-lg font-bold text-white"
       >
         {initials}
       </button>
