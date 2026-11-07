@@ -23,7 +23,7 @@ npm run dev      # dev server at http://localhost:3000 (Turbopack)
 npm run build    # production build; also the main type-check gate
 npm run lint     # ESLint 9 flat config (eslint-config-next core-web-vitals + typescript)
 npm run typecheck # tsc --noEmit, type-check without building
-npm run format   # Prettier (code only: not docs/*.md); `format:check` is what CI runs
+npm run format   # Prettier (code only: not docs/*.md); `format:check` only checks without changing files
 ```
 
 ```bash
@@ -51,7 +51,7 @@ Feature-based, so new features (e.g. match registration) are new folders:
 - `shared/`: `domain/` (types), `data/` (repository, `useRepoQuery`, `mock/`, IndexedDB, sync), `ui/` (primitives), `i18n/`.
 - `integrations/ssi/`: added last.
 
-Dependencies point one way: `features/*` → `shared/*`, and `integrations/ssi` → `shared/domain`. Code used by more than one feature belongs in `shared/` (for example the scoring rules in `shared/domain/scoring.ts`). **These boundaries are enforced by ESLint** (`eslint.config.mjs`, `no-restricted-imports`): `shared` must not import `features`, `integrations` or `app`; a feature must not import another feature (the only exception left is `features/auth`, until it moves to a shell feature in the refactoring in docs/PLAN.md). CI (`.github/workflows/ci.yml`) runs format check, lint, typecheck, tests and build on every push and pull request. `app/error.tsx` and `app/not-found.tsx` are the global fallbacks (`shared/ui/StatusPage.tsx`); each page exports its own `metadata.title`.
+Dependencies point one way: `features/*` → `shared/*`, and `integrations/ssi` → `shared/domain`. Code used by more than one feature belongs in `shared/` (for example the scoring rules in `shared/domain/scoring.ts`). **These boundaries are enforced by ESLint** (`eslint.config.mjs`, `no-restricted-imports`): `shared` must not import `features`, `integrations` or `app`; a feature must not import another feature (the only exception left is `features/auth`, until it moves to a shell feature in the refactoring in docs/PLAN.md). `app/error.tsx` and `app/not-found.tsx` are the global fallbacks (`shared/ui/StatusPage.tsx`); each page exports its own `metadata.title`.
 
 ## Stack notes
 

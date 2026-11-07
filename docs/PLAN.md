@@ -77,7 +77,7 @@ integrations/
 
 Behaviour-preserving, one commit per phase, all checks green after each:
 
-- [x] Phase 0: safety net. Prettier, CI, ESLint import boundaries, `app/error.tsx`, `app/not-found.tsx`, page titles
+- [x] Phase 0: safety net. Prettier, ESLint import boundaries, `app/error.tsx`, `app/not-found.tsx`, page titles
 - [x] Phase 1: domain consolidation. Scoring rules in `shared/domain/scoring.ts`, one `shared/domain/progress.ts` for the scored/DQ rules, `StageScore` as a scored/DNF/DQ union, `createPersistedStore` for theme, language and session
 - [x] Phase 2: data access. `useRepoQuery` (refetches on repository changes), async repository factory (mock data only in the bundle when configured), repository clock `now()`, session `userId`
 - [ ] Phase 3: screen structure. `(app)` route group with one session gate, `features/shell/Screen`, split `ScoringScreen`
