@@ -39,6 +39,9 @@ export const en = {
 
   "common.loading": "Loading…",
   "common.error": "Could not load the data.",
+  "common.cancel": "Cancel",
+  "common.saving": "Saving…",
+  "common.saveError": "Could not save. Try again.",
 
   "squads.back": "Back to matches",
   "squads.section": "Squads",
@@ -103,6 +106,11 @@ export const en = {
   "score.dnf": "DNF",
   "score.review": "Review",
   "score.reviewBlocked": "Enter the time and complete every target to review the score.",
+  "dnf.title": "Mark as DNF?",
+  "dnf.info": "{stage} is recorded as Did Not Finish for this shooter. Hits entered on this stage are discarded.",
+  "dnf.reason": "Reason",
+  "dnf.confirm": "Confirm DNF",
+
   "review.title": "Review score",
   "review.time": "Time",
   "review.points": "Points",
@@ -113,8 +121,6 @@ export const en = {
   "review.accept": "Shooter has reviewed and accepts the score",
   "review.edit": "Edit",
   "review.save": "Accept & save",
-  "review.saving": "Saving…",
-  "review.saveError": "Could not save the score. Try again.",
   "review.issue.missingTime": "Enter the time before saving.",
   "review.issue.incompleteTargets.one": "{count} target is not complete.",
   "review.issue.incompleteTargets.other": "{count} targets are not complete.",

@@ -185,10 +185,10 @@ Red warning icon in a `danger-tint` circle, title **DISQUALIFY SHOOTER?**, `Antt
 Actions: **Cancel** (outline) → Scoring · **Confirm DQ** (`danger` solid) → Shooters.
 
 ### 6b · Confirm DNF (bottom sheet over Scoring)
-Blue icon (circle-x) in a `primary-tint` circle, title **MARK AS DNF?**, shooter line.
+White sheet (`surface`). The header row has a 44 px circle in `primary-tint` holding a `primary-text` circle-x icon, and to its right the title **MARK AS DNF?** and the shooter line `Antti Mäkelä · #23 · Stage 3` (no squad).
 Info box (`bg`): "Stage 3 is recorded as Did Not Finish for this shooter. Hits entered on this stage are discarded."
 **Reason** select (Equipment failure, Injury, Shooter withdrew, Other).
-Actions: **Cancel** · **Confirm DNF** (primary).
+Actions: **Cancel** (outline, closes the sheet and keeps the entered hits) · **Confirm DNF** (primary, a little wider). Confirming saves a DNF result for this stage: no time, no hits, the chosen reason (stored as a code, e.g. `equipment_failure`), no shooter sign-off. Anything already saved or entered on this stage is replaced. Then back to Shooters, where the shooter shows **DNF** in their place (still selectable, so it can be corrected). The reason starts on the first choice each time. While saving both buttons are disabled; a failed save keeps the sheet open with an error. The DNF button works with an incomplete score.
 
 ### 7 · Review score (bottom sheet over Scoring)
 Sheet background `bg`. Title **REVIEW SCORE**, shooter line.

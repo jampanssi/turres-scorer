@@ -59,7 +59,7 @@ export function ReviewSheet({
             {t("review.edit")}
           </Button>
           <Button className="flex-1" disabled={!canSave} onClick={onAccept}>
-            {saving ? t("review.saving") : t("review.save")}
+            {saving ? t("common.saving") : t("review.save")}
           </Button>
         </>
       }
@@ -141,7 +141,7 @@ export function ReviewSheet({
             {summary.incompleteTargets > 0 && (
               <p>{t("review.issue.incompleteTargets", { count: summary.incompleteTargets })}</p>
             )}
-            {saveFailed && <p>{t("review.saveError")}</p>}
+            {saveFailed && <p>{t("common.saveError")}</p>}
           </div>
         )}
       </div>

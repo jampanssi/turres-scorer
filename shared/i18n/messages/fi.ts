@@ -39,6 +39,9 @@ export const fi: Record<MessageKey, string> = {
 
   "common.loading": "Ladataan…",
   "common.error": "Tietojen lataus epäonnistui.",
+  "common.cancel": "Peruuta",
+  "common.saving": "Tallennetaan…",
+  "common.saveError": "Tallennus epäonnistui. Yritä uudelleen.",
 
   "squads.back": "Takaisin otteluihin",
   "squads.section": "Ryhmät",
@@ -103,6 +106,11 @@ export const fi: Record<MessageKey, string> = {
   "score.dnf": "DNF",
   "score.review": "Tarkista",
   "score.reviewBlocked": "Syötä aika ja täytä kaikki maalit ennen tuloksen tarkistamista.",
+  "dnf.title": "Merkitäänkö DNF?",
+  "dnf.info": "{stage} merkitään tälle ampujalle keskeytetyksi (DNF). Radalle syötetyt osumat hylätään.",
+  "dnf.reason": "Syy",
+  "dnf.confirm": "Vahvista DNF",
+
   "review.title": "Tarkista tulos",
   "review.time": "Aika",
   "review.points": "Pisteet",
@@ -113,8 +121,6 @@ export const fi: Record<MessageKey, string> = {
   "review.accept": "Ampuja on tarkistanut tuloksen ja hyväksyy sen",
   "review.edit": "Muokkaa",
   "review.save": "Hyväksy ja tallenna",
-  "review.saving": "Tallennetaan…",
-  "review.saveError": "Tuloksen tallennus epäonnistui. Yritä uudelleen.",
   "review.issue.missingTime": "Syötä aika ennen tallennusta.",
   "review.issue.incompleteTargets.one": "{count} maali on keskeneräinen.",
   "review.issue.incompleteTargets.other": "{count} maalia on keskeneräisiä.",

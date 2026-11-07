@@ -8,15 +8,17 @@ interface BottomSheetProps {
   title: string;
   /** Line under the title, e.g. the shooter line. */
   subtitle?: string;
-  /** Icon shown above the title (Confirm DQ / DNF). */
+  /** Icon shown to the left of the title and subtitle (Confirm DQ / DNF). */
   icon?: ReactNode;
+  /** Sheet background: "bg" (default, grey like the page) or "surface" (white). Confirm DQ and DNF use surface. */
+  tone?: "bg" | "surface";
   children: ReactNode;
   /** Action row at the bottom (Cancel/Edit left, confirm right). */
   actions?: ReactNode;
 }
 
 /** Modal sheet anchored to the bottom over a scrim. Closes on Escape and on scrim tap. */
-export function BottomSheet({ open, onClose, title, subtitle, icon, children, actions }: BottomSheetProps) {
+export function BottomSheet({ open, onClose, title, subtitle, icon, tone = "bg", children, actions }: BottomSheetProps) {
   const titleId = useId();
 
   useEffect(() => {
@@ -42,17 +44,19 @@ export function BottomSheet({ open, onClose, title, subtitle, icon, children, ac
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative flex max-h-[92dvh] w-full max-w-lg flex-col rounded-t-sheet bg-bg pt-2.5 shadow-sheet"
+        className={`relative flex max-h-[92dvh] w-full max-w-lg flex-col rounded-t-sheet pt-2.5 shadow-sheet ${tone === "surface" ? "bg-surface" : "bg-bg"}`}
       >
         <div className="mx-auto h-[5px] w-10 shrink-0 rounded-full bg-border" aria-hidden="true" />
         <div className="overflow-y-auto px-5 pb-3 pt-3">
-          {icon && <div className="mb-2 flex justify-center">{icon}</div>}
-          <h2 id={titleId} className={`font-display text-[26px] font-bold uppercase leading-none ${icon ? "text-center" : ""}`}>
-            {title}
-          </h2>
-          {subtitle && (
-            <p className={`mt-1 text-sm text-text-secondary ${icon ? "text-center" : ""}`}>{subtitle}</p>
-          )}
+          <div className="flex items-center gap-3">
+            {icon && <div className="shrink-0">{icon}</div>}
+            <div className="min-w-0">
+              <h2 id={titleId} className="font-display text-[26px] font-bold uppercase leading-none">
+                {title}
+              </h2>
+              {subtitle && <p className="mt-1 text-sm text-text-secondary">{subtitle}</p>}
+            </div>
+          </div>
           <div className="mt-4">{children}</div>
         </div>
         {actions && <div className="flex gap-3 px-5 pb-5 pt-2">{actions}</div>}
