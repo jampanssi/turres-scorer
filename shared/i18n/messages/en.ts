@@ -14,7 +14,12 @@ export const en = {
   "auth.error.invalidEmail": "Enter a valid email address.",
   "auth.error.missingPassword": "Enter your password.",
 
-  "account.label": "Signed in as {email}",
+  "menu.label": "User menu ({email})",
+  "menu.signedInAs": "Signed in as",
+  // The theme row names the mode you will switch TO (light is on -> "Dark mode").
+  "menu.theme.toDark": "Dark mode",
+  "menu.theme.toLight": "Light mode",
+  "menu.signOut": "Sign out",
 
   "matches.title": "Matches",
   "matches.tabs": "Match list",
@@ -31,11 +36,6 @@ export const en = {
   "matches.empty.results": "No finished matches yet.",
   "matches.loading": "Loading…",
   "matches.error": "Could not load matches.",
-
-  "theme.label": "Theme: {current}. Switch to {next}.",
-  "theme.system": "system",
-  "theme.light": "light",
-  "theme.dark": "dark",
 
   "language.label": "Language: {current}. Switch to {next}.",
 

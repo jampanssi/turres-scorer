@@ -10,12 +10,6 @@ export type ResolvedTheme = "light" | "dark";
 export const THEME_STORAGE_KEY = "turres-scorer.theme";
 export const THEME_CHANGE_EVENT = "turres-scorer:theme";
 
-export const NEXT_PREFERENCE: Record<ThemePreference, ThemePreference> = {
-  system: "light",
-  light: "dark",
-  dark: "system",
-};
-
 export function isPreference(value: unknown): value is ThemePreference {
   return value === "system" || value === "light" || value === "dark";
 }
@@ -32,6 +26,35 @@ export function readPreference(): ThemePreference {
   } catch {
     return "system";
   }
+}
+
+export function subscribePreference(onChange: () => void): () => void {
+  window.addEventListener(THEME_CHANGE_EVENT, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(THEME_CHANGE_EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+
+/** The theme currently shown (what the inline script / applyTheme wrote to <html data-theme>). */
+export function readResolvedTheme(): ResolvedTheme {
+  return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+}
+
+/** Notifies on preference changes and, while the preference is "system", on OS theme changes. */
+export function subscribeResolvedTheme(onChange: () => void): () => void {
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  const onMedia = () => {
+    if (readPreference() === "system") applyTheme("system");
+    onChange();
+  };
+  media.addEventListener("change", onMedia);
+  const unsubscribe = subscribePreference(onChange);
+  return () => {
+    media.removeEventListener("change", onMedia);
+    unsubscribe();
+  };
 }
 
 export function applyTheme(preference: ThemePreference): void {

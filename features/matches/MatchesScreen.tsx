@@ -6,7 +6,8 @@ import { useSession } from "@/features/auth/useSession";
 import { getRepository } from "@/shared/data";
 import { useLoad } from "@/shared/data/useLoad";
 import { useT } from "@/shared/i18n/useT";
-import { AppHeader, Avatar } from "@/shared/ui/AppHeader";
+import { UserMenu } from "@/features/auth/UserMenu";
+import { AppHeader } from "@/shared/ui/AppHeader";
 import { Segmented } from "@/shared/ui/Segmented";
 import { MatchCard } from "./MatchCard";
 import { loadMatchSummaries, type MatchTab, summariesForTab } from "./summary";
@@ -31,14 +32,10 @@ export function MatchesScreen() {
 
   // Signed-out visitors are sent to Sign in; render nothing meanwhile instead of flashing the list.
   if (sessionState.status !== "signedIn") return <div className="min-h-dvh bg-bg" />;
-  const { session } = sessionState;
 
   return (
     <div className="flex min-h-dvh flex-col bg-bg">
-      <AppHeader
-        title={t("matches.title")}
-        right={<Avatar initials={session.initials} label={t("account.label", { email: session.email })} />}
-      >
+      <AppHeader title={t("matches.title")} right={<UserMenu />}>
         <Segmented
           label={t("matches.tabs")}
           value={tab}

@@ -52,7 +52,7 @@ Reference device: **390 × 844 px** (phone, portrait). Everything must also work
 
 Contrast: all text pairs above meet WCAG AA (4.5:1) at the sizes used.
 
-**Dark mode** (the tables above are the light palette). A toggle sits top right in every header and on Sign in; it cycles system → light → dark (icons: half circle, sun, moon) and the choice is remembered. "System" follows `prefers-color-scheme`. The full dark palette lives in `app/globals.css`. Rules: `primary` and `danger` stay as fill colours with white text; two extra tokens cover text or borders on surfaces, `primary-text` (`#005185` light, `#7DB9E6` dark) and `danger-fg` (`#B42318` light, `#F28B82` dark). Backgrounds and surfaces go dark navy (`bg` `#0B141D`, `surface` `#14212E`), text goes near-white (`#E8EEF4`), and the tints become dark tints. The dark palette has not been checked against the contrast rule yet.
+**Dark mode** (the tables above are the light palette). The choice is made with the theme row in the user menu on signed-in screens (light or dark); it is remembered. **Sign in is always light** (it ignores the saved theme and has no theme control). "System" follows `prefers-color-scheme`. The full dark palette lives in `app/globals.css`. Rules: `primary` and `danger` stay as fill colours with white text; two extra tokens cover text or borders on surfaces, `primary-text` (`#005185` light, `#7DB9E6` dark) and `danger-fg` (`#B42318` light, `#F28B82` dark). Backgrounds and surfaces go dark navy (`bg` `#0B141D`, `surface` `#14212E`), text goes near-white (`#E8EEF4`), and the tints become dark tints. The dark palette has not been checked against the contrast rule yet.
 
 ---
 
@@ -87,7 +87,10 @@ Fonts: Google Fonts `Barlow Condensed:wght@600;700` and `Inter:wght@400;500;600;
 ## 5. Components
 
 ### AppHeader
-Blue bar (`primary`), white text. Left: 44 px back button (chevron-left icon, `aria-label` "Back to …"). Then title (Barlow 24–26, uppercase) and one-line subtitle (`on-primary-muted`, 13 px). Matches screen has no back button and an account avatar (44 px circle, initials, white 2 px border) on the right.
+Blue bar (`primary`), white text. Left: 44 px back button (chevron-left icon, `aria-label` "Back to …"). Then title (Barlow 24–26, uppercase) and one-line subtitle (`on-primary-muted`, 13 px). The right slot holds the **UserMenu** on signed-in screens (see below). Matches has no back button.
+
+### UserMenu
+Avatar button in the header's right slot (44 px circle, initials, white 2 px border; `aria-label` "User menu (email)"). Tapping it opens a popover under the avatar (white `surface`, 1 px `border-light`, radius 14, 288 px wide, sheet shadow). Content, top to bottom: a **user card** (initials circle, "Signed in as", email), a **theme row**, a **language row**, a divider, and **Sign out**. Rows are plain: a 22 px icon on the left and a label, min. 48 px tall, with **nothing on the right** (no switches, shortcuts or chevrons). The theme row names the mode you will switch **to** (light is on -> moon icon and "Dark mode"; dark is on -> sun icon and "Light mode"), and the language row names the language you will switch to (English is on -> globe and "Suomi"). Tapping either switches immediately and keeps the menu open. The menu closes on Escape, on a tap outside, and after signing out (which returns to Sign in). The theme row sets light or dark explicitly; "system" is only the default until the first choice. Sign in has no user menu and is always light; it keeps only a small EN/FI language toggle top right.
 
 ### SectionHeader
 Row with section title (Barlow 22, uppercase) on the left and an optional **count** on the right: `**2 / 6** stages done`, `**3 / 8** scored` (number bold in `text`, rest `text-secondary`, 13 px).

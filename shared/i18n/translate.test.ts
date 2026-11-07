@@ -28,7 +28,7 @@ describe("translate", () => {
   });
   it("fills placeholders", () => {
     expect(translate("fi", "stepper.max", { max: 8 })).toBe("Enintään 8");
-    expect(translate("en", "theme.label", { current: "light", next: "dark" })).toBe("Theme: light. Switch to dark.");
+    expect(translate("en", "menu.label", { email: "ro@example.fi" })).toBe("User menu (ro@example.fi)");
   });
   it("leaves unknown placeholders untouched", () => {
     expect(translate("en", "stepper.max")).toBe("Max {max}");

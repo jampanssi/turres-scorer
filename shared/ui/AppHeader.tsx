@@ -1,7 +1,5 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { LanguageToggle } from "@/shared/i18n/LanguageToggle";
-import { ThemeToggle } from "@/shared/theme/ThemeToggle";
 import { ChevronLeftIcon } from "./icons";
 
 interface AppHeaderProps {
@@ -9,7 +7,7 @@ interface AppHeaderProps {
   subtitle?: string;
   /** Back link; omit on the root screen (Matches). */
   back?: { href: string; label: string };
-  /** Right-side slot, e.g. the account avatar. */
+  /** Right-side slot: pass `<UserMenu />` (features/auth) on signed-in screens. */
   right?: ReactNode;
   /** Content under the title row, e.g. the Open | Results segmented control. */
   children?: ReactNode;
@@ -32,24 +30,9 @@ export function AppHeader({ title, subtitle, back, right, children }: AppHeaderP
           <h1 className="truncate font-display text-[26px] font-bold uppercase leading-none">{title}</h1>
           {subtitle && <p className="mt-1 truncate text-[13px] text-on-primary-muted">{subtitle}</p>}
         </div>
-        <LanguageToggle />
-        <ThemeToggle />
         {right}
       </div>
       {children && <div className="mt-3">{children}</div>}
     </header>
-  );
-}
-
-/** Account avatar for the Matches header: 44 px circle with initials. */
-export function Avatar({ initials, label }: { initials: string; label: string }) {
-  return (
-    <span
-      role="img"
-      aria-label={label}
-      className="flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-white font-display text-lg font-bold"
-    >
-      {initials}
-    </span>
   );
 }

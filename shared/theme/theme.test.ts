@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { NEXT_PREFERENCE, THEME_INIT_SCRIPT, isPreference, resolveTheme } from "./theme";
+import { THEME_INIT_SCRIPT, isPreference, resolveTheme } from "./theme";
 
 describe("resolveTheme", () => {
   it("follows the system when set to system", () => {
@@ -13,11 +13,6 @@ describe("resolveTheme", () => {
 });
 
 describe("preference", () => {
-  it("cycles system → light → dark → system", () => {
-    expect(NEXT_PREFERENCE.system).toBe("light");
-    expect(NEXT_PREFERENCE.light).toBe("dark");
-    expect(NEXT_PREFERENCE.dark).toBe("system");
-  });
   it("validates stored values", () => {
     expect(isPreference("dark")).toBe(true);
     expect(isPreference("blue")).toBe(false);

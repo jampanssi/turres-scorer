@@ -15,7 +15,11 @@ export const fi: Record<MessageKey, string> = {
   "auth.error.invalidEmail": "Anna kelvollinen sähköpostiosoite.",
   "auth.error.missingPassword": "Anna salasana.",
 
-  "account.label": "Kirjautunut: {email}",
+  "menu.label": "Käyttäjävalikko ({email})",
+  "menu.signedInAs": "Kirjautunut",
+  "menu.theme.toDark": "Tumma teema",
+  "menu.theme.toLight": "Vaalea teema",
+  "menu.signOut": "Kirjaudu ulos",
 
   "matches.title": "Ottelut",
   "matches.tabs": "Otteluluettelo",
@@ -32,11 +36,6 @@ export const fi: Record<MessageKey, string> = {
   "matches.empty.results": "Ei vielä päättyneitä otteluita.",
   "matches.loading": "Ladataan…",
   "matches.error": "Otteluiden lataus epäonnistui.",
-
-  "theme.label": "Teema: {current}. Vaihda: {next}.",
-  "theme.system": "järjestelmä",
-  "theme.light": "vaalea",
-  "theme.dark": "tumma",
 
   "language.label": "Kieli: {current}. Vaihda: {next}.",
 

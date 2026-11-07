@@ -55,3 +55,9 @@ export const MoonIcon = (p: SVGProps<SVGSVGElement>) => (
 export const ContrastIcon = (p: SVGProps<SVGSVGElement>) => (
   <Icon {...p}><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 010 18z" fill="currentColor" /></Icon>
 );
+export const GlobeIcon = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z" /></Icon>
+);
+export const LogoutIcon = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}><path d="M9 4H5a1 1 0 00-1 1v14a1 1 0 001 1h4" /><path d="M16 8l4 4-4 4M20 12H9" /></Icon>
+);

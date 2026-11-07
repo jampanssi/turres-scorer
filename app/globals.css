@@ -3,9 +3,11 @@
 /*
  * Design tokens from docs/DESIGN.md §2–4, with a dark palette.
  * Components use the Tailwind utilities generated from @theme below (bg-surface, text-primary-text, ...);
- * only :root and the dark media query hold raw values.
+ * only :root (light, also forced with data-theme="light") and :root[data-theme="dark"] hold raw values.
  */
-:root {
+:root,
+/* A subtree can force the light palette with data-theme="light" (Sign in is always light). */
+[data-theme="light"] {
   --primary: #005185;
   --primary-text: #005185; /* primary used as text/border on surfaces */
   --primary-dark: #00406a;
