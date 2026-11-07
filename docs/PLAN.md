@@ -65,7 +65,7 @@ integrations/
    1. [x] Sign in (mock session, `features/auth/`)
    2. [x] Matches (`features/matches/`, route `/matches`)
    3. [x] Squads (`features/squads/`, route `/matches/[matchId]`)
-   4. [ ] Stage selection
+   4. [x] Stage selection (`features/stages/`, route `/matches/[matchId]/squads/[squadId]`)
    5. [ ] Shooters
    6. [ ] Scoring (matrix, steppers, sticky bar)
    7. [ ] Confirm DQ, Confirm DNF and Review sheets, with saving

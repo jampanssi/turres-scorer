@@ -152,7 +152,7 @@ List of squads (ListCard): `Squad N`, `8 shooters · Stage 3 · 2/6 done`, statu
 
 ### 4 · Stage selection
 Header: `Squad 2`, subtitle `8 shooters`. Section header **SELECT STAGE** with count `2 / 6 stages done`.
-Stage cards: number tile, stage name, status (Done / In progress / Not started), `min. 15 rounds · 6 paper, 3 steel, 2 no-shoots`, `3 / 8 scored`, chevron. Tap → Shooters.
+Stage cards: number tile, stage name, status (Done / In progress / Not started), then three lines: the targets `6 paper · 3 steel · 2 no-shoots` (dot-separated, like the header subtitle), the shots `Minimum rounds: 15` (Finnish `Minimilaukausmäärä: 15`), and `3 / 8 scored`; chevron. Tap → Shooters. Stages are listed in number order. Status is per squad: Done = every shooter has a saved result (scored, DNF or DQ), In progress = some do (blue border and filled tile), Not started = none. Target counts of 0 are left out (`4 paper`), and the singular is used for 1.
 
 ### 5 · Shooters
 Header: `Squad 2 · Stage 3`, subtitle `Min. 15 rounds · 6 paper, 3 steel, 2 No-shoot`. Section header **SHOOTING ORDER** with count `3 / 8 scored`.
