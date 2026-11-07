@@ -111,3 +111,22 @@ describe("DNS shooters in the scoring context", () => {
     expect((await loadScoringContext(r, MATCH, squad2.id, stageId, order[0]))!.nextShooterId).toBe(order[2]);
   });
 });
+
+describe("a completed match in the scoring context", () => {
+  it("flags matchCompleted once the match is completed, and not before", async () => {
+    const r = repo();
+    const stageId = squad2.stageRotation[0];
+    const shooterId = squad2.shooterIds[0];
+    expect((await loadScoringContext(r, MATCH, squad2.id, stageId, shooterId))!.matchCompleted).toBe(false);
+    await r.completeMatch(MATCH, { visibility: "participants", roId: "ro" });
+    const after = (await loadScoringContext(r, MATCH, squad2.id, stageId, shooterId))!;
+    expect(after.matchCompleted).toBe(true);
+    expect(after.existing?.status).toBe("scored"); // the saved sample result is still there to read
+  });
+
+  it("returns null when the match is unknown", async () => {
+    expect(
+      await loadScoringContext(repo(), "nope", squad2.id, squad2.stageRotation[0], squad2.shooterIds[0]),
+    ).toBeNull();
+  });
+});

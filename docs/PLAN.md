@@ -111,6 +111,11 @@ From a UX pass over every screen; details in DESIGN.md (Toast, Load errors, Stic
 - [x] match → stages → squads → shooters → scoring (the RO stays at a stage and squads rotate); `stageProgressAcross` for the stage cards, `squadProgress` removed
 - [ ] Not done: no redirects from the old URLs (no users yet); squads are listed by number, not by rotation; the UI no longer uses `Squad.stageRotation`
 
+## Complete match (done)
+
+- [x] `repo.completeMatch`, completion store (IndexedDB v3), repository guards, the Complete match sheet with the results-visibility radio group (button disabled until every stage is done), status block, read-only scoring and DNS
+- [ ] Not done: a results view that honours the visibility, Reopen, a match-director restriction (no roles yet), completing an upcoming match; the future API needs `POST /matches/:id/complete`
+
 ## Definition of done (MVP)
 
 - [ ] All screens in DESIGN.md at 390×844, usable down to 360 px wide.

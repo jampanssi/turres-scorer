@@ -59,7 +59,9 @@ export function ScoringScreen() {
         notFound={t("score.notFound")}
       >
         {(data) =>
-          data.disqualified || data.notStarting ? (
+          data.matchCompleted && data.existing === null ? (
+            <p className="px-4 pt-4 text-text-secondary">{t("score.matchCompleted")}</p>
+          ) : data.disqualified || data.notStarting ? (
             <p className="px-4 pt-4 text-text-secondary">
               {t(data.disqualified ? "score.disqualified" : "score.notStarting")}
             </p>
@@ -99,7 +101,13 @@ function ScoringBody({ requestExit, ...props }: ScoringFormProps & { requestExit
   const [editing, setEditing] = useState(data.existing === null);
 
   if (!editing && data.existing) {
-    return <ScoreReadOnly existing={data.existing} stage={data.stage} onEdit={() => setEditing(true)} />;
+    return (
+      <ScoreReadOnly
+        existing={data.existing}
+        stage={data.stage}
+        onEdit={data.matchCompleted ? undefined : () => setEditing(true)}
+      />
+    );
   }
   return (
     <ScoringForm {...props} onCancelEdit={data.existing ? () => requestExit(() => setEditing(false)) : undefined} />

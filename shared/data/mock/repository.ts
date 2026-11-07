@@ -1,5 +1,8 @@
 import { scoreId } from "@/shared/domain/ids";
-import type { Attendance, StageScore } from "@/shared/domain/types";
+import { isCompleted } from "@/shared/domain/match-state";
+import type { Attendance, Match, MatchCompletion, StageScore } from "@/shared/domain/types";
+import { RepositoryError } from "../errors";
+import { createMemoryMatchStore, type MatchStore } from "../match-store";
 import type { Repository } from "../repository";
 import type { Catalog } from "./catalog";
 import { type AttendanceStore, createMemoryAttendanceStore } from "../attendance-store";
@@ -12,6 +15,8 @@ interface CatalogRepositoryOptions {
   attendance?: AttendanceStore;
   /** Read-only sample roll call records; a saved record with the same id overrides one. */
   seedAttendance?: Attendance[];
+  /** Where match completions are saved; defaults to memory. */
+  matches?: MatchStore;
 }
 
 /**
@@ -26,6 +31,7 @@ export function createCatalogRepository(
     now = () => new Date().toISOString(),
     attendance = createMemoryAttendanceStore(),
     seedAttendance = [],
+    matches = createMemoryMatchStore(),
   }: CatalogRepositoryOptions = {},
 ): Repository {
   const listeners = new Set<() => void>();
@@ -34,12 +40,39 @@ export function createCatalogRepository(
   const seeds = new Map(seedScores.map((s) => [s.id, s]));
   const attendanceSeeds = new Map(seedAttendance.map((a) => [a.id, a]));
 
+  /** The catalog match with its completion (if any) laid over it. */
+  const withCompletion = (match: Match, completion: MatchCompletion | null | undefined): Match =>
+    completion
+      ? {
+          ...match,
+          status: "finished",
+          resultsVisibility: completion.visibility,
+          completedAt: completion.completedAt,
+          completedBy: completion.completedBy,
+        }
+      : match;
+  const getMatch = async (matchId: string) => {
+    const match = byId(catalog.matches, matchId);
+    return match ? withCompletion(match, await matches.get(matchId)) : null;
+  };
+  /** A change to a completed match is refused. Unknown matches are not this check's business. */
+  const assertOpen = async (matchId: string) => {
+    const match = await getMatch(matchId);
+    if (match && isCompleted(match)) throw new RepositoryError("matchCompleted");
+  };
+
   return {
     async listMatches() {
-      return catalog.matches;
+      const completions = new Map((await matches.list()).map((c) => [c.matchId, c]));
+      return catalog.matches.map((match) => withCompletion(match, completions.get(match.id)));
     },
-    async getMatch(matchId) {
-      return byId(catalog.matches, matchId);
+    getMatch,
+    async completeMatch(matchId, { visibility, roId }) {
+      const match = await getMatch(matchId);
+      if (!match) throw new RepositoryError("matchNotFound");
+      if (isCompleted(match)) throw new RepositoryError("matchCompleted");
+      await matches.put({ matchId, visibility, completedAt: now(), completedBy: roId });
+      listeners.forEach((listener) => listener());
     },
 
     async listStages(matchId) {
@@ -77,6 +110,7 @@ export function createCatalogRepository(
       return (await scores.get(id)) ?? seeds.get(id) ?? null;
     },
     async saveScore(score) {
+      await assertOpen(score.matchId);
       await scores.put(score);
       listeners.forEach((listener) => listener());
     },
@@ -87,6 +121,7 @@ export function createCatalogRepository(
       return [...merged.values()];
     },
     async saveAttendance(records) {
+      for (const matchId of new Set(records.map((r) => r.matchId))) await assertOpen(matchId);
       await attendance.putMany(records);
       listeners.forEach((listener) => listener());
     },

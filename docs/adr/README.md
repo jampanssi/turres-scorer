@@ -9,3 +9,4 @@ Short records of decisions that are not obvious from the code. One file each: co
 - [0005](0005-server-first-offline-fallback.md) Server first, offline as the fallback
 - [0006](0006-roll-call-and-dns.md) DNS as a reversible status, marked on a Shooters tab
 - [0007](0007-stage-first-navigation.md) Navigation goes match → stages → squads → shooters
+- [0008](0008-complete-match.md) Completing a match is final and stores who may see the results

@@ -10,7 +10,16 @@ import type { ShooterRowData } from "./summary";
  * (tap again to take it back). The pressed state is filled and `aria-pressed`, so it is not shown by
  * colour alone. A shooter disqualified from the match is shown dimmed with DQ and cannot be marked.
  */
-export function RollCallRow({ row, onToggle }: { row: ShooterRowData; onToggle: (dns: boolean) => void }) {
+export function RollCallRow({
+  row,
+  onToggle,
+  locked = false,
+}: {
+  row: ShooterRowData;
+  onToggle: (dns: boolean) => void;
+  /** The match is completed: the DNS button stays visible but cannot be tapped. */
+  locked?: boolean;
+}) {
   const { t } = useT();
 
   return (
@@ -29,10 +38,11 @@ export function RollCallRow({ row, onToggle }: { row: ShooterRowData; onToggle: 
         <button
           type="button"
           aria-pressed={row.dns}
+          disabled={locked}
           aria-label={`${t("common.dns")}: ${row.shooter.name}`}
           onClick={() => onToggle(!row.dns)}
           className={cx(
-            "min-h-touch min-w-[76px] shrink-0 rounded-button px-3 font-display text-lg font-bold uppercase tracking-wide",
+            "min-h-touch min-w-[76px] shrink-0 rounded-button px-3 font-display text-lg font-bold uppercase tracking-wide disabled:cursor-not-allowed disabled:opacity-60",
             row.dns ? "bg-text-label text-bg" : "border-2 border-border bg-surface text-text-label",
           )}
         >

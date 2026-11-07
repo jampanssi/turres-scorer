@@ -15,6 +15,10 @@ Sign in → Matches (Open | Results) → Stages in match (second tab: Shooters, 
 
 The order follows the range: a range officer stands at one stage and the squads rotate through it. Several squads can be in progress at the same time, each on a different stage.
 
+## Completing a match
+
+Any range officer can complete a live match from the bottom of the Stages view, but only **once every stage is done** (every expected shooter of every squad has a result, so a DNS or disqualified shooter does not hold it up); until then the button is disabled with a hint. The confirmation sheet asks **who can see the results** (Everyone, Participants only, Organisers only; default Participants only). Completing is **final in the app**: the match is "finished", listed under Results, and read only. Scoring, DNS marks and every other change are refused by the repository. The visibility, the time and the officer are stored on the match; a results view and the export must honour the visibility. An upcoming match cannot be completed.
+
 ## DNS (did not show)
 
 Everyone is present by default. The **Shooters** tab of the match view lists every squad with its shooters, and a range officer marks the ones who did not show as **DNS** (only a status: no reason, no note). Any range officer can take a DNS back.

@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { Screen } from "@/features/shell/Screen";
 import { useCurrentUser } from "@/features/shell/SessionGate";
 import { useRepoQuery } from "@/shared/data/useRepoQuery";
+import { isCompleted } from "@/shared/domain/match-state";
 import { formatMatchCounts } from "@/shared/i18n/format-match";
 import { useT } from "@/shared/i18n/useT";
 import { SectionHeader } from "@/shared/ui/SectionHeader";
@@ -52,6 +53,7 @@ function RosterBody({ data, matchId }: { data: RosterOverview; matchId: string }
   const { t } = useT();
   const user = useCurrentUser();
   const { setDns, settle, pending, failed } = useRollCallSave(matchId, data.day, user.userId);
+  const locked = isCompleted(data.match);
 
   // Taps show at once; once the loaded data has caught up the pending entry is dropped.
   useEffect(() => {
@@ -62,6 +64,7 @@ function RosterBody({ data, matchId }: { data: RosterOverview; matchId: string }
   return (
     <main className="flex flex-1 flex-col pb-6">
       <SectionHeader title={t("rollcall.section")} />
+      {locked && <p className="px-4 pb-2 text-sm text-text-secondary">{t("rollcall.completed")}</p>}
       {failed && (
         <p
           role="alert"
@@ -74,7 +77,7 @@ function RosterBody({ data, matchId }: { data: RosterOverview; matchId: string }
 
       <div className="flex flex-col gap-3 px-4">
         {data.squads.map((entry) => (
-          <SquadGroup key={entry.squad.id} entry={entry} pending={pending} onToggleDns={setDns} />
+          <SquadGroup key={entry.squad.id} entry={entry} pending={pending} locked={locked} onToggleDns={setDns} />
         ))}
       </div>
     </main>
@@ -84,10 +87,11 @@ function RosterBody({ data, matchId }: { data: RosterOverview; matchId: string }
 interface SquadGroupProps {
   entry: RosterSquad;
   pending: Readonly<Record<string, boolean>>;
+  locked: boolean;
   onToggleDns: (shooterId: string, dns: boolean) => void;
 }
 
-function SquadGroup({ entry, pending, onToggleDns }: SquadGroupProps) {
+function SquadGroup({ entry, pending, locked, onToggleDns }: SquadGroupProps) {
   const { t } = useT();
   const { squad, rows } = entry;
   const headingId = `squad-heading-${squad.id}`;
@@ -108,6 +112,7 @@ function SquadGroup({ entry, pending, onToggleDns }: SquadGroupProps) {
             <RollCallRow
               row={{ ...row, dns: pending[row.shooter.id] ?? row.dns }}
               onToggle={(dns) => onToggleDns(row.shooter.id, dns)}
+              locked={locked}
             />
           </li>
         ))}

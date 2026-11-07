@@ -11,13 +11,13 @@ interface ScoreReadOnlyProps {
   /** The saved result of this shooter on this stage. */
   existing: StageScore;
   stage: Stage;
-  /** Switch to the entry form to correct the result. */
-  onEdit: () => void;
+  /** Switch to the entry form to correct the result. Omitted for a completed match: no Edit button. */
+  onEdit?: () => void;
 }
 
 /**
  * A saved result, read only: the same summary as the Review sheet (or the outcome, for a DNF), and
- * an Edit button at the bottom. There are no DQ, DNF or Review buttons until the user taps Edit.
+ * an Edit button at the bottom (left out when the match is completed). There are no DQ, DNF or Review buttons until the user taps Edit.
  */
 export function ScoreReadOnly({ existing, stage, onEdit }: ScoreReadOnlyProps) {
   const { t } = useT();
@@ -36,11 +36,13 @@ export function ScoreReadOnly({ existing, stage, onEdit }: ScoreReadOnlyProps) {
         )}
       </main>
 
-      <div className="sticky bottom-0 z-10 border-t border-border-light bg-surface px-4 pb-4 pt-3 shadow-bar">
-        <Button variant="outline" className="w-full" onClick={onEdit}>
-          {t("score.edit")}
-        </Button>
-      </div>
+      {onEdit && (
+        <div className="sticky bottom-0 z-10 border-t border-border-light bg-surface px-4 pb-4 pt-3 shadow-bar">
+          <Button variant="outline" className="w-full" onClick={onEdit}>
+            {t("score.edit")}
+          </Button>
+        </div>
+      )}
     </>
   );
 }

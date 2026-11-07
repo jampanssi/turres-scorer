@@ -85,3 +85,12 @@ describe("DNS on the stage list", () => {
     expect(lastStage.total).toBe(62); // one DQ and one DNS shooter are not expected on the last stage
   });
 });
+
+describe("completion on the Stages overview", () => {
+  it("carries the completion on the match once it is completed", async () => {
+    const r = repo();
+    await r.completeMatch(MATCH, { visibility: "public", roId: "ro" });
+    const overview = (await loadStagesOverview(r, MATCH))!;
+    expect(overview.match).toMatchObject({ status: "finished", resultsVisibility: "public" });
+  });
+});

@@ -1,15 +1,18 @@
 import { INDEXED_DB_NAME } from "@/shared/lib/storage-keys";
-import type { Attendance, StageScore } from "@/shared/domain/types";
+import type { Attendance, MatchCompletion, StageScore } from "@/shared/domain/types";
 import type { AttendanceStore } from "./attendance-store";
+import type { MatchStore } from "./match-store";
 import type { ScoreStore } from "./score-store";
 
-/** IndexedDB-backed stores for scores and roll call. Browser only: call from effects or event handlers, never during render on the server. */
+/** IndexedDB-backed stores for scores, roll call and match completions. Browser only: call from effects or event handlers, never during render on the server. */
 
 const DB_NAME = INDEXED_DB_NAME;
-// Version 2 added the roll call store. The upgrade only creates what is missing, so saved scores stay.
-const DB_VERSION = 2;
+// Version 2 added the roll call store, version 3 the match completions. An upgrade only creates what is
+// missing, so saved scores and roll call records stay.
+const DB_VERSION = 3;
 const STORE = "scores";
 const ATTENDANCE_STORE = "attendance";
+const MATCH_STORE = "matches";
 
 function request<T>(req: IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -37,13 +40,16 @@ function openDb(): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains(ATTENDANCE_STORE)) {
         db.createObjectStore(ATTENDANCE_STORE, { keyPath: "id" }).createIndex("byMatch", "matchId");
       }
+      if (!db.objectStoreNames.contains(MATCH_STORE)) {
+        db.createObjectStore(MATCH_STORE, { keyPath: "matchId" });
+      }
     };
     open.onsuccess = () => resolve(open.result);
     open.onerror = () => reject(open.error);
   });
 }
 
-// One connection shared by both stores.
+// One connection shared by all stores.
 let dbPromise: Promise<IDBDatabase> | null = null;
 const db = () => (dbPromise ??= openDb());
 
@@ -76,6 +82,24 @@ export function createIndexedDbAttendanceStore(): AttendanceStore {
     async listByMatch(matchId) {
       const tx = (await db()).transaction(ATTENDANCE_STORE, "readonly");
       return request<Attendance[]>(tx.objectStore(ATTENDANCE_STORE).index("byMatch").getAll(matchId));
+    },
+  };
+}
+
+export function createIndexedDbMatchStore(): MatchStore {
+  return {
+    async get(matchId) {
+      const tx = (await db()).transaction(MATCH_STORE, "readonly");
+      return (await request<MatchCompletion | undefined>(tx.objectStore(MATCH_STORE).get(matchId))) ?? null;
+    },
+    async put(completion) {
+      const tx = (await db()).transaction(MATCH_STORE, "readwrite");
+      tx.objectStore(MATCH_STORE).put(completion);
+      await done(tx);
+    },
+    async list() {
+      const tx = (await db()).transaction(MATCH_STORE, "readonly");
+      return request<MatchCompletion[]>(tx.objectStore(MATCH_STORE).getAll());
     },
   };
 }

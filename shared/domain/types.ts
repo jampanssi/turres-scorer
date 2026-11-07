@@ -9,14 +9,33 @@ export const DNF_REASONS = ["equipment_failure", "injury", "withdrew", "other"] 
 export type DqReason = (typeof DQ_REASONS)[number];
 export type DnfReason = (typeof DNF_REASONS)[number];
 
+/** Who may see a completed match's results. Stored on the match; a results view and the export honour it. */
+export const RESULTS_VISIBILITIES = ["public", "participants", "organisers"] as const;
+export type ResultsVisibility = (typeof RESULTS_VISIBILITIES)[number];
+
+/** What is chosen when a match is completed. It is final in the app: a completed match is read only. */
+export interface MatchCompletion {
+  matchId: string;
+  visibility: ResultsVisibility;
+  /** ISO timestamp from the repository clock. */
+  completedAt: string;
+  /** The range officer who completed it. */
+  completedBy: string;
+}
+
 export interface Match {
   id: string;
   name: string;
   date: string; // ISO date
   range: string;
+  /** "finished" once the match is completed (or, for sample data, from the start). */
   status: "open" | "live" | "finished";
   stageIds: string[];
   squadIds: string[];
+  /** Set when the match is completed in the app. */
+  resultsVisibility?: ResultsVisibility;
+  completedAt?: string;
+  completedBy?: string;
 }
 
 /** Scored hits a paper target needs on a stage: set per stage, usually 2 (some stages use 1 or 3). */

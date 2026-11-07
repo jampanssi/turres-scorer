@@ -61,3 +61,52 @@ export function Checkbox({ label, ...props }: CheckboxProps) {
     </label>
   );
 }
+
+interface RadioGroupProps<T extends string> {
+  /** The group's visible name (a `legend`), read out with each option. */
+  legend: string;
+  /** Radios of one group share this name; it only has to differ from other groups on the page. */
+  name: string;
+  options: ReadonlyArray<{ value: T; label: string; hint?: string }>;
+  value: T;
+  onChange: (value: T) => void;
+  disabled?: boolean;
+}
+
+/**
+ * A group of native radio buttons, so arrow keys move the choice and a screen reader reads "n of m".
+ * Each row is at least 44 px tall and the whole row is the tap target; the selected row is outlined,
+ * so the choice is never shown by colour alone.
+ */
+export function RadioGroup<T extends string>({ legend, name, options, value, onChange, disabled }: RadioGroupProps<T>) {
+  return (
+    <fieldset disabled={disabled} className="flex flex-col gap-2">
+      <legend className="mb-2 text-sm font-bold text-text-label">{legend}</legend>
+      {options.map((option) => {
+        const selected = option.value === value;
+        return (
+          <label
+            key={option.value}
+            className={cx(
+              "flex min-h-touch items-start gap-3 rounded-input border-2 px-3 py-2.5",
+              selected ? "border-primary bg-primary-tint" : "border-border bg-surface",
+            )}
+          >
+            <input
+              type="radio"
+              name={name}
+              value={option.value}
+              checked={selected}
+              onChange={() => onChange(option.value)}
+              className="mt-0.5 size-[22px] shrink-0 accent-primary"
+            />
+            <span className="flex flex-col">
+              <span className="text-base font-bold">{option.label}</span>
+              {option.hint && <span className="text-[13px] text-text-secondary">{option.hint}</span>}
+            </span>
+          </label>
+        );
+      })}
+    </fieldset>
+  );
+}
