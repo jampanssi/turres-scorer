@@ -67,7 +67,7 @@ integrations/
    3. [x] Squads (`features/squads/`, route `/matches/[matchId]`)
    4. [x] Stage selection (`features/stages/`, route `/matches/[matchId]/squads/[squadId]`)
    5. [x] Shooters (`features/shooters/`, route `/matches/[matchId]/squads/[squadId]/stages/[stageId]`)
-   6. [ ] Scoring (matrix, steppers, sticky bar)
+   6. [x] Scoring (matrix, steppers, sticky bar; route `.../stages/[stageId]/score/[shooterId]`). DQ, DNF and Review buttons are inert until step 7
    7. [ ] Confirm DQ, Confirm DNF and Review sheets, with saving
 6. [ ] Offline fallback and PWA
 7. [ ] Playwright E2E, including an offline case
