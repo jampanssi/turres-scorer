@@ -19,12 +19,14 @@ export function initialsOf(email: string): string {
   return (letters || "?").toUpperCase();
 }
 
-export type SignInResult = { ok: true; session: Session } | { ok: false; error: string };
+/** Errors are codes, not text, so the UI can translate them (messages `auth.error.*`). */
+export type SignInError = "invalidEmail" | "missingPassword";
+export type SignInResult = { ok: true; session: Session } | { ok: false; error: SignInError };
 
 export async function signIn(email: string, password: string): Promise<SignInResult> {
   const trimmed = email.trim();
-  if (!/^\S+@\S+\.\S+$/.test(trimmed)) return { ok: false, error: "Enter a valid email address." };
-  if (password.length === 0) return { ok: false, error: "Enter your password." };
+  if (!/^\S+@\S+\.\S+$/.test(trimmed)) return { ok: false, error: "invalidEmail" };
+  if (password.length === 0) return { ok: false, error: "missingPassword" };
   const session: Session = { email: trimmed, initials: initialsOf(trimmed) };
   try {
     localStorage.setItem(KEY, JSON.stringify(session));

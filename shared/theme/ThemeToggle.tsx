@@ -1,16 +1,10 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { useT } from "@/shared/i18n/useT";
 import { ContrastIcon, MoonIcon, SunIcon } from "@/shared/ui/icons";
-import {
-  NEXT_PREFERENCE,
-  type ThemePreference,
-  THEME_CHANGE_EVENT,
-  readPreference,
-  writePreference,
-} from "./theme";
+import { NEXT_PREFERENCE, type ThemePreference, THEME_CHANGE_EVENT, readPreference, writePreference } from "./theme";
 
-const LABEL: Record<ThemePreference, string> = { system: "system", light: "light", dark: "dark" };
 const ICON: Record<ThemePreference, typeof SunIcon> = {
   system: ContrastIcon,
   light: SunIcon,
@@ -28,16 +22,18 @@ function subscribe(onChange: () => void) {
 
 /** Cycles system → light → dark. Sits top right on the blue header, so the icon is white. */
 export function ThemeToggle() {
+  const { t } = useT();
   const preference = useSyncExternalStore(subscribe, readPreference, () => "system" as const);
   const next = NEXT_PREFERENCE[preference];
   const Icon = ICON[preference];
+  const current = t(`theme.${preference}` as const);
 
   return (
     <button
       type="button"
       onClick={() => writePreference(next)}
-      aria-label={`Theme: ${LABEL[preference]}. Switch to ${LABEL[next]}.`}
-      title={`Theme: ${LABEL[preference]}`}
+      aria-label={t("theme.label", { current, next: t(`theme.${next}` as const) })}
+      title={current}
       className="flex size-11 shrink-0 items-center justify-center rounded-full text-white"
     >
       <Icon />

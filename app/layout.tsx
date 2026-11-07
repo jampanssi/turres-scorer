@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, Inter } from "next/font/google";
+import { LOCALE_INIT_SCRIPT } from "@/shared/i18n/locale";
 import { THEME_INIT_SCRIPT } from "@/shared/theme/theme";
 import "./globals.css";
 
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: LOCALE_INIT_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

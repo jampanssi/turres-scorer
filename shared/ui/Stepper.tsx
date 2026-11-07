@@ -1,7 +1,11 @@
+"use client";
+
+import { useT } from "@/shared/i18n/useT";
 import { cx } from "./cx";
 import { MinusIcon, PlusIcon } from "./icons";
 
 interface StepperProps {
+  /** Already translated by the caller. */
   label: string;
   value: number;
   max: number;
@@ -10,28 +14,29 @@ interface StepperProps {
 
 /** Label + `Max N`, then − count +. The + button is disabled at the maximum. */
 export function Stepper({ label, value, max, onChange }: StepperProps) {
+  const { t } = useT();
   const atMax = value >= max;
   return (
     <div className="flex items-center gap-2">
       <div className="min-w-0 flex-1">
         <p className="text-[15px] font-bold leading-tight">{label}</p>
-        <p className="text-xs text-text-secondary">Max {max}</p>
+        <p className="text-xs text-text-secondary">{t("stepper.max", { max })}</p>
       </div>
       <button
         type="button"
-        aria-label={`Decrease ${label}`}
+        aria-label={t("stepper.decrease", { label })}
         disabled={value <= 0}
         onClick={() => onChange(value - 1)}
         className="flex size-11 items-center justify-center rounded-button border-2 border-border bg-surface text-text-label disabled:text-disabled"
       >
         <MinusIcon />
       </button>
-      <output aria-label={`${label} count`} className="w-8 text-center font-display text-2xl font-bold">
+      <output aria-label={t("stepper.count", { label })} className="w-8 text-center font-display text-2xl font-bold">
         {value}
       </output>
       <button
         type="button"
-        aria-label={`Increase ${label}`}
+        aria-label={t("stepper.increase", { label })}
         disabled={atMax}
         onClick={() => onChange(value + 1)}
         className={cx(

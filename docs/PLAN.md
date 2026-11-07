@@ -50,7 +50,7 @@ shared/
   domain/     types.ts
   data/       repository.ts, mock.ts, local.ts (IndexedDB), sync.ts
   ui/         Button, Segmented, ProgressBar, BottomSheet, Stepper, AppHeader, SectionHeader, ListCard
-  i18n/       en.ts, format.ts
+  i18n/       messages/en.ts, messages/fi.ts, translate.ts, useT.ts, locale.ts, LanguageToggle.tsx, format.ts
 integrations/
   ssi/        last: client.ts, dto.ts, mappers.ts, tests
 ```
@@ -91,4 +91,4 @@ integrations/
 - Backend / auth provider and how ROs are provisioned.
 - Who can reverse a DQ and how (current copy says "needs the Range Master's approval").
 - Final DQ / DNF reason lists.
-- Whether a Finnish UI is needed at launch.
+- Review the Finnish translations (`shared/i18n/messages/fi.ts`) with someone who knows the sport's terms. Should Finnish also use `,` as the decimal separator for HF and time?
