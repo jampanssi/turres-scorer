@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-**TurRes Scorer** ("Powered by SSI") is a mobile-first scoring app for applied reservist shooting matches (Turun Reserviläiset ry), scored like IPSC-style hit factor. Range Officers use it on a phone, outdoors, often with gloves and in a hurry. Flow: sign in → matches → stages → squads → shooters → scoring matrix → review → save (with DQ/DNF branches). A Range Officer stands at one stage and the squads rotate through it, so a stage leads to its squads (route `/matches/[matchId]/stages/[stageId]/squads/[squadId]/score/[shooterId]`).
+**TurRes Scorer** ("Integrated with Shoot'n Score It") is a mobile-first scoring app for applied reservist shooting matches (Turun Reserviläiset ry), scored like IPSC-style hit factor. Range Officers use it on a phone, outdoors, often with gloves and in a hurry. Flow: sign in → matches → stages → squads → shooters → scoring matrix → review → save (with DQ/DNF branches). A Range Officer stands at one stage and the squads rotate through it, so a stage leads to its squads (route `/matches/[matchId]/stages/[stageId]/squads/[squadId]/score/[shooterId]`).
 
 Read these before working on the relevant area:
 

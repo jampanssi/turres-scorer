@@ -11,7 +11,8 @@ export const fi: Record<MessageKey, string> = {
   "auth.password": "Salasana",
   "auth.submit": "Kirjaudu sisään",
   "auth.busy": "Kirjaudutaan…",
-  "auth.poweredBy": "Powered by SSI",
+  // Deliberately English in Finnish too: it is a statement about a partner service, not UI text.
+  "auth.integratedWith": "Integrated with {service}",
   "auth.error.invalidEmail": "Anna kelvollinen sähköpostiosoite.",
   "auth.error.missingPassword": "Anna salasana.",
 
@@ -37,6 +38,7 @@ export const fi: Record<MessageKey, string> = {
 
   "common.loading": "Ladataan…",
   "common.error": "Tietojen lataus epäonnistui.",
+  "common.opensInBrowser": "(avautuu selaimeen)",
   "common.cancel": "Peruuta",
   "common.saving": "Tallennetaan…",
   "common.saveError": "Tallennus epäonnistui. Yritä uudelleen.",

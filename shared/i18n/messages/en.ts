@@ -10,7 +10,7 @@ export const en = {
   "auth.password": "Password",
   "auth.submit": "Sign in",
   "auth.busy": "Signing in…",
-  "auth.poweredBy": "Powered by SSI",
+  "auth.integratedWith": "Integrated with {service}",
   "auth.error.invalidEmail": "Enter a valid email address.",
   "auth.error.missingPassword": "Enter your password.",
 
@@ -37,6 +37,7 @@ export const en = {
 
   "common.loading": "Loading…",
   "common.error": "Could not load the data.",
+  "common.opensInBrowser": "(opens in the browser)",
   "common.cancel": "Cancel",
   "common.saving": "Saving…",
   "common.saveError": "Could not save. Try again.",

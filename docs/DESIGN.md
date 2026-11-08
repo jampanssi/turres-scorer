@@ -140,7 +140,7 @@ Behaviour (a native modal `<dialog>`, see `shared/ui/Dialog.tsx`): the page behi
 ## 6. Screens
 
 ### 1 · Sign in
-Full blue background. Upper area centred: club logo (104 px, `public/logo.png`), app name **TURRES SCORER**, sub-line "Powered by SSI". Bottom white panel (radius 24 top): title "SIGN IN", **Email** input, **Password** input (50 px tall, 1.5 px border, radius 10), primary button **Sign in** (it reads "Signing in…" while busy). The mock-up's "Forgot password?" link is left out until an auth provider exists: an inert link looks broken. No "keep me signed in", no sync message.
+Full blue background. Upper area centred: club logo (104 px, `public/logo.png`), app name **TURRES SCORER**, sub-line "Integrated with Shoot'n Score It" (14 px; **not translated**: the same English text in Finnish, marked `lang="en"` for screen readers) where the service name is a link to https://www.shootnscoreit.com/ (white, underlined, semibold, a 44 px tap target). It opens outside the app (`target="_blank"`, `rel="noopener noreferrer"`, via `shared/ui/ExternalLink`), also when the app is installed as a PWA; screen readers hear "(opens in the browser)". Bottom white panel (radius 24 top): title "SIGN IN", **Email** input, **Password** input (50 px tall, 1.5 px border, radius 10), primary button **Sign in** (it reads "Signing in…" while busy). The mock-up's "Forgot password?" link is left out until an auth provider exists: an inert link looks broken. No "keep me signed in", no sync message.
 
 ### 2 · Matches
 Header: title **MATCHES**, the user menu (avatar). Segmented control **Open | Results** inside the header.
