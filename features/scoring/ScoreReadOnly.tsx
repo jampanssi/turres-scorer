@@ -37,7 +37,7 @@ export function ScoreReadOnly({ existing, stage, onEdit }: ScoreReadOnlyProps) {
       </main>
 
       {onEdit && (
-        <div className="sticky bottom-0 z-10 border-t border-border-light bg-surface px-4 pb-4 pt-3 shadow-bar">
+        <div className="sticky bottom-0 z-10 border-t border-border-light bg-surface px-3 pb-4 pt-2 shadow-bar">
           <Button variant="outline" className="w-full" onClick={onEdit}>
             {t("score.edit")}
           </Button>

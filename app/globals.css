@@ -41,6 +41,17 @@
   --danger-tint: #fbe4e2;
   --danger-text: #8a1c12;
 
+  /* Pill buttons: the destructive fill and outline (DQ, Confirm DQ) and the neutral outline (DNF, Cancel). */
+  --destructive: #ba1a1a;
+  --destructive-fg: #ba1a1a; /* destructive used as text/border on surfaces */
+  --neutral-outline: #72787e;
+  /* Tonal round button (the stepper minus): light blue with a dark icon in both themes. */
+  --tonal: #d3e4f2;
+  --on-tonal: #0b1d2a;
+  /* The screen header bar: light and slightly see-through, with a hairline under it. */
+  --header: rgb(249 249 249 / 0.96);
+  --header-border: #d1d1d6;
+
   --scrim: rgb(16 32 47 / 0.55);
   --elev-card: 0 1px 2px rgb(14 42 71 / 0.08);
   --elev-bar: 0 -2px 8px rgb(14 42 71 / 0.06);
@@ -75,6 +86,11 @@
   --danger-fg: #f28b82;
   --danger-tint: #3e1814;
   --danger-text: #f4a8a0;
+
+  --destructive-fg: #f28b82;
+  --neutral-outline: #8b949b;
+  --header: rgb(11 20 29 / 0.96);
+  --header-border: #2a3b4d;
 
   --scrim: rgb(0 0 0 / 0.65);
   --elev-card: 0 1px 2px rgb(0 0 0 / 0.4);
@@ -117,6 +133,14 @@
   --color-danger-fg: var(--danger-fg);
   --color-danger-tint: var(--danger-tint);
   --color-danger-text: var(--danger-text);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-fg: var(--destructive-fg);
+  --color-neutral-outline: var(--neutral-outline);
+  --color-tonal: var(--tonal);
+  --color-on-tonal: var(--on-tonal);
+  --color-header: var(--header);
+  --color-header-border: var(--header-border);
 
   --color-scrim: var(--scrim);
 

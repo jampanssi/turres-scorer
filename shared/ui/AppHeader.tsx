@@ -1,8 +1,8 @@
 "use client";
 
-import { type MouseEventHandler, type ReactNode, useSyncExternalStore } from "react";
+import type { MouseEventHandler, ReactNode } from "react";
 import { IconLink } from "./IconButton";
-import { ChevronLeftIcon } from "./icons";
+import { ArrowLeftIcon } from "./icons";
 import { cx } from "./cx";
 
 interface AppHeaderProps {
@@ -12,55 +12,44 @@ interface AppHeaderProps {
   back?: { href: string; label: string; onClick?: MouseEventHandler<HTMLAnchorElement> };
   /** Right-side slot: pass `<UserMenu />` (features/auth) on signed-in screens. */
   right?: ReactNode;
-  /** Content under the title row, e.g. the Open | Results segmented control. */
+  /** Content under the title bar, e.g. the Open | Results segmented control. */
   children?: ReactNode;
 }
 
-function subscribeToScroll(onChange: () => void): () => void {
-  window.addEventListener("scroll", onChange, { passive: true });
-  return () => window.removeEventListener("scroll", onChange);
-}
-
-/** True once the page has scrolled, i.e. content can be sliding under the sticky header. */
-function useScrolled(): boolean {
-  return useSyncExternalStore(
-    subscribeToScroll,
-    () => window.scrollY > 0,
-    () => false,
-  );
-}
-
 /**
- * Plain header on the page background (no coloured bar). It is sticky: it stays at the top while the
- * page scrolls, so the shooter, back arrow and user menu are always visible. A divider and a soft
- * shadow appear only while content has scrolled underneath it. Layering: above the page and the
- * bottom bar (z-10), below sheets (z-50). The user menu popover lives inside the header.
+ * The header: a light, slightly see-through bar (`header`) with a 1 px hairline under it. The bar is 64 px
+ * tall: a 48 px round back arrow (the Android arrow, no text), the title and subtitle left-aligned, and the
+ * right slot. It is sticky and always shows its hairline, so the shooter, the back arrow and the user menu
+ * stay in view while the page scrolls. Extra content (tabs) sits under the bar inside the same sticky
+ * header. Layering: above the page and the bottom bar (z-10), below sheets (z-50). The user menu popover
+ * lives inside the header.
  */
 export function AppHeader({ title, subtitle, back, right, children }: AppHeaderProps) {
-  const scrolled = useScrolled();
-
   return (
-    <header
-      className={cx(
-        "sticky top-0 z-20 border-b bg-bg px-3 pb-3 pt-3 text-text transition-shadow",
-        scrolled ? "border-border-light shadow-card" : "border-transparent",
-      )}
-    >
-      <div className="flex items-center gap-1">
+    <header className="sticky top-0 z-20 border-b border-header-border bg-header text-text">
+      <div className="flex h-16 items-center gap-1 px-1">
         {back && (
-          <IconLink href={back.href} label={back.label} onClick={back.onClick}>
-            <ChevronLeftIcon />
+          <IconLink
+            href={back.href}
+            label={back.label}
+            onClick={back.onClick}
+            variant="plain"
+            shape="round"
+            size="large"
+          >
+            <ArrowLeftIcon />
           </IconLink>
         )}
-        <div className={back ? "min-w-0 flex-1" : "min-w-0 flex-1 pl-1"}>
-          {/* Fixed heights (even with no subtitle or while loading) keep the title at the same
-              position on every screen, so it doesn't jump when navigating. */}
-          <h1 className="min-h-[26px] truncate font-display text-[26px] font-bold uppercase leading-none">{title}</h1>
-          <p className="mt-1 h-[18px] truncate text-[13px] leading-[18px] text-text-secondary">{subtitle}</p>
+        {/* Fixed heights (even with no subtitle or while loading) keep the title at the same position on
+            every screen, so it doesn't jump when navigating. Without a back arrow the title is indented to
+            line up with the content below. */}
+        <div className={cx("min-w-0 flex-1", !back && "pl-3")}>
+          <h1 className="h-6 truncate font-display text-2xl font-bold uppercase leading-none">{title}</h1>
+          <p className="mt-0.5 h-[18px] truncate text-[13px] leading-[18px] text-text-secondary">{subtitle}</p>
         </div>
-        {right}
+        {right && <div className="mr-1 flex shrink-0">{right}</div>}
       </div>
-      {children && <div className="mt-3">{children}</div>}
+      {children && <div className="px-3 pb-3">{children}</div>}
     </header>
   );
 }

@@ -25,7 +25,7 @@ export function ScoreBar(props: ScoreBarProps) {
   const reviewHintId = useId();
 
   return (
-    <div className="sticky bottom-0 z-10 flex flex-col gap-4 border-t border-border-light bg-surface px-4 pb-4 pt-3 shadow-bar">
+    <div className="sticky bottom-0 z-10 flex flex-col gap-4 border-t border-border-light bg-surface px-3 pb-4 pt-2 shadow-bar">
       <div className="flex flex-col gap-[9px]">
         {props.maxNoShoots > 0 && (
           <Stepper
@@ -43,10 +43,10 @@ export function ScoreBar(props: ScoreBarProps) {
         />
       </div>
       <div className="flex gap-2">
-        <Button variant="dangerOutline" className="px-4" onClick={props.onDq}>
+        <Button variant="dangerOutline" onClick={props.onDq}>
           {t("common.dq")}
         </Button>
-        <Button variant="outline" className="px-4" onClick={props.onDnf}>
+        <Button variant="outline" onClick={props.onDnf}>
           {t("common.dnf")}
         </Button>
         <Button

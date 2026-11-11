@@ -49,7 +49,7 @@ export function ToastHost() {
             href={toast.action.href}
             variant="outlinePrimary"
             onClick={dismissToast}
-            className="mb-2 mr-2 min-h-touch self-stretch text-base"
+            className="mb-2 mr-2 self-stretch"
           >
             {toast.action.label}
           </ButtonLink>

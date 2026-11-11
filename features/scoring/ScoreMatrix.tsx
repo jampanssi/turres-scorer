@@ -75,31 +75,25 @@ export function ScoreMatrix({
 
       {steel.length > 0 && (
         <>
-          <div className={GRID}>
-            <span className="eyebrow">{t("score.steel")}</span>
-            <ColumnHead code="A" />
-            <span />
-            <span />
-            <ColumnHead code="M" />
-            <span />
-          </div>
+          {/* Steel has no column heads: just the section label, and the A and M cells always show their letter. */}
+          <span className="eyebrow">{t("score.steel")}</span>
           {steel.map((hit, index) => {
             const row = index + 1;
             return (
               <div key={row} className={GRID}>
                 <RowLabel number={row} remaining={steelRemaining(hit)} />
-                <Cell
+                <SteelCell
                   code="A"
-                  count={hit === "A" ? 1 : 0}
+                  selected={hit === "A"}
                   label={t("score.steelCell", { row, code: "A" })}
                   onClick={() => onSteelTap(index, "A")}
                 />
-                <div className="col-span-2 flex h-11 items-center justify-center rounded-cell bg-surface-muted text-xs text-text-secondary">
+                <div className="col-span-2 flex h-11 items-center justify-center text-[13px] text-text-secondary">
                   {t("score.steelHint")}
                 </div>
-                <Cell
+                <SteelCell
                   code="M"
-                  count={hit === "M" ? 1 : 0}
+                  selected={hit === "M"}
                   label={t("score.steelCell", { row, code: "M" })}
                   onClick={() => onSteelTap(index, "M")}
                 />
@@ -171,10 +165,43 @@ function Cell({ code, count, label, onClick }: { code: HitCode; count: number; l
   );
 }
 
+/**
+ * A steel cell (A or M, mutually exclusive). It always shows its letter: not selected, a light cell with a
+ * blue A or red M; selected, a solid blue or red fill with a white letter and no visible border.
+ */
+function SteelCell({
+  code,
+  selected,
+  label,
+  onClick,
+}: {
+  code: "A" | "M";
+  selected: boolean;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      aria-pressed={selected}
+      onClick={onClick}
+      className={cx(
+        "flex h-11 items-center justify-center rounded-cell border-[1.5px] font-display text-[22px] font-bold transition-transform active:scale-95",
+        selected
+          ? cx("border-transparent text-white", code === "M" ? "bg-danger" : "bg-primary")
+          : cx("border-border-light bg-surface-muted", code === "M" ? "text-danger-fg" : "text-primary-text"),
+      )}
+    >
+      {code}
+    </button>
+  );
+}
+
 function UndoButton({ label, disabled, onClick }: { label: string; disabled: boolean; onClick: () => void }) {
   return (
-    <IconButton variant="outlineAccent" shape="cell" label={label} disabled={disabled} onClick={onClick}>
-      <UndoIcon width={22} height={22} />
+    <IconButton variant="plain" shape="round" label={label} disabled={disabled} onClick={onClick}>
+      <UndoIcon width={22} height={22} strokeWidth={2.2} />
     </IconButton>
   );
 }

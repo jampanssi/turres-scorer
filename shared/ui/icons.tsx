@@ -21,9 +21,10 @@ function Icon({ children, ...props }: SVGProps<SVGSVGElement>) {
   );
 }
 
-export const ChevronLeftIcon = (p: SVGProps<SVGSVGElement>) => (
-  <Icon {...p}>
-    <path d="M15 5l-7 7 7 7" />
+/** The Android back arrow: a shaft and an arrow head (header back button). */
+export const ArrowLeftIcon = (p: SVGProps<SVGSVGElement>) => (
+  <Icon strokeWidth={2} {...p}>
+    <path d="M19 12H5M12 19l-7-7 7-7" />
   </Icon>
 );
 export const ChevronRightIcon = (p: SVGProps<SVGSVGElement>) => (

@@ -5,7 +5,7 @@ Reference material for every screen is in `docs/design/`:
 - **Images** (PNG/PDF exports of each screen) — the primary visual reference: match layout, hierarchy and look against these.
 - **`*.dc.html` sources** — use for exact values (hex colours, px sizes, radii, copy) when the image is ambiguous. File names: `Main` = Sign in, `Events` = Matches, `Squads`, `Stages`, `Shooters`, `Scoring`, `Review`, `ConfirmDQ`, `ConfirmDNF`.
 
-If an image and this document disagree, this document wins (it reflects the latest decisions).
+If an image and this document disagree, this document wins (it reflects the latest decisions). The images and `*.dc.html` files predate the **header, button, steel row, undo and stepper styles** described below (the Android-style "V2" look); build those from this document.
 Reference device: **390 × 844 px** (phone, portrait). Everything must also work at 360 px wide.
 
 ---
@@ -34,7 +34,7 @@ Reference device: **390 × 844 px** (phone, portrait). Everything must also work
 | `surface` | `#FFFFFF` | Cards, sheets, inputs |
 | `surface-muted` | `#F3F6F9` | Empty matrix cells, stat tiles, placeholders |
 | `surface-tile` | `#E6ECF2` | "Not started" number tiles |
-| `border` | `#C5CFDA` | Inputs, outline buttons, undo buttons, sheet handle |
+| `border` | `#C5CFDA` | Inputs, sheet handle |
 | `border-light` | `#D5DDE6` | Empty matrix cell border, bottom bar top border |
 | `divider` | `#E1E7EE` | Dividers, progress track |
 | `text` | `#10202F` | Primary text |
@@ -45,14 +45,20 @@ Reference device: **390 × 844 px** (phone, portrait). Everything must also work
 | `success` | `#237A34` | Completed row tile (white text) |
 | `success-text` | `#2F4A22` | "Done" status text, HF chip text |
 | `success-tint` | `#E3EEDC` | Done tiles / live badge background |
-| `danger` | `#B42318` | M cells, DQ button, M/NS column headers |
+| `danger` | `#B42318` | M cells, M/NS column heads, the red warning boxes |
 | `danger-tint` | `#FBE4E2` | Incomplete row tile, DQ warning box, miss highlight |
 | `danger-text` | `#8A1C12` | Text on `danger-tint` |
+| `destructive` | `#BA1A1A` | Destructive **fill** (Confirm DQ, Discard), white text |
+| `destructive-fg` | `#BA1A1A` | Destructive **outline and text** (the DQ button) |
+| `neutral-outline` | `#72787E` | The 1 px outline of the neutral buttons (DNF, Cancel, Edit) |
+| `tonal` / `on-tonal` | `#D3E4F2` / `#0B1D2A` | The stepper `−` button background and its icon |
+| `header` | `rgba(249,249,249,0.96)` | The header bar background (slightly see-through) |
+| `header-border` | `#D1D1D6` | The 1 px line under the header bar |
 | `scrim` | `rgba(16,32,47,0.55)` | Overlay behind bottom sheets |
 
 Contrast: all text pairs above meet WCAG AA (4.5:1) at the sizes used.
 
-**Dark mode** (the tables above are the light palette). The choice is made with the theme row in the user menu on signed-in screens (light or dark); it is remembered. **Sign in is always light** (it ignores the saved theme and has no theme control). "System" follows `prefers-color-scheme`. The full dark palette lives in `app/globals.css`. Rules: `primary` and `danger` stay as fill colours with white text; two extra tokens cover text or borders on surfaces, `primary-text` (`#005185` light, `#7DB9E6` dark) and `danger-fg` (`#B42318` light, `#F28B82` dark). Backgrounds and surfaces go dark navy (`bg` `#0B141D`, `surface` `#14212E`), text goes near-white (`#E8EEF4`), and the tints become dark tints. The dark palette has not been checked against the contrast rule yet.
+**Dark mode** (the tables above are the light palette). The choice is made with the theme row in the user menu on signed-in screens (light or dark); it is remembered. **Sign in is always light** (it ignores the saved theme and has no theme control). "System" follows `prefers-color-scheme`. The full dark palette lives in `app/globals.css`. Rules: `primary` and `danger` stay as fill colours with white text; two extra tokens cover text or borders on surfaces, `primary-text` (`#005185` light, `#7DB9E6` dark) and `danger-fg` (`#B42318` light, `#F28B82` dark). The same split applies to the destructive pair: `destructive` (`#BA1A1A` in both modes, fill) and `destructive-fg` (`#BA1A1A` light, `#F28B82` dark). `tonal` and `on-tonal` are the **same in both themes** (a light blue circle with a dark icon, so the enabled stepper minus reads as light blue on a dark surface too). Dark values of the other new tokens: `neutral-outline` `#8B949B`, `header` `rgba(11,20,29,0.96)` with `header-border` `#2A3B4D`. Backgrounds and surfaces go dark navy (`bg` `#0B141D`, `surface` `#14212E`), text goes near-white (`#E8EEF4`), and the tints become dark tints. The dark palette has not been checked against the contrast rule yet.
 
 ---
 
@@ -60,11 +66,11 @@ Contrast: all text pairs above meet WCAG AA (4.5:1) at the sizes used.
 
 | Role | Font | Weight | Size | Notes |
 |---|---|---|---|---|
-| Screen title (header) | Barlow Condensed | 700 | 24–26 px | UPPERCASE, line-height 1 |
+| Screen title (header) | Barlow Condensed | 700 | 24 px | UPPERCASE, line-height 1 |
 | Login app name | Barlow Condensed | 700 | 40 px | UPPERCASE, letter-spacing 1 px — "TURRES SCORER" |
 | Section header | Barlow Condensed | 700 | 22 px | UPPERCASE ("SELECT STAGE", "SHOOTING ORDER") |
 | Sheet title | Barlow Condensed | 700 | 26 px | UPPERCASE |
-| Buttons | Barlow Condensed | 700 | 20–22 px | UPPERCASE, letter-spacing 0.5–1 px |
+| Buttons | Inter | 600 | 15 px | Normal case, letter-spacing 0.1 px, no icons |
 | Matrix cell / column head | Barlow Condensed | 700 | 22 px / 17 px | |
 | Big numbers (time, points, HF) | Barlow Condensed | 700 | 28–30 px | |
 | Body / list title | Inter | 700 | 15–16 px | |
@@ -77,9 +83,9 @@ Fonts: Google Fonts `Barlow Condensed:wght@600;700` and `Inter:wght@400;500;600;
 
 ## 4. Shape, spacing, elevation
 
-- Radii: matrix cells 8 · inputs / small tiles 10 · buttons, number tiles 12 · cards 14 · event cards 16 · sheet top corners 20 · login panel top corners 24 · chips 999.
+- Radii: matrix cells 8 · inputs / small tiles 10 · number tiles 12 · cards 14 · event cards 16 · sheet top corners 20 · login panel top corners 24 · **buttons and round icon buttons 999 (pills and circles)** · chips 999.
 - Screen side padding 12–16 px; gaps between cards 8–12 px; matrix row gap 9 px, cell gap 4 px.
-- Touch targets: min 44 × 44 px; main action buttons 52–54 px tall.
+- Touch targets: min 44 × 44 px; every button is a 48 px tall pill; the header back button is 48 × 48 px.
 - Elevation: cards are flat or `0 1px 2px rgba(14,42,71,.08)`; sticky bottom bar `0 -2px 8px rgba(14,42,71,.06)`; sheets `0 -8px 24px rgba(16,32,47,.18)`.
 
 ---
@@ -87,7 +93,12 @@ Fonts: Google Fonts `Barlow Condensed:wght@600;700` and `Inter:wght@400;500;600;
 ## 5. Components
 
 ### AppHeader
-Plain header on the page background (`bg`), `text` colour, no coloured bar. **Sticky**: it stays at the top while the page scrolls, so the shooter, the back arrow and the user menu are always visible (on Scoring it shows who is being scored). While content has scrolled underneath it shows a 1 px `border-light` line and a soft card shadow; at the top of the page it has neither. Layering: above the page and the bottom bar, below sheets; the user menu popover is inside it. On Matches the Open / Results control is part of the sticky header. The header keeps a constant height so the transition causes no layout jump. Left: 44 px back button (chevron-left icon, `aria-label` "Back to …"). Then title (Barlow 24–26, uppercase) and one-line subtitle (`text-secondary`, 13 px). The title block has a fixed height (title 26 px + subtitle line 18 px) even when there is no subtitle, so the title stays at the same position on every screen. The right slot holds the **UserMenu** on signed-in screens (see below). Matches has no back button.
+A light bar: background `header` (`rgba(249,249,249,0.96)`, slightly see-through, so content scrolling under it shows faintly), a **1 px `header-border` line** under it (always visible), `text` colour, no coloured bar. **Sticky**: it stays at the top while the page scrolls, so the shooter, the back arrow and the user menu are always visible (on Scoring it shows who is being scored). Layering: above the page and the bottom bar, below sheets; the user menu popover is inside it.
+The bar is **64 px tall**, a flex row with the items centred, padding 0 4 px and a 4 px gap:
+- **Back button**: a 48 × 48 px round icon button with **no text label**, `primary` colour, `aria-label` "Back to …" (for example "Back to shooters"). The icon is the Android arrow, 24 px, stroke 2: `<path d="M19 12H5M12 19l-7-7 7-7"/>`. Matches has no back button, and its title is indented 12 px so it lines up with the content below.
+- **Title block**, left-aligned, filling the remaining width: the **name** in Barlow Condensed 700, 24 px, uppercase, line-height 1, `text` colour; the **subtitle** in Inter 13 px, `text-secondary`, 2 px under the name (for example `#23 · Stage 3 · Squad 2`). The block has a fixed height (24 px title + 2 px + an 18 px subtitle line) even with no subtitle or while loading, so the title stays at the same position on every screen.
+- **Right slot**: the **UserMenu** avatar on signed-in screens (see below), with a 4 px margin to the edge.
+Extra header content (the Open | Results control on Matches, the Stages | Shooters tabs) sits **under the 64 px bar** inside the same sticky header (12 px side padding, 12 px below), above the one hairline.
 
 ### UserMenu
 Avatar button in the header's right slot (44 px circle, initials, `primary` fill, white text; `aria-label` "User menu (email)"). Tapping it opens a popover under the avatar (white `surface`, 1 px `border-light`, radius 14, 288 px wide, sheet shadow). Content, top to bottom: a **user card** (initials circle, "Signed in as", email), a **theme row**, a **language row**, a divider, and **Sign out**. Rows are plain: a 22 px icon on the left and a label, min. 48 px tall, with **nothing on the right** (no switches, shortcuts or chevrons). The theme row names the mode you will switch **to** (light is on -> moon icon and "Dark mode"; dark is on -> sun icon and "Light mode"), and the language row names the language you will switch to (English is on -> globe and "Suomi"). Tapping either switches immediately and keeps the menu open. The menu closes on Escape, on a tap outside, and after signing out (which returns to Sign in). The theme row sets light or dark explicitly; "system" is only the default until the first choice. Sign in has no user menu and is always light; it keeps only a language button top right (globe icon and the name of the language you switch to, e.g. "Suomi" while English is on; the same rule as the menu's language row).
@@ -108,27 +119,31 @@ White card, radius 14 (shooters 12), padding 12–14. Left: 48 px number tile (r
 Track `divider`, fill `primary`, height 6–8 px, fully rounded.
 
 ### Buttons
-- **Primary**: `primary` bg, white text, radius 12, height 52–54.
-- **Secondary / outline**: white bg, 2 px `border`, `text-label` text.
-- **Edit (outline primary)**: white bg, 2 px `primary` border, `primary` text.
-- **Destructive outline (DQ)**: white bg, 2 px `danger` border, `danger` text.
-- **Destructive solid (Confirm DQ)**: `danger` bg, white text.
-- Links that look like buttons are `<a>` elements styled as above.
+Every button is the same **pill**: height 48, fully rounded (radius 24), padding 0 20 px, Inter 15 px 600, letter-spacing 0.1 px, normal case, **no icons**. Outlines are 1 px and the background is transparent. Disabled buttons use the `disabled` colour (for outlines border and text, for fills the background).
+- **Primary**: `primary` fill, white text (Review, Confirm DNF, Done, Sign in). May grow to fill the row (`flex-grow: 1`).
+- **Neutral outline**: 1 px `neutral-outline` border, `primary` text (DNF, Cancel, Edit, Try again).
+- **Primary outline**: 1 px `primary` border, `primary` text (Edit in the Review sheet, Keep editing, Next shooter in the toast).
+- **Destructive outline (DQ)**: 1 px `destructive-fg` (`#BA1A1A`) border, `destructive-fg` text.
+- **Destructive solid (Confirm DQ, Discard)**: `destructive` (`#BA1A1A`) fill, white text.
+- Links that look like buttons are `<a>` elements styled as above. Round **icon buttons** are separate: see below.
+
+### Icon buttons
+Round, 44 × 44 px (the header back button 48 × 48), always with an `aria-label`. **Plain**: transparent, no border, `primary` icon, `disabled` colour when disabled (the header back arrow, the per-row undo). **Tonal**: `tonal` fill with an `on-tonal` icon (the stepper `−`); disabled, the whole button fades to 60% opacity instead of greying the icon, because a grey icon on the pale `tonal` fill is below 2:1 contrast. **Solid**: `primary` fill, white icon, `disabled` fill when disabled (the stepper `+`, the user avatar).
 
 ### ScoreMatrix
 White card, radius 14, padding 10 × 8, row gap 9.
 Grid columns: `38px | 1fr | 1fr | 1fr | 1fr | 44px` (label · A · C · D · M · undo).
-- **Section label + column heads** ("PAPER" A C D M; "STEEL" A · · M). A/C/D heads in `primary`, M in `danger`.
+- **Section label + column heads**: "PAPER" with the column heads A C D M (A/C/D in `primary`, M in `danger`). **"STEEL" has only the section label** (11 px, 700, uppercase, `text-label`) and no column-head row: its cells always show their own letter.
 - **RowLabelTile** (38 × 44, radius 8): row number (Barlow 20). Complete → `success` bg, white. Incomplete → `danger-tint` bg, `danger-text`, with micro label `N left` under the number. The label cannot wrap and must fit the 38 px tile, so its translation is kept to 8 characters at most (English `2 left`, Finnish `2 vielä`; a test guards this).
 - **MatrixCell** (button, 44 px tall, radius 8): empty → `surface-muted` bg, 1.5 px `border-light`, no text. Filled → `primary` bg (A/C/D) or `danger` bg (M), white count text.
-- **Steel rows**: A cell, a 2-column placeholder tile reading "A or M" (`surface-muted`, 12 px `text-secondary`), M cell.
-- **UndoButton** (44 × 44, radius 8, white, 1.5 px `border`): undo-arrow icon, `primary` when active, `disabled` colour + `disabled` attribute when the row is empty.
+- **Steel rows**: label tile · **A cell** · the text "A or M" · **M cell** · undo. The A and M cells always show their letter (Barlow Condensed 700, 22 px, 44 px tall, radius 8, 1.5 px border). **Not selected**: `surface-muted` background, `border-light` border, the letter in `primary` (A) or `danger` (M). **Selected**: solid `primary` (A) or `danger` (M) background, white letter, transparent border (`aria-pressed`). A and M are mutually exclusive, as before. "A or M" is plain text (13 px, `text-secondary`) spanning two columns, with no background or border.
+- **UndoButton** (a plain round icon button, 44 × 44, transparent, no border): undo-arrow icon 22 px, stroke 2.2, `primary` when active, `disabled` colour + `disabled` attribute when the row is empty.
 
 ### Stepper (No-shoot, Procedural)
-Row: label block (name 15 px bold + `Max N` 12 px `text-secondary`) · `−` button (44, outline) · count (Barlow 24) · `+` button (44, `primary`; `disabled` colour when at max). Two steppers stacked with 9 px gap.
+Row: label block (name Inter 15 px 700 + `Max N` Inter 12 px `text-secondary`) · `−` (44 px circle, `tonal` fill, `on-tonal` icon; at 0 the whole button fades to 60% opacity, the icon keeps its colour) · count (Barlow Condensed 700, 24 px, min-width 28) · `+` (44 px circle, `primary` fill, white icon; `disabled` fill when at max). Icons are 20 px, stroke 2.4. Two steppers stacked with 9 px gap.
 
 ### Sticky bottom bar (Scoring)
-White, 1 px `border-light` top border, soft upward shadow. Contains the two steppers, then 16 px gap, then the action row: **DQ** (destructive outline) · **DNF** (outline) · **Review** (primary, fills remaining width). The matrix area above scrolls; the bar never scrolls away.
+White, 1 px `border-light` top border, soft upward shadow, padding 8 px 12 px 16 px. Contains the two steppers, then a 16 px gap, then the action row (gap 8 px) of three pills: **DQ** (destructive outline) · **DNF** (neutral outline) · **Review** (primary, fills the remaining width). The matrix area above scrolls; the bar never scrolls away.
 
 ### BottomSheet
 Full-screen `scrim` over the previous screen, sheet anchored to the bottom: radius 20 top corners, 10 px top padding, 40 × 5 grab handle (`border` colour) centred, content padding 12–20 px, ends with an action row (Cancel/Edit left, confirm right).
@@ -176,7 +191,7 @@ Rows: order number, name, `#23` (competitor number; no division/gun type). Right
 Tap → Scoring.
 
 ### 6 · Scoring
-Header: shooter name, `#23 · Stage 3 · Squad 2`.
+Header: shooter name, `#23 · Stage 3 · Squad 2` (the AppHeader: light bar, Android back arrow, see above).
 Scrollable content:
 1. **Time card**: stopwatch icon, label "Time (s)", and a button (120 × 46, 2 px `primary` border, Barlow 28, right-aligned, placeholder `0.00`) that opens the **time keypad** instead of the phone keyboard (below).
 2. **ScoreMatrix**: Paper rows 1…N, divider, Steel rows 1…S (see components and SCORING.md for behaviour).
@@ -192,13 +207,13 @@ Opens when the time field is tapped. Title **TIME (S)**, a white card with the t
 White sheet (`surface`). The header row has a 44 px circle in `danger-tint` holding a `danger-fg` warning-triangle icon, and to its right the title **DISQUALIFY SHOOTER?** and the shooter line `Antti Mäkelä · #23 · Stage 3` (no squad).
 `danger-tint` info box: "The shooter is removed from the rest of the match. This needs the Range Master's approval to reverse."
 **Reason** select (Unsafe gun handling, Accidental discharge, Unsportsmanlike conduct, Other) and optional **Note** textarea.
-Actions: **Cancel** (outline, closes the sheet and keeps the entered hits) · **Confirm DQ** (`danger` solid, a little wider). Confirming saves a DQ result for this stage: no time, no hits, the chosen reason (a code, e.g. `unsafe_handling`), the trimmed note if any (max 500 characters), no shooter sign-off. Anything already saved or entered on this stage is replaced. Then back to Shooters, where the shooter is now last, dimmed and not selectable, on every stage of the match (a DQ lasts for the rest of the match). The reason starts on the first choice each time and the note starts empty. While saving both buttons are disabled; a failed save keeps the sheet open with an error. The DQ button works with an incomplete score. There is no way to reverse a DQ in the app: the text says it needs the Range Master's approval.
+The screen dimmed behind the sheet shows the same light header as the rest of the app. Actions (two pills): **Cancel** (neutral outline, `flex: 1 1 0`, closes the sheet and keeps the entered hits) · **Confirm DQ** (`destructive` `#BA1A1A` fill, white text, `flex: 1.4 1 0`). Confirming saves a DQ result for this stage: no time, no hits, the chosen reason (a code, e.g. `unsafe_handling`), the trimmed note if any (max 500 characters), no shooter sign-off. Anything already saved or entered on this stage is replaced. Then back to Shooters, where the shooter is now last, dimmed and not selectable, on every stage of the match (a DQ lasts for the rest of the match). The reason starts on the first choice each time and the note starts empty. While saving both buttons are disabled; a failed save keeps the sheet open with an error. The DQ button works with an incomplete score. There is no way to reverse a DQ in the app: the text says it needs the Range Master's approval.
 
 ### 6b · Confirm DNF (bottom sheet over Scoring)
 White sheet (`surface`). The header row has a 44 px circle in `primary-tint` holding a `primary-text` circle-x icon, and to its right the title **MARK AS DNF?** and the shooter line `Antti Mäkelä · #23 · Stage 3` (no squad).
 Info box (`bg`): "Stage 3 is recorded as Did Not Finish for this shooter. Hits entered on this stage are discarded."
 **Reason** select (Equipment failure, Injury, Shooter withdrew, Other).
-Actions: **Cancel** (outline, closes the sheet and keeps the entered hits) · **Confirm DNF** (primary, a little wider). Confirming saves a DNF result for this stage: no time, no hits, the chosen reason (stored as a code, e.g. `equipment_failure`), no shooter sign-off. Anything already saved or entered on this stage is replaced. Then back to Shooters, where the shooter shows **DNF** in their place (still selectable, so it can be corrected). The reason starts on the first choice each time. While saving both buttons are disabled; a failed save keeps the sheet open with an error. The DNF button works with an incomplete score.
+Actions (two pills): **Cancel** (neutral outline, `flex: 1 1 0`, closes the sheet and keeps the entered hits) · **Confirm DNF** (primary, `flex: 1.4 1 0`). Confirming saves a DNF result for this stage: no time, no hits, the chosen reason (stored as a code, e.g. `equipment_failure`), no shooter sign-off. Anything already saved or entered on this stage is replaced. Then back to Shooters, where the shooter shows **DNF** in their place (still selectable, so it can be corrected). The reason starts on the first choice each time. While saving both buttons are disabled; a failed save keeps the sheet open with an error. The DNF button works with an incomplete score.
 
 ### 7 · Review score (bottom sheet over Scoring)
 Sheet background `bg`. Title **REVIEW SCORE**, shooter line.
@@ -225,7 +240,7 @@ When a screen cannot load its data it shows the message and a **Try again** butt
 
 ## 7. Iconography
 
-Inline stroke SVG icons, 2–2.6 px stroke, `currentColor`, round caps: chevron-left (back), chevron-right (list), stopwatch, undo-arrow, minus, plus, warning triangle (DQ), circle-x (DNF), check and close (toast and the completed status). Decorative icons have `aria-hidden="true"`; icon-only buttons have `aria-label`. No emoji.
+Inline stroke SVG icons, 2–2.6 px stroke, `currentColor`, round caps: arrow-left (the Android back arrow in the header), chevron-right (list), stopwatch, undo-arrow, minus, plus, warning triangle (DQ), circle-x (DNF), check and close (toast and the completed status). Decorative icons have `aria-hidden="true"`; icon-only buttons have `aria-label`. No emoji.
 
 ---
 

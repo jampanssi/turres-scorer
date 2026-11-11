@@ -56,7 +56,7 @@ export function SignInForm() {
         </p>
       )}
 
-      <Button type="submit" disabled={busy} className="w-full min-h-[54px] text-[22px]">
+      <Button type="submit" disabled={busy} className="w-full">
         {busy ? t("auth.busy") : t("auth.submit")}
       </Button>
     </form>
