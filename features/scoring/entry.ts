@@ -26,6 +26,16 @@ export function addPaperHit(row: HitCode[], hit: HitCode, required: number): Hit
   return [...row.slice(0, oldestDifferent), ...row.slice(oldestDifferent + 1), hit].slice(-required);
 }
 
+/**
+ * A paper row as text for the Review sheet and the read-only summary: the hits in alphabetical order
+ * (`A` before `C` before `D` before `M`), whatever order they were tapped in. `C` then `A` reads `AC`, and
+ * `M` then `A` reads `AM`. The order of a row never matters for the score, so showing it sorted keeps the
+ * same result looking the same every time.
+ */
+export function formatPaperHits(row: readonly HitCode[]): string {
+  return [...row].sort().join("");
+}
+
 /** Remove the most recent entry of a paper row. */
 export function undoPaperHit(row: HitCode[]): HitCode[] {
   return row.slice(0, -1);

@@ -3,6 +3,7 @@ import type { HitCode } from "@/shared/domain/types";
 import {
   addPaperHit,
   DEFAULT_STEEL_HIT,
+  formatPaperHits,
   paperRemaining,
   setSteelHit,
   steelRemaining,
@@ -123,5 +124,30 @@ describe("a tap on a full row replaces a hit that differs", () => {
         for (const tapped of codes) {
           expect(tap(2, [first, second], tapped)).toContain(tapped);
         }
+  });
+});
+
+describe("formatPaperHits (how a row reads on Review)", () => {
+  it("is alphabetical whatever order the hits were tapped in: CA reads AC, MA reads AM", () => {
+    expect(formatPaperHits(["C", "A"])).toBe("AC");
+    expect(formatPaperHits(["M", "A"])).toBe("AM");
+    expect(formatPaperHits(["M", "D"])).toBe("DM");
+    expect(formatPaperHits(["D", "C", "A"])).toBe("ACD");
+  });
+
+  it("keeps equal hits together, and handles one hit and an empty row", () => {
+    expect(formatPaperHits(["C", "C"])).toBe("CC");
+    expect(formatPaperHits(["M"])).toBe("M");
+    expect(formatPaperHits([])).toBe("");
+  });
+
+  it("does not reorder the row it was given", () => {
+    const row: HitCode[] = ["C", "A"];
+    formatPaperHits(row);
+    expect(row).toEqual(["C", "A"]);
+  });
+
+  it("the same hits in any order read the same", () => {
+    expect(formatPaperHits(["A", "C"])).toBe(formatPaperHits(["C", "A"]));
   });
 });

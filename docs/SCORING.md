@@ -69,6 +69,7 @@ Everyone is present by default. The **Shooters** tab of the match view lists eve
   - H = 3: `AAA` + tap `C` → `AAC`; `AAA` + tap `C`, tap `M` → `ACM`; `ACD` + tap `A` → `AAD` (the oldest hit that is not an `A` is replaced)
 - Each row has a visible **Undo** button removing that row's most recent entry (steel: puts the row back to the default `A`). Disabled when there is nothing to undo (an empty paper row, a steel row that is already `A`).
 - Tapping a steel cell sets it to that value (A or M); the other is cleared.
+- The order of a row never matters for the score, so Review and the read-only summary always show a row's hits **alphabetically** (`AC`, `AM`), even if they were tapped as `CA` or `MA`.
 - A row is **complete** when it has its required count. The row-number tile is green when complete; otherwise red-tinted with `N left` (e.g. `1 left`).
 - No long-press, swipe or other hidden gestures.
 

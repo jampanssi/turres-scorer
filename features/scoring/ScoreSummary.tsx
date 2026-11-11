@@ -6,7 +6,7 @@ import { useT } from "@/shared/i18n/useT";
 import { Card } from "@/shared/ui/Card";
 import { cx } from "@/shared/ui/cx";
 import type { ScoreDraft } from "./draft";
-import { paperRemaining, steelRemaining } from "./entry";
+import { formatPaperHits, paperRemaining, steelRemaining } from "./entry";
 import type { ReviewSummary } from "./review";
 import type { Totals } from "@/shared/domain/scoring";
 
@@ -61,7 +61,7 @@ export function ScoreSummary({ draft, hitsPerPaperTarget, summary }: ScoreSummar
                 <TargetTile
                   key={index}
                   number={index + 1}
-                  text={hits.join("")}
+                  text={formatPaperHits(hits)}
                   warn={hits.includes("M") || paperRemaining(hits, hitsPerPaperTarget) > 0}
                 />
               ))}
