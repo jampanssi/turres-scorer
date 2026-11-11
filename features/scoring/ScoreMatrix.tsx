@@ -75,25 +75,34 @@ export function ScoreMatrix({
 
       {steel.length > 0 && (
         <>
-          {/* Steel has no column heads: just the section label, and the A and M cells always show their letter. */}
-          <span className="eyebrow">{t("score.steel")}</span>
+          {/* Same look as paper: the letters are the column heads, a hit shows as a number in its cell. */}
+          <div className={GRID}>
+            <span className="eyebrow">{t("score.steel")}</span>
+            <ColumnHead code="A" />
+            <span />
+            <span />
+            <ColumnHead code="M" />
+            <span />
+          </div>
           {steel.map((hit, index) => {
             const row = index + 1;
             return (
               <div key={row} className={GRID}>
                 <RowLabel number={row} remaining={steelRemaining(hit)} />
-                <SteelCell
+                <Cell
                   code="A"
-                  selected={hit === "A"}
+                  count={hit === "A" ? 1 : 0}
+                  pressed={hit === "A"}
                   label={t("score.steelCell", { row, code: "A" })}
                   onClick={() => onSteelTap(index, "A")}
                 />
                 <div className="col-span-2 flex h-11 items-center justify-center text-[13px] text-text-secondary">
                   {t("score.steelHint")}
                 </div>
-                <SteelCell
+                <Cell
                   code="M"
-                  selected={hit === "M"}
+                  count={hit === "M" ? 1 : 0}
+                  pressed={hit === "M"}
                   label={t("score.steelCell", { row, code: "M" })}
                   onClick={() => onSteelTap(index, "M")}
                 />
@@ -146,12 +155,26 @@ function RowLabel({ number, remaining }: { number: number; remaining: number }) 
 }
 
 /** One tap target. Empty: grey with no text. Filled: blue (A/C/D) or red (M) with the hit count. */
-function Cell({ code, count, label, onClick }: { code: HitCode; count: number; label: string; onClick: () => void }) {
+function Cell({
+  code,
+  count,
+  label,
+  onClick,
+  pressed,
+}: {
+  code: HitCode;
+  count: number;
+  label: string;
+  onClick: () => void;
+  /** Steel cells are a choice between A and M, so they also say whether they are selected. */
+  pressed?: boolean;
+}) {
   const filled = count > 0;
   return (
     <button
       type="button"
       aria-label={label}
+      aria-pressed={pressed}
       onClick={onClick}
       className={cx(
         "flex h-11 items-center justify-center rounded-cell font-display text-[22px] font-bold transition-transform active:scale-95",
@@ -161,39 +184,6 @@ function Cell({ code, count, label, onClick }: { code: HitCode; count: number; l
       )}
     >
       {filled ? count : ""}
-    </button>
-  );
-}
-
-/**
- * A steel cell (A or M, mutually exclusive). It always shows its letter: not selected, a light cell with a
- * blue A or red M; selected, a solid blue or red fill with a white letter and no visible border.
- */
-function SteelCell({
-  code,
-  selected,
-  label,
-  onClick,
-}: {
-  code: "A" | "M";
-  selected: boolean;
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      aria-pressed={selected}
-      onClick={onClick}
-      className={cx(
-        "flex h-11 items-center justify-center rounded-cell border-[1.5px] font-display text-[22px] font-bold transition-transform active:scale-95",
-        selected
-          ? cx("border-transparent text-white", code === "M" ? "bg-danger" : "bg-primary")
-          : cx("border-border-light bg-surface-muted", code === "M" ? "text-danger-fg" : "text-primary-text"),
-      )}
-    >
-      {code}
     </button>
   );
 }
