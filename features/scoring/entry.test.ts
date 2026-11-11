@@ -71,3 +71,57 @@ describe("undo and completeness", () => {
     expect(steelRemaining(DEFAULT_STEEL_HIT)).toBe(0); // so a fresh steel row counts as complete
   });
 });
+
+describe("a tap on a full row replaces a hit that differs", () => {
+  it("fixing a hit takes one tap: AC + A -> AA (a plain 'drop the oldest' would give CA, the same hits again)", () => {
+    expect(tap(2, ["A", "C"], "A")).toEqual(["A", "A"]);
+    expect(tap(2, ["C", "A"], "A")).toEqual(["A", "A"]);
+    expect(tap(2, ["A", "M"], "A")).toEqual(["A", "A"]);
+  });
+
+  it("the other direction works too: AA + C -> AC, AC + C -> CC, AM + C -> MC (one hit is replaced)", () => {
+    expect(tap(2, ["A", "A"], "C")).toEqual(["A", "C"]);
+    expect(tap(2, ["A", "C"], "C")).toEqual(["C", "C"]);
+    expect(tap(2, ["A", "M"], "C")).toEqual(["M", "C"]); // only the oldest hit that differs goes
+  });
+
+  it("tapping the code the whole row already holds changes nothing", () => {
+    expect(tap(2, ["A", "A"], "A")).toEqual(["A", "A"]);
+    expect(tap(1, ["D"], "D")).toEqual(["D"]);
+    expect(tap(3, ["C", "C", "C"], "C")).toEqual(["C", "C", "C"]);
+  });
+
+  it("with three hits it drops the oldest hit that is not the tapped code", () => {
+    expect(tap(3, ["A", "C", "D"], "A")).toEqual(["A", "D", "A"]); // C is replaced, the first A stays (same hits as AAD)
+    expect(tap(3, ["A", "C", "D"], "D")).toEqual(["C", "D", "D"]); // A is the oldest that is not D
+    expect(tap(3, ["A", "A", "C"], "C")).toEqual(["A", "C", "C"]);
+    expect(tap(3, ["A", "C", "D"], "M")).toEqual(["C", "D", "M"]); // nothing equals M: the oldest goes
+  });
+
+  it("with one hit per target a tap always replaces it", () => {
+    expect(tap(1, ["A"], "C")).toEqual(["C"]);
+    expect(tap(1, ["C"], "M")).toEqual(["M"]);
+  });
+
+  it("never grows a row beyond what the stage needs, and never changes the row it was given", () => {
+    const row: HitCode[] = ["A", "C"];
+    tap(2, row, "A", "D", "M");
+    expect(row).toEqual(["A", "C"]);
+    for (const taps of [
+      ["A", "C", "D", "M", "A", "A", "C"],
+      ["M", "M", "M", "D", "D"],
+    ] as HitCode[][]) {
+      expect(tap(2, [], ...taps).length).toBeLessThanOrEqual(2);
+      expect(tap(3, [], ...taps).length).toBeLessThanOrEqual(3);
+    }
+  });
+
+  it("a row that does not hold the code always ends up holding it (a tap is never wasted)", () => {
+    const codes: HitCode[] = ["A", "C", "D", "M"];
+    for (const first of codes)
+      for (const second of codes)
+        for (const tapped of codes) {
+          expect(tap(2, [first, second], tapped)).toContain(tapped);
+        }
+  });
+});

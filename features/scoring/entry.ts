@@ -11,12 +11,19 @@ export const STEEL_HITS_REQUIRED = 1;
 export const DEFAULT_STEEL_HIT = "A" satisfies Exclude<SteelHit, null>;
 
 /**
- * Add a tap to a paper row. A row holds `required` hits (the stage's hits per paper target, 1-3):
- * it keeps the most recent taps (FIFO), dropping the oldest.
+ * Add a tap to a paper row. A row holds `required` hits (the stage's hits per paper target, 1-3).
+ * - While the row has room, the hit is added.
+ * - On a full row the tap **replaces a hit that differs**: the oldest entry that is not the tapped code is
+ *   dropped and the tapped code is added. So `AC` + A gives `AA` in one tap (a plain "drop the oldest"
+ *   would give `CA`, the same hits again, and the correction would take a second tap). Tapping a code the
+ *   whole row already holds changes nothing.
+ * The order of a row never matters for the score, only which codes it holds.
  */
 export function addPaperHit(row: HitCode[], hit: HitCode, required: number): HitCode[] {
-  const next = [...row, hit];
-  return next.length > required ? next.slice(next.length - required) : next;
+  if (row.length < required) return [...row, hit];
+  const oldestDifferent = row.findIndex((entry) => entry !== hit);
+  if (oldestDifferent === -1) return row.slice(-required); // every entry is already this code
+  return [...row.slice(0, oldestDifferent), ...row.slice(oldestDifferent + 1), hit].slice(-required);
 }
 
 /** Remove the most recent entry of a paper row. */

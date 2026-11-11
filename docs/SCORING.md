@@ -59,12 +59,14 @@ Everyone is present by default. The **Shooters** tab of the match view lists eve
 ## Matrix entry behaviour
 
 - Tapping a paper cell **adds** a hit of that type to the row. Cells never cycle back to zero.
-- A paper row keeps the **H most recent taps** (FIFO): with H entries already, a new tap drops the **oldest**. Examples for H = 2, 1 and 3:
+- A paper row holds **H** hits. While it has room, a tap adds a hit. On a **full** row a tap **replaces a hit that differs**: the **oldest entry that is not the tapped code** is dropped and the tapped code is added. The order of a row never matters for the score, only which codes it holds. Examples for H = 2, 1 and 3:
   - `AA` + tap `C` → `AC`
   - `AA` + tap `C`, tap `M` → `CM`
   - `AA` + tap `C`, tap `C` → `CC`
+  - **Fixing a hit takes one tap**: `AC` + tap `A` → `AA`; `AM` + tap `A` → `AA`; `AC` + tap `C` → `CC` (a plain "drop the oldest" would turn `AC` + `A` into `CA`, the same hits, and the fix would need a second tap)
+  - Tapping a code the whole row already holds changes nothing: `AA` + tap `A` → `AA`
   - H = 1: each tap replaces the previous one (`A` + tap `C` → `C`)
-  - H = 3: `AAA` + tap `C` → `AAC`; `AAA` + tap `C`, tap `M` → `ACM`
+  - H = 3: `AAA` + tap `C` → `AAC`; `AAA` + tap `C`, tap `M` → `ACM`; `ACD` + tap `A` → `AAD` (the oldest hit that is not an `A` is replaced)
 - Each row has a visible **Undo** button removing that row's most recent entry (steel: puts the row back to the default `A`). Disabled when there is nothing to undo (an empty paper row, a steel row that is already `A`).
 - Tapping a steel cell sets it to that value (A or M); the other is cleared.
 - A row is **complete** when it has its required count. The row-number tile is green when complete; otherwise red-tinted with `N left` (e.g. `1 left`).
