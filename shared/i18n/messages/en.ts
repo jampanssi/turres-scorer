@@ -11,6 +11,11 @@ export const en = {
   "auth.submit": "Sign in",
   "auth.busy": "Signing in…",
   "auth.integratedWith": "Integrated with {service}",
+  // One message for two different failures, on purpose: the app must not reveal that the credentials were
+  // right but the user has no permission to use it.
+  "auth.failedTitle": "Sign-in failed",
+  "auth.error.invalidCredentials":
+    "Wrong email address or password, or you don't have permission to use the application.",
   "auth.error.invalidEmail": "Enter a valid email address.",
   "auth.error.missingPassword": "Enter your password.",
 

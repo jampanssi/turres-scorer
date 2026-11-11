@@ -4,6 +4,7 @@ import Image from "next/image";
 import { LanguageToggle } from "@/shared/i18n/LanguageToggle";
 import { useT } from "@/shared/i18n/useT";
 import { ExternalLink } from "@/shared/ui/ExternalLink";
+import { ToastHost } from "@/shared/ui/ToastHost";
 import { SignInForm } from "./SignInForm";
 
 /** The data source's site, linked from the sub-line under the app name. */
@@ -31,6 +32,9 @@ export function SignInScreen() {
           <span>{after}</span>
         </p>
       </div>
+
+      {/* Errors (a failed sign-in) appear as a toast at the bottom, inside this always-light subtree. */}
+      <ToastHost />
 
       <section aria-labelledby="sign-in-title" className="rounded-t-3xl bg-surface px-6 pb-8 pt-8 text-text">
         <div className="mx-auto w-full max-w-sm">

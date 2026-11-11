@@ -1,10 +1,28 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { initialsOf, parseSession, readSessionRaw, signIn, signOut } from "./session";
+import {
+  initialsOf,
+  MOCK_NO_PERMISSION_EMAIL,
+  MOCK_WRONG_PASSWORD,
+  mockRejects,
+  parseSession,
+  readSessionRaw,
+  signIn,
+  signOut,
+} from "./session";
 
 describe("initialsOf", () => {
   it("uses first letters of dotted names", () => expect(initialsOf("ro.virtanen@example.fi")).toBe("RV"));
   it("falls back to the first two letters", () => expect(initialsOf("antti@example.fi")).toBe("AN"));
   it("handles an empty local part", () => expect(initialsOf("@example.fi")).toBe("?"));
+});
+
+describe("mockRejects", () => {
+  it("rejects exactly the wrong test password and the no-permission test email", () => {
+    expect(mockRejects("a@b.fi", "wrong")).toBe(true);
+    expect(mockRejects("NoPermission@Example.fi", "x")).toBe(true);
+    expect(mockRejects("a@b.fi", "secret")).toBe(false);
+    expect(mockRejects("permission@example.fi", "x")).toBe(false);
+  });
 });
 
 describe("parseSession", () => {
@@ -48,6 +66,19 @@ describe("signIn and signOut", () => {
     expect(await signIn("not-an-email", "x")).toEqual({ ok: false, error: "invalidEmail" });
     expect(await signIn("a@b.fi", "")).toEqual({ ok: false, error: "missingPassword" });
     expect(readSessionRaw()).toBeNull();
+  });
+
+  it("fails with the same error for a wrong password and for a user without permission, and stores nothing", async () => {
+    const wrongPassword = await signIn("ro@example.fi", MOCK_WRONG_PASSWORD);
+    const noPermission = await signIn(`  ${MOCK_NO_PERMISSION_EMAIL.toUpperCase()} `, "secret");
+    expect(wrongPassword).toEqual({ ok: false, error: "invalidCredentials" });
+    expect(noPermission).toEqual(wrongPassword); // identical: the app cannot tell the two apart
+    expect(readSessionRaw()).toBeNull();
+  });
+
+  it("still signs in with any other email and password", async () => {
+    expect(await signIn("ro@example.fi", "Wrong")).toMatchObject({ ok: true }); // only the exact test password fails
+    expect(await signIn("nopermission2@example.fi", "secret")).toMatchObject({ ok: true });
   });
 
   it("signOut clears the session", async () => {

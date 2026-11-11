@@ -13,6 +13,9 @@ export const fi: Record<MessageKey, string> = {
   "auth.busy": "Kirjaudutaan…",
   // Deliberately English in Finnish too: it is a statement about a partner service, not UI text.
   "auth.integratedWith": "Integrated with {service}",
+  "auth.failedTitle": "Kirjautuminen epäonnistui",
+  "auth.error.invalidCredentials":
+    "Väärä sähköpostiosoite tai salasana, tai sinulla ei ole oikeutta käyttää sovellusta.",
   "auth.error.invalidEmail": "Anna kelvollinen sähköpostiosoite.",
   "auth.error.missingPassword": "Anna salasana.",
 

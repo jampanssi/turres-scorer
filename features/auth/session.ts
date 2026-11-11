@@ -3,8 +3,8 @@ import { STORAGE } from "@/shared/lib/storage-keys";
 
 /**
  * Mock session until the auth provider is decided (see docs/PLAN.md open questions).
- * Any valid-looking email and any password signs in; the session lives in localStorage
- * (with an in-memory fallback if storage is blocked).
+ * Any valid-looking email and any password signs in, except the two test cases below that fail the way
+ * a real sign-in can; the session lives in localStorage (with an in-memory fallback if storage is blocked).
  * Replace `signIn` / `signOut` / `readSessionRaw` when real auth exists; callers stay the same.
  */
 
@@ -26,13 +26,27 @@ export function initialsOf(email: string): string {
 }
 
 /** Errors are codes, not text, so the UI can translate them (messages `auth.error.*`). */
-export type SignInError = "invalidEmail" | "missingPassword";
+export type SignInError = "invalidEmail" | "missingPassword" | "invalidCredentials";
 export type SignInResult = { ok: true; session: Session } | { ok: false; error: SignInError };
+
+/**
+ * Test cases for the failed sign-in message (the mock accepts everything else):
+ * - the password `wrong`, with any email: wrong credentials;
+ * - the email `nopermission@example.fi`, with any password: right credentials but no permission.
+ * Both give the same `invalidCredentials` error, so the app never reveals which one it was.
+ */
+export const MOCK_WRONG_PASSWORD = "wrong";
+export const MOCK_NO_PERMISSION_EMAIL = "nopermission@example.fi";
+
+export function mockRejects(email: string, password: string): boolean {
+  return password === MOCK_WRONG_PASSWORD || email.trim().toLowerCase() === MOCK_NO_PERMISSION_EMAIL;
+}
 
 export async function signIn(email: string, password: string): Promise<SignInResult> {
   const trimmed = email.trim();
   if (!/^\S+@\S+\.\S+$/.test(trimmed)) return { ok: false, error: "invalidEmail" };
   if (password.length === 0) return { ok: false, error: "missingPassword" };
+  if (mockRejects(trimmed, password)) return { ok: false, error: "invalidCredentials" };
   const session: Session = { userId: trimmed.toLowerCase(), email: trimmed, initials: initialsOf(trimmed) };
   store.write(JSON.stringify(session));
   return { ok: true, session };

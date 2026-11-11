@@ -36,7 +36,14 @@ export function Field({ label, optional, describedBy, children }: FieldProps) {
 
 export function TextInput({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
   return (
-    <input className={cx(CONTROL, "h-[50px] w-full px-4 text-base placeholder:text-disabled", className)} {...props} />
+    <input
+      className={cx(
+        CONTROL,
+        "h-[50px] w-full px-4 text-base placeholder:text-disabled aria-invalid:border-danger-fg",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 

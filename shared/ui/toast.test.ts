@@ -36,4 +36,11 @@ describe("toast store", () => {
     showToast({ message: "A", shooterId: "s1", action: { label: "Next", href: "/x" } });
     expect(getToast()).toMatchObject({ shooterId: "s1", action: { href: "/x" } });
   });
+
+  it("keeps the tone and the title of an error toast, and defaults to a plain confirmation", () => {
+    showToast({ message: "Saved" });
+    expect(getToast()?.tone).toBeUndefined();
+    showToast({ tone: "danger", title: "Sign-in failed", message: "Wrong password" });
+    expect(getToast()).toMatchObject({ tone: "danger", title: "Sign-in failed", message: "Wrong password" });
+  });
 });
