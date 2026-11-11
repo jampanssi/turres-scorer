@@ -66,6 +66,29 @@ export const CircleXIcon = (p: SVGProps<SVGSVGElement>) => (
     <path d="M9 9l6 6M15 9l-6 6" />
   </Icon>
 );
+/** Three dots in a column: "more actions" for the item next to it. */
+export const MoreIcon = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <circle cx="12" cy="5" r="1.3" fill="currentColor" />
+    <circle cx="12" cy="12" r="1.3" fill="currentColor" />
+    <circle cx="12" cy="19" r="1.3" fill="currentColor" />
+  </Icon>
+);
+/** Two arrows in opposite directions: swap or move between places. */
+export const SwapIcon = (p: SVGProps<SVGSVGElement>) => (
+  <Icon strokeWidth={2} {...p}>
+    <path d="M4 8h15M15 4l4 4-4 4" />
+    <path d="M20 16H5M9 12l-4 4 4 4" />
+  </Icon>
+);
+/** A person with a cross: someone who is not here. */
+export const UserOffIcon = (p: SVGProps<SVGSVGElement>) => (
+  <Icon strokeWidth={2} {...p}>
+    <circle cx="9" cy="8" r="4" />
+    <path d="M2 21v-1a6 6 0 016-6h2" />
+    <path d="M16 15l5 5M21 15l-5 5" />
+  </Icon>
+);
 export const CircleCheckIcon = (p: SVGProps<SVGSVGElement>) => (
   <Icon {...p}>
     <circle cx="12" cy="12" r="9" />

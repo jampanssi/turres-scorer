@@ -1,18 +1,20 @@
 import { INDEXED_DB_NAME } from "@/shared/lib/storage-keys";
-import type { Attendance, MatchCompletion, StageScore } from "@/shared/domain/types";
+import type { Attendance, MatchCompletion, SquadMove, StageScore } from "@/shared/domain/types";
 import type { AttendanceStore } from "./attendance-store";
 import type { MatchStore } from "./match-store";
 import type { ScoreStore } from "./score-store";
+import type { SquadMoveStore } from "./squad-move-store";
 
 /** IndexedDB-backed stores for scores, roll call and match completions. Browser only: call from effects or event handlers, never during render on the server. */
 
 const DB_NAME = INDEXED_DB_NAME;
-// Version 2 added the roll call store, version 3 the match completions. An upgrade only creates what is
+// Version 2 added the roll call store, version 3 the match completions, version 4 the squad moves. An upgrade only creates what is
 // missing, so saved scores and roll call records stay.
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 const STORE = "scores";
 const ATTENDANCE_STORE = "attendance";
 const MATCH_STORE = "matches";
+const SQUAD_MOVE_STORE = "squadMoves";
 
 function request<T>(req: IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -42,6 +44,9 @@ function openDb(): Promise<IDBDatabase> {
       }
       if (!db.objectStoreNames.contains(MATCH_STORE)) {
         db.createObjectStore(MATCH_STORE, { keyPath: "matchId" });
+      }
+      if (!db.objectStoreNames.contains(SQUAD_MOVE_STORE)) {
+        db.createObjectStore(SQUAD_MOVE_STORE, { keyPath: "shooterId" }).createIndex("byMatch", "matchId");
       }
     };
     open.onsuccess = () => resolve(open.result);
@@ -100,6 +105,20 @@ export function createIndexedDbMatchStore(): MatchStore {
     async list() {
       const tx = (await db()).transaction(MATCH_STORE, "readonly");
       return request<MatchCompletion[]>(tx.objectStore(MATCH_STORE).getAll());
+    },
+  };
+}
+
+export function createIndexedDbSquadMoveStore(): SquadMoveStore {
+  return {
+    async put(move) {
+      const tx = (await db()).transaction(SQUAD_MOVE_STORE, "readwrite");
+      tx.objectStore(SQUAD_MOVE_STORE).put(move);
+      await done(tx);
+    },
+    async listByMatch(matchId) {
+      const tx = (await db()).transaction(SQUAD_MOVE_STORE, "readonly");
+      return request<SquadMove[]>(tx.objectStore(SQUAD_MOVE_STORE).index("byMatch").getAll(matchId));
     },
   };
 }

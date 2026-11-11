@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { getRepository } from "@/shared/data";
-import { attendanceId } from "@/shared/domain/ids";
-import type { Attendance } from "@/shared/domain/types";
+import { saveShooterDns } from "@/shared/data/attendance-save";
 
 /**
  * Marking a shooter DNS, or taking the mark back (a "present" record). Every tap is saved at once,
@@ -21,17 +19,7 @@ export function useRollCallSave(matchId: string, day: string, roId: string) {
   async function setDns(shooterId: string, dns: boolean) {
     setPending((p) => ({ ...p, [shooterId]: dns }));
     try {
-      const repo = await getRepository();
-      const record: Attendance = {
-        id: attendanceId(day, shooterId),
-        matchId,
-        shooterId,
-        day,
-        status: dns ? "dns" : "present",
-        roId,
-        updatedAt: repo.now(),
-      };
-      await repo.saveAttendance([record]);
+      await saveShooterDns({ matchId, shooterId, dns, roId, day });
       setFailed(false);
     } catch {
       setFailed(true);

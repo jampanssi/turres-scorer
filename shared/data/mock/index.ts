@@ -1,9 +1,15 @@
 import { createMemoryAttendanceStore } from "../attendance-store";
-import { createIndexedDbAttendanceStore, createIndexedDbMatchStore, createIndexedDbScoreStore } from "../local";
+import {
+  createIndexedDbAttendanceStore,
+  createIndexedDbMatchStore,
+  createIndexedDbScoreStore,
+  createIndexedDbSquadMoveStore,
+} from "../local";
 import { createMemoryMatchStore } from "../match-store";
 import { dayOf } from "@/shared/domain/attendance";
 import type { Repository } from "../repository";
 import { createMemoryScoreStore } from "../score-store";
+import { createMemorySquadMoveStore } from "../squad-move-store";
 import { buildMockAttendance } from "./attendance";
 import { buildMockCatalog } from "./catalog";
 import { createCatalogRepository } from "./repository";
@@ -19,11 +25,13 @@ export function createMockRepository(): Repository {
   const scores = browser ? createIndexedDbScoreStore() : createMemoryScoreStore();
   const attendance = browser ? createIndexedDbAttendanceStore() : createMemoryAttendanceStore();
   const matches = browser ? createIndexedDbMatchStore() : createMemoryMatchStore();
+  const squadMoves = browser ? createIndexedDbSquadMoveStore() : createMemorySquadMoveStore();
   const catalog = buildMockCatalog();
   const now = new Date().toISOString();
   return createCatalogRepository(catalog, scores, buildMockScores(catalog), {
     attendance,
     matches,
+    squadMoves,
     seedAttendance: buildMockAttendance(catalog, dayOf(now), now),
   });
 }

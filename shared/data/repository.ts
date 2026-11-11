@@ -18,8 +18,17 @@ export interface Repository {
   listStages(matchId: string): Promise<Stage[]>;
   getStage(stageId: string): Promise<Stage | null>;
 
+  /** Squads of a match in squad number order, with every shooter move applied to their shooter lists. */
   listSquads(matchId: string): Promise<Squad[]>;
   getSquad(squadId: string): Promise<Squad | null>;
+
+  /**
+   * Move a shooter to another squad of the same match, for the whole match, to the end of that squad's
+   * shooting order. Only a shooter with no result on any stage can move: otherwise `shooterHasResults`.
+   * Throws a `RepositoryError`: `shooterNotFound`, `squadNotFound`, `sameSquad` (already there),
+   * `shooterHasResults` or `matchCompleted`. Notifies subscribers once.
+   */
+  moveShooter(shooterId: string, toSquadId: string, options: { roId: string }): Promise<void>;
 
   /** Shooters of a squad, in shooting order. */
   listShooters(squadId: string): Promise<Shooter[]>;

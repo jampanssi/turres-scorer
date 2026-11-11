@@ -134,3 +134,18 @@ export interface Attendance {
   roId: string;
   updatedAt: string;
 }
+
+/**
+ * A shooter moved to another squad for the whole match (see `squad-moves.ts`). One record per shooter: the
+ * latest move is the one that counts.
+ */
+export interface SquadMove {
+  shooterId: string;
+  matchId: string;
+  /** The squad the shooter was moved to. */
+  squadId: string;
+  /** ISO timestamp from the repository clock; decides the order when several shooters join one squad. */
+  movedAt: string;
+  /** The range officer who moved them. */
+  movedBy: string;
+}

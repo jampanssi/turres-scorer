@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Screen } from "@/features/shell/Screen";
 import { useCurrentUser } from "@/features/shell/SessionGate";
 import { useRepoQuery } from "@/shared/data/useRepoQuery";
@@ -11,6 +11,7 @@ import { useT } from "@/shared/i18n/useT";
 import { SectionHeader } from "@/shared/ui/SectionHeader";
 import { TabLinks } from "@/shared/ui/TabLinks";
 import { RollCallRow } from "./RollCallRow";
+import { ShooterActionsSheet } from "./ShooterActionsSheet";
 import { loadRoster, type RosterOverview, type RosterSquad } from "./summary";
 import { useRollCallSave } from "./useRollCallSave";
 
@@ -54,6 +55,11 @@ function RosterBody({ data, matchId }: { data: RosterOverview; matchId: string }
   const user = useCurrentUser();
   const { setDns, settle, pending, failed } = useRollCallSave(matchId, data.day, user.userId);
   const locked = isCompleted(data.match);
+  // The shooter whose actions are open (by id, so the sheet closes by itself if the shooter disappears).
+  const [actionsFor, setActionsFor] = useState<string | null>(null);
+  const open = data.squads
+    .flatMap((s) => s.rows.map((row) => ({ row, squad: s.squad })))
+    .find((e) => e.row.shooter.id === actionsFor);
 
   // Taps show at once; once the loaded data has caught up the pending entry is dropped.
   useEffect(() => {
@@ -77,9 +83,21 @@ function RosterBody({ data, matchId }: { data: RosterOverview; matchId: string }
 
       <div className="flex flex-col gap-3 px-4">
         {data.squads.map((entry) => (
-          <SquadGroup key={entry.squad.id} entry={entry} pending={pending} locked={locked} onToggleDns={setDns} />
+          <SquadGroup key={entry.squad.id} entry={entry} pending={pending} locked={locked} onActions={setActionsFor} />
         ))}
       </div>
+      {open && (
+        <ShooterActionsSheet
+          row={{ ...open.row, dns: pending[open.row.shooter.id] ?? open.row.dns }}
+          squad={open.squad}
+          otherSquads={data.squads
+            .filter((s) => s.squad.id !== open.squad.id)
+            .map((s) => ({ id: s.squad.id, number: s.squad.number, shooters: s.squad.shooterIds.length }))}
+          roId={user.userId}
+          onSetDns={(dns) => setDns(open.row.shooter.id, dns)}
+          onClose={() => setActionsFor(null)}
+        />
+      )}
     </main>
   );
 }
@@ -88,10 +106,10 @@ interface SquadGroupProps {
   entry: RosterSquad;
   pending: Readonly<Record<string, boolean>>;
   locked: boolean;
-  onToggleDns: (shooterId: string, dns: boolean) => void;
+  onActions: (shooterId: string) => void;
 }
 
-function SquadGroup({ entry, pending, locked, onToggleDns }: SquadGroupProps) {
+function SquadGroup({ entry, pending, locked, onActions }: SquadGroupProps) {
   const { t } = useT();
   const { squad, rows } = entry;
   const headingId = `squad-heading-${squad.id}`;
@@ -111,7 +129,7 @@ function SquadGroup({ entry, pending, locked, onToggleDns }: SquadGroupProps) {
           <li key={row.shooter.id}>
             <RollCallRow
               row={{ ...row, dns: pending[row.shooter.id] ?? row.dns }}
-              onToggle={(dns) => onToggleDns(row.shooter.id, dns)}
+              onActions={() => onActions(row.shooter.id)}
               locked={locked}
             />
           </li>

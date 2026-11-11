@@ -19,6 +19,10 @@ The order follows the range: a range officer stands at one stage and the squads 
 
 Any range officer can complete a live match from the bottom of the Stages view, but only **once every stage is done** (every expected shooter of every squad has a result, so a DNS or disqualified shooter does not hold it up); until then the button is disabled with a hint. The confirmation sheet asks **who can see the results** (Everyone, Participants only, Organisers only; default Participants only). Completing is **final in the app**: the match is "finished", listed under Results, and read only. Scoring, DNS marks and every other change are refused by the repository. The visibility, the time and the officer are stored on the match; a results view and the export must honour the visibility. An upcoming match cannot be completed.
 
+## Change squad
+
+By tapping a shooter on the match's Shooters tab, an RO can move the shooter to another squad of the same match. The move is for the **whole match** (not only the current stage): the shooter leaves the old squad and joins the **end** of the chosen squad's shooting order. Results already saved stay with the shooter. **Only a shooter with no saved result on any stage can be moved** (once they have shot a stage, scored, DNF or DQ, their squad is fixed). A completed match cannot be changed. The same menu marks or unmarks DNS; a shooter with a result cannot be marked DNS (an existing mark can still be taken back).
+
 ## DNS (did not show)
 
 Everyone is present by default. The **Shooters** tab of the match view lists every squad with its shooters, and a range officer marks the ones who did not show as **DNS** (only a status: no reason, no note). Any range officer can take a DNS back.

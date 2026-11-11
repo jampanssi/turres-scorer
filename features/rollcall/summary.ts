@@ -9,6 +9,8 @@ export interface ShooterRowData {
   dns: boolean;
   /** Disqualified from the match: listed last, cannot be marked. */
   disqualified: boolean;
+  /** Has a saved result on at least one stage (scored, DNF or DQ): cannot change squad or be marked DNS. */
+  hasResults: boolean;
 }
 
 /**
@@ -19,12 +21,14 @@ export function buildRoster(
   shooters: readonly Shooter[],
   records: readonly Attendance[],
   disqualified: ReadonlySet<string>,
+  withResults: ReadonlySet<string> = new Set(),
 ): ShooterRowData[] {
   const dns = dnsShooterIds(records);
   const rows = shooters.map((shooter) => ({
     shooter,
     dns: dns.has(shooter.id),
     disqualified: disqualified.has(shooter.id),
+    hasResults: withResults.has(shooter.id),
   }));
   return [...rows.filter((r) => !r.disqualified), ...rows.filter((r) => r.disqualified)];
 }
@@ -56,10 +60,11 @@ export async function loadRoster(repo: Repository, matchId: string): Promise<Ros
     repo.listAttendance(matchId),
   ]);
   const disqualified = disqualifiedShooterIds(scores);
+  const withResults = new Set(scores.map((s) => s.shooterId));
   const squads = await Promise.all(
     squadList.map(async (squad): Promise<RosterSquad> => ({
       squad,
-      rows: buildRoster(await repo.listShooters(squad.id), records, disqualified),
+      rows: buildRoster(await repo.listShooters(squad.id), records, disqualified, withResults),
     })),
   );
 

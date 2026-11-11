@@ -38,6 +38,11 @@ describe("buildRoster", () => {
     expect(rows.map((r) => r.shooter.id)).toEqual(["s2", "s3", "s1"]);
     expect(rows.map((r) => r.disqualified)).toEqual([false, false, true]);
   });
+
+  it("marks shooters who have a result on any stage", () => {
+    const rows = buildRoster(shooters, [], new Set(), new Set(["s2"]));
+    expect(rows.map((r) => r.hasResults)).toEqual([false, true, false]);
+  });
 });
 
 describe("loadRoster", () => {

@@ -103,7 +103,7 @@ From a UX pass over every screen; details in DESIGN.md (Toast, Load errors, Stic
 ## DNS (done)
 
 - [x] Domain (`attendance.ts`, DNS in `progress.ts`), attendance stores (IndexedDB v2), repository methods, mock seed (one DNS shooter)
-- [x] Shooters tab on the match view with all squads grouped (always open) and a DNS button per shooter (first built as a roll call with Here/DNS, a gate and counters; simplified after testing), DNS row on the stage's shooter list, Scoring notice
+- [x] Shooters tab on the match view with all squads grouped (always open) and a more button per shooter (Change squad, DNS) (first built as a roll call with Here/DNS, a gate and counters; simplified after testing), DNS row on the stage's shooter list, Scoring notice
 - [ ] Not done: the time zone is fixed to Europe/Helsinki; SSI may have its own check-in; a DNS from an earlier day carries over until taken back
 
 ## Navigation order (done)
