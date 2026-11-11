@@ -66,6 +66,12 @@ export const CircleXIcon = (p: SVGProps<SVGSVGElement>) => (
     <path d="M9 9l6 6M15 9l-6 6" />
   </Icon>
 );
+export const CircleCheckIcon = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M8.5 12.5l2.5 2.5 4.5-5" />
+  </Icon>
+);
 export const SunIcon = (p: SVGProps<SVGSVGElement>) => (
   <Icon {...p}>
     <circle cx="12" cy="12" r="4" />

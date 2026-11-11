@@ -94,7 +94,7 @@ Behaviour-preserving, one commit per phase, all checks green after each:
 
 From a UX pass over every screen; details in DESIGN.md (Toast, Load errors, Sticky bottom bar, Scoring, Time keypad).
 
-- [x] Save confirmation toast, saved row highlighted, Next shooter shortcut, `router.replace` after save
+- [x] Save confirmation toast (HeroUI-style, no shortcut button), saved row highlighted, `router.replace` to the shooter list after save
 - [x] Try again on load errors; unsaved-changes prompt, Cancel edit
 - [x] Clear key on the time keypad; matrix press feedback (DQ and DNF stay in the score bar)
 - [x] Sign in: no inert link, "Signing in…"; empty states on Squads, Stages, Shooters
@@ -103,7 +103,7 @@ From a UX pass over every screen; details in DESIGN.md (Toast, Load errors, Stic
 ## DNS (done)
 
 - [x] Domain (`attendance.ts`, DNS in `progress.ts`), attendance stores (IndexedDB v2), repository methods, mock seed (one DNS shooter)
-- [x] Shooters tab on the match view with all squads grouped (always open) and a DNS button per shooter (first built as a roll call with Here/DNS, a gate and counters; simplified after testing), DNS row on the stage's shooter list, Scoring notice, next shooter skips DNS
+- [x] Shooters tab on the match view with all squads grouped (always open) and a DNS button per shooter (first built as a roll call with Here/DNS, a gate and counters; simplified after testing), DNS row on the stage's shooter list, Scoring notice
 - [ ] Not done: the time zone is fixed to Europe/Helsinki; SSI may have its own check-in; a DNS from an earlier day carries over until taken back
 
 ## Navigation order (done)

@@ -32,9 +32,9 @@ describe("toast store", () => {
     expect(listener).toHaveBeenCalledTimes(2);
   });
 
-  it("keeps the shooter and the action", () => {
-    showToast({ message: "A", shooterId: "s1", action: { label: "Next", href: "/x" } });
-    expect(getToast()).toMatchObject({ shooterId: "s1", action: { href: "/x" } });
+  it("keeps the shooter", () => {
+    showToast({ message: "A", shooterId: "s1" });
+    expect(getToast()).toMatchObject({ shooterId: "s1" });
   });
 
   it("keeps the tone and the title of an error toast, and defaults to a plain confirmation", () => {

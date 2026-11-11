@@ -14,8 +14,6 @@ interface SaveTarget {
   /** The shooter list: where to go after saving. */
   backHref: string;
   shooter: Pick<Shooter, "id" | "name">;
-  /** The score page of the next shooter to shoot, offered in the toast; null when everyone has a result. */
-  nextHref: string | null;
 }
 
 /**
@@ -24,7 +22,7 @@ interface SaveTarget {
  * changed, so a result cannot be saved twice; if storing fails, `saveFailed` is set and the sheet
  * stays open to try again.
  */
-export function useSaveResult({ backHref, shooter, nextHref }: SaveTarget) {
+export function useSaveResult({ backHref, shooter }: SaveTarget) {
   const router = useRouter();
   const { t } = useT();
   const [saving, setSaving] = useState(false);
@@ -38,11 +36,7 @@ export function useSaveResult({ backHref, shooter, nextHref }: SaveTarget) {
       const repo = await getRepository();
       const score = build(repo.now());
       await repo.saveScore(score);
-      showToast({
-        message: confirmation(score, shooter.name, t),
-        shooterId: shooter.id,
-        action: nextHref ? { label: t("toast.next"), href: nextHref } : undefined,
-      });
+      showToast({ ...confirmation(score, shooter.name, t), shooterId: shooter.id });
       // replace, not push: Back from the shooter list must not reopen the score page just saved.
       router.replace(backHref);
     } catch {
@@ -54,17 +48,21 @@ export function useSaveResult({ backHref, shooter, nextHref }: SaveTarget) {
   return { saving, saveFailed, persist, clearFailure: () => setSaveFailed(false) };
 }
 
-function confirmation(score: StageScore, name: string, t: TFn): string {
+/** The title and message of the confirmation toast for a saved result. */
+function confirmation(score: StageScore, name: string, t: TFn): { title: string; message: string } {
   switch (score.status) {
     case "scored":
-      return t("toast.saved", {
-        name,
-        time: formatTime(score.timeSec),
-        hf: formatHitFactor(hitFactor(pointsOf(totalsOf(score)), score.timeSec)),
-      });
+      return {
+        title: t("toast.savedTitle"),
+        message: t("toast.saved", {
+          name,
+          time: formatTime(score.timeSec),
+          hf: formatHitFactor(hitFactor(pointsOf(totalsOf(score)), score.timeSec)),
+        }),
+      };
     case "dnf":
-      return t("toast.dnf", { name });
+      return { title: t("toast.dnfTitle"), message: t("toast.dnf", { name }) };
     case "dq":
-      return t("toast.dq", { name });
+      return { title: t("toast.dqTitle"), message: t("toast.dq", { name }) };
   }
 }

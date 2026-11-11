@@ -58,11 +58,7 @@ export function ScoringForm({ data, matchId, roId, backHref, onDirtyChange, onCa
     onDirtyChange(dirty);
     return () => onDirtyChange(false);
   }, [dirty, onDirtyChange]);
-  const { saving, saveFailed, persist, clearFailure } = useSaveResult({
-    backHref,
-    shooter,
-    nextHref: data.nextShooterId ? `${backHref}/score/${data.nextShooterId}` : null,
-  });
+  const { saving, saveFailed, persist, clearFailure } = useSaveResult({ backHref, shooter });
   const summary = useMemo(() => summarizeDraft(draft, stage), [draft, stage]);
 
   const closeSheet = () => {

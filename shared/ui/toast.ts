@@ -9,16 +9,14 @@ export interface Toast {
   id: number;
   message: string;
   /**
-   * "success" (the default): a quiet confirmation. "danger": an error in the HeroUI-style red toast,
-   * announced at once to screen readers and kept longer.
+   * "success" (the default): a confirmation in the HeroUI-style green toast. "danger": an error in the
+   * red one, announced at once to screen readers and kept longer.
    */
   tone?: "success" | "danger";
-  /** A bold first line above the message (danger toasts). */
+  /** A bold first line above the message. */
   title?: string;
   /** The shooter the message is about: their row on Shooters is highlighted while the toast shows. */
   shooterId?: string;
-  /** An optional shortcut, such as "Next shooter". */
-  action?: { label: string; href: string };
 }
 
 let current: Toast | null = null;
