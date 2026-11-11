@@ -6,7 +6,7 @@ import { cx } from "@/shared/ui/cx";
 import { IconButton } from "@/shared/ui/IconButton";
 import { UndoIcon } from "@/shared/ui/icons";
 import type { HitCode, SteelHit } from "@/shared/domain/types";
-import { paperRemaining, steelRemaining } from "./entry";
+import { DEFAULT_STEEL_HIT, paperRemaining, steelRemaining } from "./entry";
 
 const GRID = "grid grid-cols-[38px_1fr_1fr_1fr_1fr_44px] items-center gap-1";
 const PAPER_CODES: HitCode[] = ["A", "C", "D", "M"];
@@ -99,7 +99,7 @@ export function ScoreMatrix({
                 />
                 <UndoButton
                   label={t("score.undoSteel", { row })}
-                  disabled={hit === null}
+                  disabled={hit === DEFAULT_STEEL_HIT}
                   onClick={() => onSteelUndo(index)}
                 />
               </div>

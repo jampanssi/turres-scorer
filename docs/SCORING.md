@@ -46,7 +46,7 @@ Everyone is present by default. The **Shooters** tab of the match view lists eve
 ## Targets
 
 - **Paper target**: exactly **H** scored entries, each one of `A | C | D | M`. **H is set per stage** (`hitsPerPaperTarget`): 1, 2 or 3, usually 2. Everything below uses H.
-- **Steel target**: exactly **1** entry, either `A` or `M` (mutually exclusive).
+- **Steel target**: exactly **1** entry, either `A` or `M` (mutually exclusive). **A steel target starts as `A` when the Scoring screen opens**, so a steel row is never empty and the range officer only taps the misses (`M`). The shooter must still review the score before it is saved.
 - A stage has N paper targets, S steel targets and K no-shoot targets (configured per stage).
 
 ## Penalty limits
@@ -65,7 +65,7 @@ Everyone is present by default. The **Shooters** tab of the match view lists eve
   - `AA` + tap `C`, tap `C` → `CC`
   - H = 1: each tap replaces the previous one (`A` + tap `C` → `C`)
   - H = 3: `AAA` + tap `C` → `AAC`; `AAA` + tap `C`, tap `M` → `ACM`
-- Each row has a visible **Undo** button removing that row's most recent entry (steel: clears the row). Disabled when empty.
+- Each row has a visible **Undo** button removing that row's most recent entry (steel: puts the row back to the default `A`). Disabled when there is nothing to undo (an empty paper row, a steel row that is already `A`).
 - Tapping a steel cell sets it to that value (A or M); the other is cleared.
 - A row is **complete** when it has its required count. The row-number tile is green when complete; otherwise red-tinted with `N left` (e.g. `1 left`).
 - No long-press, swipe or other hidden gestures.

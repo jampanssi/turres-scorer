@@ -23,10 +23,10 @@ import {
 const stage = { paperTargets: 6, hitsPerPaperTarget: 2 as const, steelTargets: 3, noShootTargets: 2 };
 
 describe("emptyDraft", () => {
-  it("has an empty row per target", () => {
+  it("has an empty paper row per target, and every steel target already a hit (A)", () => {
     const draft = emptyDraft(stage);
     expect(draft.paper).toEqual([[], [], [], [], [], []]);
-    expect(draft.steel).toEqual([null, null, null]);
+    expect(draft.steel).toEqual(["A", "A", "A"]);
     expect(draft).toMatchObject({ timeDigits: "", noShoots: 0, procedurals: 0 });
   });
 });
@@ -72,8 +72,9 @@ describe("steel rows", () => {
     draft = tapSteel(draft, 0, "M");
     expect(draft.steel[0]).toBe("M");
   });
-  it("undo clears the row", () => {
-    expect(undoSteel(tapSteel(emptyDraft(stage), 1, "A"), 1).steel[1]).toBeNull();
+  it("undo puts the row back to the default A", () => {
+    expect(undoSteel(tapSteel(emptyDraft(stage), 1, "M"), 1).steel[1]).toBe("A");
+    expect(undoSteel(emptyDraft(stage), 1).steel[1]).toBe("A"); // already the default: nothing changes
   });
 });
 
@@ -121,7 +122,7 @@ describe("draftFromScore", () => {
     expect(draft.paper).toHaveLength(6);
     expect(draft.paper[0]).toEqual(["A", "A"]);
     expect(draft.paper[5]).toEqual([]);
-    expect(draft.steel).toEqual(["A", null, null]);
+    expect(draft.steel).toEqual(["A", "A", "A"]); // a saved score with fewer steel entries pads with the default
     expect(draft).toMatchObject({ noShoots: 1, procedurals: 2 });
   });
 
@@ -257,7 +258,8 @@ describe("isSameDraft", () => {
     expect(isSameDraft(start, emptyDraft(stage))).toBe(true);
     expect(isSameDraft(start, appendTimeDigit(start, "5"))).toBe(false);
     expect(isSameDraft(start, tapPaper(start, 0, "A", 2))).toBe(false);
-    expect(isSameDraft(start, tapSteel(start, 0, "A"))).toBe(false);
+    expect(isSameDraft(start, tapSteel(start, 0, "M"))).toBe(false);
+    expect(isSameDraft(start, tapSteel(start, 0, "A"))).toBe(true); // A is already the default
     expect(isSameDraft(start, setNoShoots(start, 1, stage))).toBe(false);
     expect(isSameDraft(start, setProcedurals(start, 1, stage))).toBe(false);
   });

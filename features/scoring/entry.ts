@@ -5,6 +5,12 @@ import type { HitCode, SteelHit } from "@/shared/domain/types";
 export const STEEL_HITS_REQUIRED = 1;
 
 /**
+ * A steel target starts as a hit (`A`): the range officer only has to tap the ones that were missed. A steel
+ * row is therefore never empty on the Scoring screen.
+ */
+export const DEFAULT_STEEL_HIT = "A" satisfies Exclude<SteelHit, null>;
+
+/**
  * Add a tap to a paper row. A row holds `required` hits (the stage's hits per paper target, 1-3):
  * it keeps the most recent taps (FIFO), dropping the oldest.
  */
@@ -23,9 +29,9 @@ export function setSteelHit(hit: Exclude<SteelHit, null>): SteelHit {
   return hit;
 }
 
-/** Undo on a steel row clears it. */
+/** Undo on a steel row puts it back to where it started: the default hit, `A`. */
 export function undoSteelHit(): SteelHit {
-  return null;
+  return DEFAULT_STEEL_HIT;
 }
 
 /** How many entries a paper row still needs ("N left"). 0 = complete. */

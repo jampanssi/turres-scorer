@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import type { HitCode } from "@/shared/domain/types";
-import { addPaperHit, paperRemaining, steelRemaining, undoPaperHit } from "./entry";
+import {
+  addPaperHit,
+  DEFAULT_STEEL_HIT,
+  paperRemaining,
+  setSteelHit,
+  steelRemaining,
+  undoPaperHit,
+  undoSteelHit,
+} from "./entry";
 
 /** Tap the given hits in order on a row of a stage that needs `required` hits per paper target. */
 const tap = (required: number, row: HitCode[], ...hits: HitCode[]) =>
@@ -54,5 +62,12 @@ describe("undo and completeness", () => {
   it("steel rows report 1 left until set", () => {
     expect(steelRemaining(null)).toBe(1);
     expect(steelRemaining("A")).toBe(0);
+  });
+
+  it("a steel target starts as a hit, and undo returns to that", () => {
+    expect(DEFAULT_STEEL_HIT).toBe("A");
+    expect(undoSteelHit()).toBe("A");
+    expect(undoSteelHit()).toBe(setSteelHit("A"));
+    expect(steelRemaining(DEFAULT_STEEL_HIT)).toBe(0); // so a fresh steel row counts as complete
   });
 });

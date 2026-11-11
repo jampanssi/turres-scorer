@@ -1,5 +1,5 @@
 import type { HitCode, Stage, StageScore, SteelHit } from "@/shared/domain/types";
-import { addPaperHit, setSteelHit, undoPaperHit, undoSteelHit } from "./entry";
+import { addPaperHit, DEFAULT_STEEL_HIT, setSteelHit, undoPaperHit, undoSteelHit } from "./entry";
 import { maxNoShoots, maxProcedurals } from "@/shared/domain/scoring";
 
 /**
@@ -27,7 +27,8 @@ export function emptyDraft(stage: TargetCounts): ScoreDraft {
   return {
     timeDigits: "",
     paper: Array.from({ length: stage.paperTargets }, () => []),
-    steel: Array.from({ length: stage.steelTargets }, () => null),
+    // Steel starts as hits (A): only the misses are entered.
+    steel: Array.from({ length: stage.steelTargets }, () => DEFAULT_STEEL_HIT),
     noShoots: 0,
     procedurals: 0,
   };
@@ -41,7 +42,7 @@ export function draftFromScore(score: StageScore | null, stage: PenaltyLimits): 
     timeDigits: digitsFromSeconds(score.timeSec),
     // A row never holds more hits than the stage asks for: keep the most recent ones.
     paper: draft.paper.map((_, i) => (score.paper[i] ?? []).slice(-stage.hitsPerPaperTarget)),
-    steel: draft.steel.map((_, i) => score.steel[i] ?? null),
+    steel: draft.steel.map((_, i) => score.steel[i] ?? DEFAULT_STEEL_HIT),
     noShoots: Math.min(score.noShoots, maxNoShoots(stage.noShootTargets)),
     procedurals: Math.min(
       score.procedurals,
